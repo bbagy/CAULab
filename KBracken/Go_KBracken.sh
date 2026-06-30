@@ -1,0 +1,167 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage(){
+  echo "Usage: $0 -i FASTQ_DIR -o OUTPUT_DIR -d KRAKEN2_DB [-s SNAKEDIR] [-c CORES] [-j JOBS] [-m IMAGE] [-n] [-K] [--kraken-only]"
+  exit 1
+}
+
+abs_path(){
+  local p="$1"
+  if [ -d "$p" ]; then
+    (cd "$p" && pwd -P)
+  elif [ -e "$p" ]; then
+    (cd "$(dirname "$p")" && printf "%s/%s\n" "$(pwd -P)" "$(basename "$p")")
+  else
+    return 1
+  fi
+}
+
+FASTQ_DIR=""
+OUTPUT_DIR=""
+DB=""
+SNAKEDIR=""
+CORES=8
+JOBS=4
+IMAGE="kbracken:caulab"
+DOCKER_PLATFORM="${DOCKER_PLATFORM:-}"
+DRYRUN=0
+KEEP_GOING=0
+RUN_BRACKEN=1
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    -i)
+      FASTQ_DIR="${2:-}"
+      shift 2
+      ;;
+    -o)
+      OUTPUT_DIR="${2:-}"
+      shift 2
+      ;;
+    -d)
+      DB="${2:-}"
+      shift 2
+      ;;
+    -s)
+      SNAKEDIR="${2:-}"
+      shift 2
+      ;;
+    -c)
+      CORES="${2:-}"
+      shift 2
+      ;;
+    -j)
+      JOBS="${2:-}"
+      shift 2
+      ;;
+    -m)
+      IMAGE="${2:-}"
+      shift 2
+      ;;
+    -n)
+      DRYRUN=1
+      shift
+      ;;
+    -K)
+      KEEP_GOING=1
+      shift
+      ;;
+    --kraken-only)
+      RUN_BRACKEN=0
+      shift
+      ;;
+    --help|-h)
+      usage
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+
+[ -z "$FASTQ_DIR" ] && usage
+[ -z "$OUTPUT_DIR" ] && usage
+[ -z "$DB" ] && usage
+
+FASTQ_DIR_ABS="$(abs_path "$FASTQ_DIR")" || { echo "[KBracken] FASTQ_DIR not found: $FASTQ_DIR"; exit 1; }
+DB_ABS="$(abs_path "$DB")" || { echo "[KBracken] DB not found: $DB"; exit 1; }
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
+PIPELINE_DIR="$SCRIPT_DIR"
+if [ -n "$SNAKEDIR" ]; then
+  [ -d "$SNAKEDIR" ] || { echo "[KBracken] SNAKEDIR not found: $SNAKEDIR"; exit 1; }
+  PIPELINE_DIR="$(cd "$SNAKEDIR" && pwd -P)"
+fi
+
+SNAKEFILE_NAME="Go_KBracken.smk"
+if [ ! -f "$PIPELINE_DIR/$SNAKEFILE_NAME" ] && [ -f "$PIPELINE_DIR/Go_KBracken_V1.smk" ]; then
+  SNAKEFILE_NAME="Go_KBracken_V1.smk"
+fi
+if [ ! -f "$PIPELINE_DIR/$SNAKEFILE_NAME" ]; then
+  echo "[KBracken][FATAL] Snakefile not found: $PIPELINE_DIR/$SNAKEFILE_NAME"
+  exit 1
+fi
+
+if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
+  echo "[KBracken][FATAL] Docker image not found locally: $IMAGE"
+  echo "[KBracken] Build example:"
+  echo "  cd \"$SCRIPT_DIR\" && docker build -t kbracken:caulab ."
+  exit 1
+fi
+
+WORKDIR="$(pwd)"
+
+run(){
+  local -a platform_args=()
+  if [ -n "$DOCKER_PLATFORM" ]; then
+    platform_args=(--platform "$DOCKER_PLATFORM")
+  fi
+  docker run --rm \
+    "${platform_args[@]}" \
+    -u "$(id -u):$(id -g)" \
+    -v "$WORKDIR":/work \
+    -v "$PIPELINE_DIR":/pipeline:ro \
+    -v "$FASTQ_DIR_ABS":/fastq:ro \
+    -v "$DB_ABS":/db/kraken2:ro \
+    -w /work \
+    "$IMAGE" \
+    "$@"
+}
+
+BASE_ARGS=(
+  snakemake
+  --snakefile "/pipeline/$SNAKEFILE_NAME"
+  --config
+  fastq_dir=/fastq
+  output_dir="$OUTPUT_DIR"
+  db=/db/kraken2
+  run_bracken="$RUN_BRACKEN"
+  --cores "$CORES"
+  --jobs "$JOBS"
+  --latency-wait 60
+  --rerun-incomplete
+)
+
+if [ "$DRYRUN" -eq 1 ]; then
+  BASE_ARGS+=(--dry-run)
+fi
+if [ "$KEEP_GOING" -eq 1 ]; then
+  BASE_ARGS+=(--keep-going)
+fi
+
+set +e
+run "${BASE_ARGS[@]}" 2>&1 | tee kbracken.log
+rc=${PIPESTATUS[0]}
+set -e
+
+if [ "$rc" -ne 0 ] && grep -qiE "lock|unlock|LockException|cannot be locked" kbracken.log; then
+  echo "[KBracken] Detected lock issue -> running --unlock then retry..."
+  run "${BASE_ARGS[@]}" --unlock
+  set +e
+  run "${BASE_ARGS[@]}" 2>&1 | tee -a kbracken.log
+  rc=${PIPESTATUS[0]}
+  set -e
+fi
+
+exit "$rc"

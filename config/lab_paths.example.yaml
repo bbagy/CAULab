@@ -1,0 +1,16 @@
+# Copy this file to lab_paths.yaml on each workstation and edit the host paths.
+# These values are examples only; wrappers still receive paths through CLI flags.
+
+install_root: $HOME/caulab-pipelines
+
+databases:
+  kraken2: /data/db/kraken2/k2_pluspfp_16gb
+  host_bowtie2_prefix: /data/db/host/hg38/bowtie2/hg38
+  humann_chocophlan: /data/db/humann/chocophlan
+  humann_uniref: /data/db/humann/uniref
+  humann_metaphlan: /data/db/humann/metaphlan4
+
+docker_images:
+  goqc: goqc:caulab
+  kbracken: kbracken:caulab
+  humann: humann:caulab
