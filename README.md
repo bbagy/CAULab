@@ -28,7 +28,7 @@ Available now (production-ready):
 ## Quick Install
 
 ```bash
-git clone <repo-url> CAULab
+git clone https://github.com/bbagy/CAULab.git
 cd CAULab
 ./install_mac.sh --build-core
 source "$HOME/caulab-pipelines/caulab.env"
@@ -38,8 +38,10 @@ caulab_usage.sh
 On Apple Silicon Mac, if package solving fails during Docker build:
 
 ```bash
+cd CAULab
 ./install_mac.sh --build-core --platform linux/amd64
 source "$HOME/caulab-pipelines/caulab.env"
+caulab_usage.sh
 ```
 
 ---
