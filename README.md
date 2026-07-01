@@ -35,6 +35,22 @@ source "$HOME/caulab-pipelines/caulab.env"
 caulab_usage.sh
 ```
 
+If `$HOME/caulab-pipelines` already exists, use the installed commands directly:
+
+```bash
+source "$HOME/caulab-pipelines/caulab.env"
+caulab_usage.sh
+```
+
+To refresh an existing install from a newly pulled clone:
+
+```bash
+cd CAULab
+git pull
+./install_mac.sh --update --build-core
+source "$HOME/caulab-pipelines/caulab.env"
+```
+
 On Apple Silicon Mac, if package solving fails during Docker build:
 
 ```bash

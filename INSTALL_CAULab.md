@@ -12,6 +12,22 @@ cd /path/to/CAULab
 source "$HOME/caulab-pipelines/caulab.env"
 ```
 
+If the install directory already exists, use it:
+
+```bash
+source "$HOME/caulab-pipelines/caulab.env"
+caulab_usage.sh
+```
+
+Update an existing install from a refreshed clone:
+
+```bash
+cd /path/to/CAULab
+git pull
+./install_mac.sh --update --build-core
+source "$HOME/caulab-pipelines/caulab.env"
+```
+
 For Apple Silicon Mac, if the normal Docker build fails while solving Bioconda packages:
 
 ```bash

@@ -4,7 +4,7 @@ set -euo pipefail
 usage() {
   cat <<'EOF'
 Usage:
-  ./install_mac.sh [--prefix INSTALL_DIR] [--build-core] [--platform linux/amd64]
+  ./install_mac.sh [--prefix INSTALL_DIR] [--update] [--build-core] [--platform linux/amd64]
 
 Defaults:
   INSTALL_DIR = $HOME/caulab-pipelines
@@ -12,6 +12,7 @@ Defaults:
 Examples:
   ./install_mac.sh
   ./install_mac.sh --build-core
+  ./install_mac.sh --update --build-core
   ./install_mac.sh --build-core --platform linux/amd64
   ./install_mac.sh --prefix /Volumes/Analysis/caulab-pipelines --build-core
 
@@ -19,6 +20,7 @@ Notes:
   - Docker Desktop must already be installed and running if a build option is used.
   - Use --platform linux/amd64 on Apple Silicon if Bioconda cannot solve linux/arm64 packages.
   - --build-core builds GoQC, KBracken, and Humann images.
+  - --update refreshes an existing install while preserving config/lab_paths.yaml.
 EOF
   exit "${1:-1}"
 }
@@ -27,6 +29,7 @@ PREFIX="$HOME/caulab-pipelines"
 BUILD_GOQC=0
 BUILD_KBRACKEN=0
 BUILD_HUMANN=0
+UPDATE=0
 PLATFORM=""
 
 while [ "$#" -gt 0 ]; do
@@ -54,6 +57,10 @@ while [ "$#" -gt 0 ]; do
       BUILD_HUMANN=1
       shift
       ;;
+    --update)
+      UPDATE=1
+      shift
+      ;;
     --platform)
       PLATFORM="${2:-}"
       [ -n "$PLATFORM" ] || usage
@@ -71,16 +78,32 @@ done
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PREFIX_PARENT="$(dirname "$PREFIX")"
 
+copy_install_files() {
+  mkdir -p "$PREFIX"
+  cp -R "$SCRIPT_DIR/GoQC" "$PREFIX/"
+  cp -R "$SCRIPT_DIR/KBracken" "$PREFIX/"
+  cp -R "$SCRIPT_DIR/Humann" "$PREFIX/"
+  cp -R "$SCRIPT_DIR/config" "$PREFIX/"
+  cp "$SCRIPT_DIR/README.md" "$PREFIX/"
+  cp "$SCRIPT_DIR/INSTALL_CAULab.md" "$PREFIX/"
+  cp "$SCRIPT_DIR/install_mac.sh" "$PREFIX/"
+  cp "$SCRIPT_DIR/caulab_usage.sh" "$PREFIX/"
+  cp "$SCRIPT_DIR/.gitignore" "$PREFIX/"
+}
+
 mkdir -p "$PREFIX_PARENT"
 
-if [ -e "$PREFIX" ]; then
+if [ -e "$PREFIX" ] && [ "$UPDATE" -ne 1 ]; then
   echo "[CAULab install][FATAL] install dir already exists: $PREFIX"
-  echo "[CAULab install] Choose a new --prefix or move the existing directory first."
+  echo "[CAULab install] Existing install can be used with:"
+  echo "  source \"$PREFIX/caulab.env\""
+  echo "[CAULab install] To refresh code in that install, rerun:"
+  echo "  ./install_mac.sh --update"
+  echo "[CAULab install] Or choose a new --prefix."
   exit 1
 fi
 
-mkdir -p "$PREFIX"
-cp -R "$SCRIPT_DIR"/. "$PREFIX"/
+copy_install_files
 
 if [ ! -f "$PREFIX/config/lab_paths.yaml" ]; then
   cp "$PREFIX/config/lab_paths.example.yaml" "$PREFIX/config/lab_paths.yaml"
@@ -130,7 +153,7 @@ if [ "$BUILD_HUMANN" -eq 1 ]; then
 fi
 
 cat <<EOF
-[CAULab install] Installed to:
+[CAULab install] Installed/updated to:
   $PREFIX
 
 [CAULab install] Next:
