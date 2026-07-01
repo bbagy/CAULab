@@ -2,7 +2,8 @@
 set -euo pipefail
 
 usage(){
-  echo "Usage: $0 -i FASTQ_DIR -o OUTPUT_DIR -n NUCLEOTIDE_DB -p PROTEIN_DB [-b METAPHLAN_DB] [-I METAPHLAN_INDEX] [-s SNAKEDIR] [-c CORES] [-j JOBS] [-t THREADS] [-m IMAGE] [-x] [-K] [--run-musicc] [--skip-gene-norm] [--skip-path-split] [--skip-pathcoverage]"
+  echo "Usage: $0 -i FASTQ_DIR -o OUTPUT_DIR [-n NUCLEOTIDE_DB] [-p PROTEIN_DB] [-b METAPHLAN_DB] [-I METAPHLAN_INDEX] [-s SNAKEDIR] [-c CORES] [-j JOBS] [-t THREADS] [-m IMAGE] [-x] [-K] [--run-musicc] [--skip-gene-norm] [--skip-path-split] [--skip-pathcoverage]"
+  echo "  If DB options are omitted, CAULAB_HUMANN_* values from config/lab_paths.sh are used."
   echo "  Recommended MetaPhlAn input: -b /path/to/metaphlan_db_dir -I mpa_vJan25_CHOCOPhlAnSGB_202503"
   echo "  Backward-compatible shortcut: -b /path/to/mpa_vJan25_CHOCOPhlAnSGB_202503.pkl"
   exit 1
@@ -29,7 +30,7 @@ SNAKEDIR=""
 CORES=8
 JOBS=4
 THREADS=4
-IMAGE="humann:caulab"
+IMAGE="${CAULAB_HUMANN_IMAGE:-humann:caulab}"
 DOCKER_PLATFORM="${DOCKER_PLATFORM:-}"
 DRYRUN=0
 KEEP_GOING=0
@@ -119,6 +120,18 @@ done
 
 [ -z "$FASTQ_DIR" ] && usage
 [ -z "$OUTPUT_DIR" ] && usage
+if [ -z "$NUCLEOTIDE_DB" ]; then
+  NUCLEOTIDE_DB="${CAULAB_HUMANN_CHOCOPHLAN:-}"
+fi
+if [ -z "$PROTEIN_DB" ]; then
+  PROTEIN_DB="${CAULAB_HUMANN_UNIREF:-}"
+fi
+if [ -z "$METAPHLAN_DB" ]; then
+  METAPHLAN_DB="${CAULAB_HUMANN_METAPHLAN:-}"
+fi
+if [ -z "$METAPHLAN_INDEX" ]; then
+  METAPHLAN_INDEX="${CAULAB_METAPHLAN_INDEX:-}"
+fi
 [ -z "$NUCLEOTIDE_DB" ] && usage
 [ -z "$PROTEIN_DB" ] && usage
 

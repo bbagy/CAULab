@@ -14,12 +14,21 @@ Set this once per shell session after install:
   source "$PIPELINES/caulab.env"
 
 Edit local paths here:
-  "$PIPELINES/config/lab_paths.yaml"
+  "$PIPELINES/config/lab_paths.sh"
+
+Database variables loaded from lab_paths.sh:
+  CAULAB_HOST_BT2_PREFIX
+  CAULAB_KRAKEN2_DB
+  CAULAB_HUMANN_CHOCOPHLAN
+  CAULAB_HUMANN_UNIREF
+  CAULAB_HUMANN_METAPHLAN
+  CAULAB_METAPHLAN_INDEX
 
 Commands on PATH after sourcing caulab.env:
   Go_QC.sh
   Go_KBracken.sh
   Go_Humann.sh
+  download_databases.sh
   caulab_usage.sh
 
 Docker images:
@@ -39,6 +48,22 @@ Build all three images during install:
 Apple Silicon fallback:
   ./install_mac.sh --build-core --platform linux/amd64
 
+Download reference databases:
+  download_databases.sh --db-root /Volumes/CAULabDB --tools host --threads 8
+  download_databases.sh --db-root /Volumes/CAULabDB --tools kraken2 --threads 8
+  download_databases.sh --db-root /Volumes/CAULabDB --tools humann --threads 8
+
+Defaults:
+  host    = CHM13/T2T Bowtie2 index
+  kraken2 = latest k2_pluspfp_16gb_YYYYMMDD prebuilt DB
+  humann  = ChocoPhlAn full + UniRef90 Diamond + MetaPhlAn DB
+
+Download all reference databases:
+  download_databases.sh --db-root /Volumes/CAULabDB --tools all --threads 8
+
+After download, reload paths:
+  source "$PIPELINES/caulab.env"
+
 
 1. GoQC: raw FASTQ -> QC + host-filtered FASTQ
 ------------------------------------------------
@@ -46,11 +71,12 @@ Apple Silicon fallback:
 Go_QC.sh \\
   -i /path/to/raw_fastq \\
   -o /path/to/output/ProjectA_QC \\
-  -d /path/to/host_bowtie2_index_prefix \\
-  -m goqc:caulab \\
   -c 8 \\
   -j 4 \\
   -K
+
+Explicit DB override:
+  Go_QC.sh -i IN -o OUT -d /path/to/host_bowtie2_index_prefix -K
 
 Main output for downstream tools:
   /path/to/output/ProjectA_QC/host_filtered_fastq
@@ -62,14 +88,15 @@ Main output for downstream tools:
 Go_KBracken.sh \\
   -i /path/to/fastq_or_host_filtered_fastq \\
   -o /path/to/output/ProjectA_kbracken \\
-  -d /path/to/kraken2_db \\
-  -m kbracken:caulab \\
   -c 8 \\
   -j 4 \\
   -K
 
+Explicit DB override:
+  Go_KBracken.sh -i IN -o OUT -d /path/to/kraken2_db -K
+
 Kraken2-only mode:
-  Go_KBracken.sh -i IN -o OUT -d DB --kraken-only -K
+  Go_KBracken.sh -i IN -o OUT --kraken-only -K
 
 
 3. Humann: host-filtered FASTQ -> HUMAnN3 functional profiles
@@ -78,15 +105,13 @@ Kraken2-only mode:
 Go_Humann.sh \\
   -i /path/to/ProjectA_QC/host_filtered_fastq \\
   -o /path/to/output/ProjectA_humann \\
-  -n /path/to/humann/chocophlan \\
-  -p /path/to/humann/uniref \\
-  -b /path/to/humann/metaphlan4 \\
-  -I mpa_vJan25_CHOCOPhlAnSGB_202503 \\
-  -m humann:caulab \\
   -c 8 \\
   -j 4 \\
   -t 4 \\
   -K
+
+Explicit DB override:
+  Go_Humann.sh -i IN -o OUT -n /path/to/chocophlan -p /path/to/uniref -b /path/to/metaphlan4 -I mpa_index -K
 
 
 Typical order

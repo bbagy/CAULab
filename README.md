@@ -51,7 +51,7 @@ git pull
 source "$HOME/caulab-pipelines/caulab.env"
 ```
 
-`--update` refreshes the installed `.sh` wrappers, Snakefiles, Dockerfiles, and `bin/` links while preserving `config/lab_paths.yaml`.
+`--update` refreshes the installed `.sh` wrappers, Snakefiles, Dockerfiles, and `bin/` links while preserving local DB settings in `config/lab_paths.sh` and `config/lab_paths.yaml`.
 
 If Docker images are missing, make sure Docker Desktop is running, then rerun:
 
@@ -76,12 +76,36 @@ caulab_usage.sh
 - Data and DB files are mounted from host paths.
 - Outputs are written under user-defined output directories.
 - Wrapper scripts auto-retry lock issues with Snakemake `--unlock`.
-- Data, DB, and pipeline installation paths are lab-specific and must be passed as wrapper arguments.
+- DB paths are configured once in `config/lab_paths.sh`; command-line DB flags can still override them.
 - Keep a stable install root on each workstation, usually `$HOME/caulab-pipelines`; use another writable path if needed.
 - Wrapper scripts, Snakefiles, and Dockerfiles live together in each pipeline directory.
 - Common wrapper flags:
   - `-n` (or `-x` for `Go_Humann.sh`): dry-run (show execution plan only)
   - `-K`: keep-going (continue independent jobs even if some fail)
+
+---
+
+## Reference DB Download
+
+After Docker images are built, download the needed DBs to a large disk:
+
+```bash
+source "$HOME/caulab-pipelines/caulab.env"
+download_databases.sh --db-root /Volumes/CAULabDB --tools host --threads 8
+download_databases.sh --db-root /Volumes/CAULabDB --tools kraken2 --threads 8
+download_databases.sh --db-root /Volumes/CAULabDB --tools humann --threads 8
+source "$HOME/caulab-pipelines/caulab.env"
+```
+
+Or download all three groups:
+
+```bash
+download_databases.sh --db-root /Volumes/CAULabDB --tools all --threads 8
+```
+
+The downloader updates `config/lab_paths.sh`, so normal wrappers can omit DB flags after `source caulab.env`.
+GoQC host filtering uses a CHM13/T2T Bowtie2 index by default.
+Kraken2 uses the latest available prebuilt `k2_pluspfp_16gb_YYYYMMDD` database by default, then builds the matching Bracken read-length file locally.
 
 ---
 
@@ -101,6 +125,8 @@ caulab-pipelines/
     Go_Humann.sh
     Go_Humann_V1.smk
     Dockerfile
+  download_databases.sh
+  config/lab_paths.sh
   config/lab_paths.yaml
 ```
 
@@ -109,7 +135,7 @@ caulab-pipelines/
 ## Notes
 
 - Reference databases are not versioned in this repository.
-- Local DB paths belong in `config/lab_paths.yaml`; commit only `config/lab_paths.example.yaml`.
+- Local DB paths belong in `config/lab_paths.sh`; commit only `config/lab_paths.sh.example`.
 - Large outputs should stay outside Git-tracked paths.
 
 ---

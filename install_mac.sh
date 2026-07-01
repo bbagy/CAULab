@@ -83,10 +83,15 @@ prepare_update_target() {
     return
   fi
 
-  local keep_paths=""
+  local keep_yaml=""
+  local keep_shell=""
   if [ -f "$PREFIX/config/lab_paths.yaml" ]; then
-    keep_paths="$(mktemp "${TMPDIR:-/tmp}/caulab_lab_paths.XXXXXX")"
-    cp "$PREFIX/config/lab_paths.yaml" "$keep_paths"
+    keep_yaml="$(mktemp "${TMPDIR:-/tmp}/caulab_lab_paths_yaml.XXXXXX")"
+    cp "$PREFIX/config/lab_paths.yaml" "$keep_yaml"
+  fi
+  if [ -f "$PREFIX/config/lab_paths.sh" ]; then
+    keep_shell="$(mktemp "${TMPDIR:-/tmp}/caulab_lab_paths_sh.XXXXXX")"
+    cp "$PREFIX/config/lab_paths.sh" "$keep_shell"
   fi
 
   rm -rf \
@@ -98,13 +103,18 @@ prepare_update_target() {
     "$PREFIX/README.md" \
     "$PREFIX/INSTALL_CAULab.md" \
     "$PREFIX/install_mac.sh" \
+    "$PREFIX/download_databases.sh" \
     "$PREFIX/caulab_usage.sh" \
     "$PREFIX/.gitignore"
 
   mkdir -p "$PREFIX/config"
-  if [ -n "$keep_paths" ]; then
-    cp "$keep_paths" "$PREFIX/config/lab_paths.yaml"
-    rm -f "$keep_paths"
+  if [ -n "$keep_yaml" ]; then
+    cp "$keep_yaml" "$PREFIX/config/lab_paths.yaml"
+    rm -f "$keep_yaml"
+  fi
+  if [ -n "$keep_shell" ]; then
+    cp "$keep_shell" "$PREFIX/config/lab_paths.sh"
+    rm -f "$keep_shell"
   fi
 }
 
@@ -117,6 +127,7 @@ copy_install_files() {
   cp "$SCRIPT_DIR/README.md" "$PREFIX/"
   cp "$SCRIPT_DIR/INSTALL_CAULab.md" "$PREFIX/"
   cp "$SCRIPT_DIR/install_mac.sh" "$PREFIX/"
+  cp "$SCRIPT_DIR/download_databases.sh" "$PREFIX/"
   cp "$SCRIPT_DIR/caulab_usage.sh" "$PREFIX/"
   cp "$SCRIPT_DIR/.gitignore" "$PREFIX/"
 }
@@ -140,16 +151,23 @@ copy_install_files
 if [ ! -f "$PREFIX/config/lab_paths.yaml" ]; then
   cp "$PREFIX/config/lab_paths.example.yaml" "$PREFIX/config/lab_paths.yaml"
 fi
+if [ ! -f "$PREFIX/config/lab_paths.sh" ]; then
+  cp "$PREFIX/config/lab_paths.sh.example" "$PREFIX/config/lab_paths.sh"
+fi
 
 mkdir -p "$PREFIX/bin"
 ln -sf "../GoQC/Go_QC.sh" "$PREFIX/bin/Go_QC.sh"
 ln -sf "../KBracken/Go_KBracken.sh" "$PREFIX/bin/Go_KBracken.sh"
 ln -sf "../Humann/Go_Humann.sh" "$PREFIX/bin/Go_Humann.sh"
+ln -sf "../download_databases.sh" "$PREFIX/bin/download_databases.sh"
 ln -sf "../caulab_usage.sh" "$PREFIX/bin/caulab_usage.sh"
 
 cat > "$PREFIX/caulab.env" <<EOF
 export CAULAB_PIPELINES="$PREFIX"
 export PATH="$PREFIX/bin:\$PATH"
+if [ -f "$PREFIX/config/lab_paths.sh" ]; then
+  . "$PREFIX/config/lab_paths.sh"
+fi
 EOF
 if [ -n "$PLATFORM" ]; then
   cat >> "$PREFIX/caulab.env" <<EOF
@@ -208,7 +226,7 @@ cat <<EOF
 
 [CAULab install] Next:
   source "$PREFIX/caulab.env"
-  edit "$PREFIX/config/lab_paths.yaml"
+  edit "$PREFIX/config/lab_paths.sh"
   caulab_usage.sh
 
 [CAULab install] GoQC example:
@@ -228,6 +246,7 @@ cat <<EOF
   Go_QC.sh
   Go_KBracken.sh
   Go_Humann.sh
+  download_databases.sh
   caulab_usage.sh
 
 [CAULab install] Updated wrapper scripts:

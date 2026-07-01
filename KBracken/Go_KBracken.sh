@@ -2,7 +2,8 @@
 set -euo pipefail
 
 usage(){
-  echo "Usage: $0 -i FASTQ_DIR -o OUTPUT_DIR -d KRAKEN2_DB [-s SNAKEDIR] [-c CORES] [-j JOBS] [-m IMAGE] [-n] [-K] [--kraken-only]"
+  echo "Usage: $0 -i FASTQ_DIR -o OUTPUT_DIR [-d KRAKEN2_DB] [-s SNAKEDIR] [-c CORES] [-j JOBS] [-m IMAGE] [-n] [-K] [--kraken-only]"
+  echo "       If -d is omitted, CAULAB_KRAKEN2_DB from config/lab_paths.sh is used."
   exit 1
 }
 
@@ -23,7 +24,7 @@ DB=""
 SNAKEDIR=""
 CORES=8
 JOBS=4
-IMAGE="kbracken:caulab"
+IMAGE="${CAULAB_KBRACKEN_IMAGE:-kbracken:caulab}"
 DOCKER_PLATFORM="${DOCKER_PLATFORM:-}"
 DRYRUN=0
 KEEP_GOING=0
@@ -82,6 +83,9 @@ done
 
 [ -z "$FASTQ_DIR" ] && usage
 [ -z "$OUTPUT_DIR" ] && usage
+if [ -z "$DB" ]; then
+  DB="${CAULAB_KRAKEN2_DB:-}"
+fi
 [ -z "$DB" ] && usage
 
 FASTQ_DIR_ABS="$(abs_path "$FASTQ_DIR")" || { echo "[KBracken] FASTQ_DIR not found: $FASTQ_DIR"; exit 1; }

@@ -2,7 +2,8 @@
 set -euo pipefail
 
 usage(){
-  echo "Usage: $0 -i FASTQ_DIR -o OUTPUT_DIR -d HOST_BT2_INDEX_PREFIX [-s SNAKEDIR] [-c CORES] [-j JOBS] [-m IMAGE] [-n] [-K]"
+  echo "Usage: $0 -i FASTQ_DIR -o OUTPUT_DIR [-d HOST_BT2_INDEX_PREFIX] [-s SNAKEDIR] [-c CORES] [-j JOBS] [-m IMAGE] [-n] [-K]"
+  echo "       If -d is omitted, CAULAB_HOST_BT2_PREFIX from config/lab_paths.sh is used."
   exit 1
 }
 
@@ -58,7 +59,7 @@ HOST_DB=""
 SNAKEDIR=""
 CORES=8
 JOBS=4
-IMAGE="goqc:caulab"
+IMAGE="${CAULAB_GOQC_IMAGE:-goqc:caulab}"
 DOCKER_PLATFORM="${DOCKER_PLATFORM:-}"
 DRYRUN=0
 KEEP_GOING=0
@@ -112,6 +113,9 @@ done
 
 [ -z "$FASTQ_DIR" ] && usage
 [ -z "$OUTPUT_DIR" ] && usage
+if [ -z "$HOST_DB" ]; then
+  HOST_DB="${CAULAB_HOST_BT2_PREFIX:-}"
+fi
 [ -z "$HOST_DB" ] && usage
 
 FASTQ_DIR_ABS="$(abs_path "$FASTQ_DIR")" || { echo "[GoQC] FASTQ_DIR not found: $FASTQ_DIR"; exit 1; }
