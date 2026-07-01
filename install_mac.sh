@@ -78,6 +78,36 @@ done
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
 PREFIX_PARENT="$(dirname "$PREFIX")"
 
+prepare_update_target() {
+  if [ "$UPDATE" -ne 1 ] || [ ! -e "$PREFIX" ]; then
+    return
+  fi
+
+  local keep_paths=""
+  if [ -f "$PREFIX/config/lab_paths.yaml" ]; then
+    keep_paths="$(mktemp "${TMPDIR:-/tmp}/caulab_lab_paths.XXXXXX")"
+    cp "$PREFIX/config/lab_paths.yaml" "$keep_paths"
+  fi
+
+  rm -rf \
+    "$PREFIX/GoQC" \
+    "$PREFIX/KBracken" \
+    "$PREFIX/Humann" \
+    "$PREFIX/bin" \
+    "$PREFIX/config" \
+    "$PREFIX/README.md" \
+    "$PREFIX/INSTALL_CAULab.md" \
+    "$PREFIX/install_mac.sh" \
+    "$PREFIX/caulab_usage.sh" \
+    "$PREFIX/.gitignore"
+
+  mkdir -p "$PREFIX/config"
+  if [ -n "$keep_paths" ]; then
+    cp "$keep_paths" "$PREFIX/config/lab_paths.yaml"
+    rm -f "$keep_paths"
+  fi
+}
+
 copy_install_files() {
   mkdir -p "$PREFIX"
   cp -R "$SCRIPT_DIR/GoQC" "$PREFIX/"
@@ -104,6 +134,7 @@ if [ -e "$PREFIX" ] && [ "$UPDATE" -ne 1 ]; then
   exit 1
 fi
 
+prepare_update_target
 copy_install_files
 
 if [ ! -f "$PREFIX/config/lab_paths.yaml" ]; then
@@ -198,4 +229,9 @@ cat <<EOF
   Go_KBracken.sh
   Go_Humann.sh
   caulab_usage.sh
+
+[CAULab install] Updated wrapper scripts:
+  $PREFIX/GoQC/Go_QC.sh
+  $PREFIX/KBracken/Go_KBracken.sh
+  $PREFIX/Humann/Go_Humann.sh
 EOF

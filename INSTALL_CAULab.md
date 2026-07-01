@@ -28,6 +28,8 @@ git pull
 source "$HOME/caulab-pipelines/caulab.env"
 ```
 
+`--update` refreshes installed wrapper scripts (`Go_QC.sh`, `Go_KBracken.sh`, `Go_Humann.sh`), Snakefiles, Dockerfiles, helper scripts, and `bin/` links while preserving `config/lab_paths.yaml`.
+
 If Docker images are missing, first start Docker Desktop, then rerun:
 
 ```bash

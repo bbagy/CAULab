@@ -51,6 +51,8 @@ git pull
 source "$HOME/caulab-pipelines/caulab.env"
 ```
 
+`--update` refreshes the installed `.sh` wrappers, Snakefiles, Dockerfiles, and `bin/` links while preserving `config/lab_paths.yaml`.
+
 If Docker images are missing, make sure Docker Desktop is running, then rerun:
 
 ```bash
