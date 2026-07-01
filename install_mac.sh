@@ -97,8 +97,9 @@ if [ -e "$PREFIX" ] && [ "$UPDATE" -ne 1 ]; then
   echo "[CAULab install][FATAL] install dir already exists: $PREFIX"
   echo "[CAULab install] Existing install can be used with:"
   echo "  source \"$PREFIX/caulab.env\""
-  echo "[CAULab install] To refresh code in that install, rerun:"
-  echo "  ./install_mac.sh --update"
+  echo "[CAULab install] No Docker images were built because install stopped before the build step."
+  echo "[CAULab install] To refresh code and build images in that install, rerun:"
+  echo "  ./install_mac.sh --update --build-core"
   echo "[CAULab install] Or choose a new --prefix."
   exit 1
 fi
@@ -136,9 +137,20 @@ build_image() {
   docker build "${build_args[@]}" -t "$image" "$context"
 }
 
+report_image_status() {
+  local image="$1"
+  if docker image inspect "$image" >/dev/null 2>&1; then
+    echo "[CAULab install] Docker image ready: $image"
+  else
+    echo "[CAULab install][WARN] Docker image missing: $image"
+  fi
+}
+
 if [ "$BUILD_GOQC" -eq 1 ] || [ "$BUILD_KBRACKEN" -eq 1 ] || [ "$BUILD_HUMANN" -eq 1 ]; then
   if ! docker info >/dev/null 2>&1; then
     echo "[CAULab install][FATAL] Docker is not available. Start Docker Desktop and rerun."
+    echo "[CAULab install] After Docker Desktop is running, use:"
+    echo "  ./install_mac.sh --update --build-core"
     exit 1
   fi
 fi
@@ -150,6 +162,13 @@ if [ "$BUILD_KBRACKEN" -eq 1 ]; then
 fi
 if [ "$BUILD_HUMANN" -eq 1 ]; then
   build_image "humann:caulab" "$PREFIX/Humann"
+fi
+
+if [ "$BUILD_GOQC" -eq 1 ] || [ "$BUILD_KBRACKEN" -eq 1 ] || [ "$BUILD_HUMANN" -eq 1 ]; then
+  echo "[CAULab install] Docker image status:"
+  report_image_status "goqc:caulab"
+  report_image_status "kbracken:caulab"
+  report_image_status "humann:caulab"
 fi
 
 cat <<EOF

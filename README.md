@@ -51,6 +51,13 @@ git pull
 source "$HOME/caulab-pipelines/caulab.env"
 ```
 
+If Docker images are missing, make sure Docker Desktop is running, then rerun:
+
+```bash
+./install_mac.sh --update --build-core
+docker image inspect goqc:caulab kbracken:caulab humann:caulab >/dev/null
+```
+
 On Apple Silicon Mac, if package solving fails during Docker build:
 
 ```bash

@@ -28,6 +28,13 @@ git pull
 source "$HOME/caulab-pipelines/caulab.env"
 ```
 
+If Docker images are missing, first start Docker Desktop, then rerun:
+
+```bash
+./install_mac.sh --update --build-core
+docker image inspect goqc:caulab kbracken:caulab humann:caulab >/dev/null
+```
+
 For Apple Silicon Mac, if the normal Docker build fails while solving Bioconda packages:
 
 ```bash

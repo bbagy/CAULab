@@ -27,6 +27,12 @@ Docker images:
   kbracken:caulab
   humann:caulab
 
+Check whether images exist locally:
+  docker image inspect goqc:caulab kbracken:caulab humann:caulab >/dev/null
+
+List CAULab images:
+  docker images --format '{{.Repository}}:{{.Tag}}' | grep -E '^(goqc|kbracken|humann):caulab$'
+
 Build all three images during install:
   ./install_mac.sh --build-core
 
