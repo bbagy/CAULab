@@ -151,14 +151,14 @@ fi
 
 WORKDIR="$(pwd)"
 CONTAINER_HOME="/work/.codex_home_humann"
-PLATFORM_ARGS=()
-if [ -n "$DOCKER_PLATFORM" ]; then
-  PLATFORM_ARGS=(--platform "$DOCKER_PLATFORM")
-fi
 
 DOCKER_ARGS=(
   docker run --rm
-  "${PLATFORM_ARGS[@]}"
+)
+if [ -n "$DOCKER_PLATFORM" ]; then
+  DOCKER_ARGS+=(--platform "$DOCKER_PLATFORM")
+fi
+DOCKER_ARGS+=(
   -u "$(id -u):$(id -g)"
   -v "$WORKDIR":/work
   -v "$PIPELINE_DIR":/pipeline:ro

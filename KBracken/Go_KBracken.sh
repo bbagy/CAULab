@@ -113,12 +113,11 @@ fi
 WORKDIR="$(pwd)"
 
 run(){
-  local -a platform_args=()
+  local -a docker_args=(docker run --rm)
   if [ -n "$DOCKER_PLATFORM" ]; then
-    platform_args=(--platform "$DOCKER_PLATFORM")
+    docker_args+=(--platform "$DOCKER_PLATFORM")
   fi
-  docker run --rm \
-    "${platform_args[@]}" \
+  "${docker_args[@]}" \
     -u "$(id -u):$(id -g)" \
     -v "$WORKDIR":/work \
     -v "$PIPELINE_DIR":/pipeline:ro \

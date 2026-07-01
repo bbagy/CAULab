@@ -160,12 +160,12 @@ fi
 build_image() {
   local image="$1"
   local context="$2"
-  local -a build_args=()
-  if [ -n "$PLATFORM" ]; then
-    build_args=(--platform "$PLATFORM")
-  fi
   echo "[CAULab install] Building $image from $context"
-  docker build "${build_args[@]}" -t "$image" "$context"
+  if [ -n "$PLATFORM" ]; then
+    docker build --platform "$PLATFORM" -t "$image" "$context"
+  else
+    docker build -t "$image" "$context"
+  fi
 }
 
 report_image_status() {
