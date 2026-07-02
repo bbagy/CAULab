@@ -53,6 +53,20 @@ bt2_prefix_exists(){
   compgen -G "${p}*.bt2" >/dev/null || compgen -G "${p}*.bt2l" >/dev/null
 }
 
+script_dir(){
+  local source="$1"
+  local dir target
+  while [ -L "$source" ]; do
+    dir="$(cd -P "$(dirname "$source")" && pwd)"
+    target="$(readlink "$source")"
+    case "$target" in
+      /*) source="$target" ;;
+      *) source="$dir/$target" ;;
+    esac
+  done
+  cd -P "$(dirname "$source")" && pwd
+}
+
 FASTQ_DIR=""
 OUTPUT_DIR=""
 HOST_DB=""
@@ -133,7 +147,7 @@ if ! bt2_prefix_exists "$HOST_DB_ABS"; then
   exit 1
 fi
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
+SCRIPT_DIR="$(script_dir "$0")"
 PIPELINE_DIR="$SCRIPT_DIR"
 if [ -n "$SNAKEDIR" ]; then
   [ -d "$SNAKEDIR" ] || { echo "[GoQC] SNAKEDIR not found: $SNAKEDIR"; exit 1; }

@@ -20,6 +20,20 @@ abs_path(){
   fi
 }
 
+script_dir(){
+  local source="$1"
+  local dir target
+  while [ -L "$source" ]; do
+    dir="$(cd -P "$(dirname "$source")" && pwd)"
+    target="$(readlink "$source")"
+    case "$target" in
+      /*) source="$target" ;;
+      *) source="$dir/$target" ;;
+    esac
+  done
+  cd -P "$(dirname "$source")" && pwd
+}
+
 FASTQ_DIR=""
 OUTPUT_DIR=""
 NUCLEOTIDE_DB=""
@@ -139,7 +153,7 @@ FASTQ_DIR_ABS="$(abs_path "$FASTQ_DIR")" || { echo "[Humann] FASTQ_DIR not found
 NUCLEOTIDE_DB_ABS="$(abs_path "$NUCLEOTIDE_DB")" || { echo "[Humann] NUCLEOTIDE_DB not found: $NUCLEOTIDE_DB"; exit 1; }
 PROTEIN_DB_ABS="$(abs_path "$PROTEIN_DB")" || { echo "[Humann] PROTEIN_DB not found: $PROTEIN_DB"; exit 1; }
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
+SCRIPT_DIR="$(script_dir "$0")"
 PIPELINE_DIR="$SCRIPT_DIR"
 if [ -n "$SNAKEDIR" ]; then
   [ -d "$SNAKEDIR" ] || { echo "[Humann] SNAKEDIR not found: $SNAKEDIR"; exit 1; }

@@ -18,6 +18,20 @@ abs_path(){
   fi
 }
 
+script_dir(){
+  local source="$1"
+  local dir target
+  while [ -L "$source" ]; do
+    dir="$(cd -P "$(dirname "$source")" && pwd)"
+    target="$(readlink "$source")"
+    case "$target" in
+      /*) source="$target" ;;
+      *) source="$dir/$target" ;;
+    esac
+  done
+  cd -P "$(dirname "$source")" && pwd
+}
+
 FASTQ_DIR=""
 OUTPUT_DIR=""
 DB=""
@@ -91,7 +105,7 @@ fi
 FASTQ_DIR_ABS="$(abs_path "$FASTQ_DIR")" || { echo "[KBracken] FASTQ_DIR not found: $FASTQ_DIR"; exit 1; }
 DB_ABS="$(abs_path "$DB")" || { echo "[KBracken] DB not found: $DB"; exit 1; }
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
+SCRIPT_DIR="$(script_dir "$0")"
 PIPELINE_DIR="$SCRIPT_DIR"
 if [ -n "$SNAKEDIR" ]; then
   [ -d "$SNAKEDIR" ] || { echo "[KBracken] SNAKEDIR not found: $SNAKEDIR"; exit 1; }
