@@ -4,6 +4,8 @@ LABEL author="Heekuk Park"
 LABEL project="CAULab-GoQC"
 
 ENV ENV_NAME=goqc
+ENV CONDA_OVERRIDE_ARCHSPEC=x86_64
+ENV MAMBA_OVERRIDE_ARCHSPEC=x86_64
 
 RUN micromamba create -y -n ${ENV_NAME} \
     -c conda-forge -c bioconda \

@@ -186,6 +186,16 @@ build_image() {
   fi
 }
 
+check_image_runtime() {
+  local image="$1"
+  echo "[CAULab install] Runtime check: $image"
+  if [ -n "$PLATFORM" ]; then
+    docker run --rm --platform "$PLATFORM" "$image" bash -lc 'python --version && snakemake --version >/dev/null'
+  else
+    docker run --rm "$image" bash -lc 'python --version && snakemake --version >/dev/null'
+  fi
+}
+
 report_image_status() {
   local image="$1"
   if docker image inspect "$image" >/dev/null 2>&1; then
@@ -205,12 +215,15 @@ if [ "$BUILD_GOQC" -eq 1 ] || [ "$BUILD_KBRACKEN" -eq 1 ] || [ "$BUILD_HUMANN" -
 fi
 if [ "$BUILD_GOQC" -eq 1 ]; then
   build_image "goqc:caulab" "$PREFIX/GoQC"
+  check_image_runtime "goqc:caulab"
 fi
 if [ "$BUILD_KBRACKEN" -eq 1 ]; then
   build_image "kbracken:caulab" "$PREFIX/KBracken"
+  check_image_runtime "kbracken:caulab"
 fi
 if [ "$BUILD_HUMANN" -eq 1 ]; then
   build_image "humann:caulab" "$PREFIX/Humann"
+  check_image_runtime "humann:caulab"
 fi
 
 if [ "$BUILD_GOQC" -eq 1 ] || [ "$BUILD_KBRACKEN" -eq 1 ] || [ "$BUILD_HUMANN" -eq 1 ]; then

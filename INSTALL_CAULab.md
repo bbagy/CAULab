@@ -38,6 +38,15 @@ If Docker images are missing, first start Docker Desktop, then rerun:
 docker image inspect goqc:caulab kbracken:caulab humann:caulab >/dev/null
 ```
 
+If a container fails with `failed to launch x86-64-v3 version`, rebuild after updating CAULab:
+
+```bash
+git pull
+./install_mac.sh --update --build-core
+```
+
+The Dockerfiles force generic `x86_64` conda packages so the images are more portable across Intel Macs and amd64 emulation.
+
 For Apple Silicon Mac, if the normal Docker build fails while solving Bioconda packages:
 
 ```bash

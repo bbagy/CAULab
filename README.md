@@ -60,6 +60,13 @@ If Docker images are missing, make sure Docker Desktop is running, then rerun:
 docker image inspect goqc:caulab kbracken:caulab humann:caulab >/dev/null
 ```
 
+If GoQC or another image fails with `failed to launch x86-64-v3 version`, update and rebuild:
+
+```bash
+git pull
+./install_mac.sh --update --build-core
+```
+
 On Apple Silicon Mac, if package solving fails during Docker build:
 
 ```bash
