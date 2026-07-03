@@ -187,14 +187,39 @@ build_image() {
   local context="$2"
   echo "[CAULab install] Building $image from $context"
   if [ "$NO_CACHE" -eq 1 ] && [ -n "$PLATFORM" ]; then
-    docker build --no-cache --platform "$PLATFORM" -t "$image" "$context"
+    if ! docker build --progress=plain --no-cache --platform "$PLATFORM" -t "$image" "$context"; then
+      report_build_failure "$image" "$context"
+    fi
   elif [ "$NO_CACHE" -eq 1 ]; then
-    docker build --no-cache -t "$image" "$context"
+    if ! docker build --progress=plain --no-cache -t "$image" "$context"; then
+      report_build_failure "$image" "$context"
+    fi
   elif [ -n "$PLATFORM" ]; then
-    docker build --platform "$PLATFORM" -t "$image" "$context"
+    if ! docker build --progress=plain --platform "$PLATFORM" -t "$image" "$context"; then
+      report_build_failure "$image" "$context"
+    fi
   else
-    docker build -t "$image" "$context"
+    if ! docker build --progress=plain -t "$image" "$context"; then
+      report_build_failure "$image" "$context"
+    fi
   fi
+}
+
+report_build_failure() {
+  local image="$1"
+  local context="$2"
+  echo "[CAULab install][FATAL] Docker build failed: $image"
+  echo "[CAULab install] Re-run this command to see the full plain build log:"
+  if [ -n "$PLATFORM" ]; then
+    echo "  docker build --progress=plain --no-cache --platform \"$PLATFORM\" -t \"$image\" \"$context\""
+  else
+    echo "  docker build --progress=plain --no-cache -t \"$image\" \"$context\""
+  fi
+  if [ "$image" = "goqc:caulab" ]; then
+    echo "[CAULab install] If the failure is at apt-get, test Docker apt directly:"
+    echo "  docker run --rm python:3.11-slim-bookworm bash -lc 'apt-get update && apt-get install -y --no-install-recommends fastp bowtie2 samtools pigz'"
+  fi
+  exit 1
 }
 
 check_image_runtime() {
