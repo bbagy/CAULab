@@ -14,9 +14,8 @@ RUN for i in 1 2 3 4 5; do \
         echo "FATAL: apt-get update failed inside Docker. Check Docker Desktop network/DNS/proxy."; \
         exit 1; \
       fi; \
-    done
-
-RUN apt-get -o Acquire::Retries=5 install -y --no-install-recommends \
+    done; \
+    apt-get -o Acquire::Retries=5 install -y --no-install-recommends \
       bash \
       bowtie2 \
       ca-certificates \
@@ -25,7 +24,12 @@ RUN apt-get -o Acquire::Retries=5 install -y --no-install-recommends \
       pigz \
       procps \
       samtools \
-    && rm -rf /var/lib/apt/lists/*
+    || { \
+      echo "FATAL: apt-get install failed. Package availability follows:"; \
+      apt-cache policy bash bowtie2 ca-certificates coreutils fastp pigz procps samtools; \
+      exit 1; \
+    }; \
+    rm -rf /var/lib/apt/lists/*
 
 RUN python -m pip install --no-cache-dir --upgrade pip \
     && python -m pip install --no-cache-dir snakemake==8.25.3
