@@ -47,6 +47,15 @@ git pull
 
 GoQC no longer uses conda/micromamba, which avoids conda-forge CPU variant launch errors on older Intel Macs and amd64 emulation.
 
+If GoQC build stops at `apt-get update`, first check Docker network access:
+
+```bash
+docker pull python:3.11-slim-bookworm
+docker run --rm python:3.11-slim-bookworm bash -lc "apt-get update"
+```
+
+If those commands fail too, the problem is Docker Desktop network/DNS/proxy access rather than CAULab code.
+
 For Apple Silicon Mac, if the normal Docker build fails while solving Bioconda packages:
 
 ```bash
