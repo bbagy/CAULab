@@ -188,11 +188,12 @@ build_image() {
 
 check_image_runtime() {
   local image="$1"
+  local runtime_check='(command -v python >/dev/null 2>&1 && python --version || python3 --version) && snakemake --version >/dev/null'
   echo "[CAULab install] Runtime check: $image"
   if [ -n "$PLATFORM" ]; then
-    docker run --rm --platform "$PLATFORM" "$image" bash -lc 'python --version && snakemake --version >/dev/null'
+    docker run --rm --platform "$PLATFORM" "$image" bash -lc "$runtime_check"
   else
-    docker run --rm "$image" bash -lc 'python --version && snakemake --version >/dev/null'
+    docker run --rm "$image" bash -lc "$runtime_check"
   fi
 }
 
