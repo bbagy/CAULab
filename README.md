@@ -64,8 +64,10 @@ If GoQC or another image fails with `failed to launch x86-64-v3 version`, update
 
 ```bash
 git pull
-./install_mac.sh --update --build-core
+./install_mac.sh --update --build-goqc --no-cache
 ```
+
+GoQC is built without conda/micromamba to avoid conda-forge CPU variant launch errors on older Intel Macs and amd64 emulation.
 
 On Apple Silicon Mac, if package solving fails during Docker build:
 

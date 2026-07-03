@@ -4,7 +4,7 @@ set -euo pipefail
 usage() {
   cat <<'EOF'
 Usage:
-  ./install_mac.sh [--prefix INSTALL_DIR] [--update] [--build-core] [--platform linux/amd64]
+  ./install_mac.sh [--prefix INSTALL_DIR] [--update] [--build-core] [--no-cache] [--platform linux/amd64]
 
 Defaults:
   INSTALL_DIR = $HOME/caulab-pipelines
@@ -12,6 +12,7 @@ Defaults:
 Examples:
   ./install_mac.sh
   ./install_mac.sh --build-core
+  ./install_mac.sh --update --build-goqc --no-cache
   ./install_mac.sh --update --build-core
   ./install_mac.sh --build-core --platform linux/amd64
   ./install_mac.sh --prefix /Volumes/Analysis/caulab-pipelines --build-core
@@ -19,6 +20,7 @@ Examples:
 Notes:
   - Docker Desktop must already be installed and running if a build option is used.
   - Use --platform linux/amd64 on Apple Silicon if Bioconda cannot solve linux/arm64 packages.
+  - Use --no-cache when replacing a broken Docker image.
   - --build-core builds GoQC, KBracken, and Humann images.
   - --update refreshes an existing install while preserving config/lab_paths.yaml.
 EOF
@@ -31,6 +33,7 @@ BUILD_KBRACKEN=0
 BUILD_HUMANN=0
 UPDATE=0
 PLATFORM=""
+NO_CACHE=0
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -65,6 +68,10 @@ while [ "$#" -gt 0 ]; do
       PLATFORM="${2:-}"
       [ -n "$PLATFORM" ] || usage
       shift 2
+      ;;
+    --no-cache)
+      NO_CACHE=1
+      shift
       ;;
     -h|--help)
       usage 0
@@ -179,7 +186,11 @@ build_image() {
   local image="$1"
   local context="$2"
   echo "[CAULab install] Building $image from $context"
-  if [ -n "$PLATFORM" ]; then
+  if [ "$NO_CACHE" -eq 1 ] && [ -n "$PLATFORM" ]; then
+    docker build --no-cache --platform "$PLATFORM" -t "$image" "$context"
+  elif [ "$NO_CACHE" -eq 1 ]; then
+    docker build --no-cache -t "$image" "$context"
+  elif [ -n "$PLATFORM" ]; then
     docker build --platform "$PLATFORM" -t "$image" "$context"
   else
     docker build -t "$image" "$context"

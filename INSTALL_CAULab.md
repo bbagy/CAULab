@@ -42,10 +42,10 @@ If a container fails with `failed to launch x86-64-v3 version`, rebuild after up
 
 ```bash
 git pull
-./install_mac.sh --update --build-core
+./install_mac.sh --update --build-goqc --no-cache
 ```
 
-The Dockerfiles force generic `x86_64` conda packages so the images are more portable across Intel Macs and amd64 emulation.
+GoQC no longer uses conda/micromamba, which avoids conda-forge CPU variant launch errors on older Intel Macs and amd64 emulation.
 
 For Apple Silicon Mac, if the normal Docker build fails while solving Bioconda packages:
 

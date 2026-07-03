@@ -1,26 +1,24 @@
-FROM mambaorg/micromamba:1.5.10
+FROM python:3.11-slim-bookworm
 
 LABEL author="Heekuk Park"
 LABEL project="CAULab-GoQC"
 
-ENV ENV_NAME=goqc
-ENV CONDA_OVERRIDE_ARCHSPEC=x86_64
-ENV MAMBA_OVERRIDE_ARCHSPEC=x86_64
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN micromamba create -y -n ${ENV_NAME} \
-    -c conda-forge -c bioconda \
-    bash \
-    python=3.11 \
-    snakemake=8.25.3 \
-    fastp \
-    bowtie2 \
-    samtools \
-    pigz \
-    coreutils \
-    && micromamba clean --all --yes
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+      bash \
+      bowtie2 \
+      ca-certificates \
+      coreutils \
+      fastp \
+      pigz \
+      procps \
+      samtools \
+    && rm -rf /var/lib/apt/lists/*
 
-ENV PATH=/opt/conda/envs/${ENV_NAME}/bin:$PATH
-ENV CONDA_DEFAULT_ENV=${ENV_NAME}
+RUN python -m pip install --no-cache-dir --upgrade pip \
+    && python -m pip install --no-cache-dir snakemake==8.25.3
 
 WORKDIR /work
 CMD ["bash"]
