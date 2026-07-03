@@ -5,17 +5,8 @@ LABEL project="CAULab-GoQC"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN for i in 1 2 3 4 5; do \
-      apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=30 update && break; \
-      echo "apt-get update failed, retry ${i}/5"; \
-      rm -rf /var/lib/apt/lists/*; \
-      sleep 5; \
-      if [ "$i" = 5 ]; then \
-        echo "FATAL: apt-get update failed inside Docker. Check Docker Desktop network/DNS/proxy."; \
-        exit 1; \
-      fi; \
-    done; \
-    apt-get -o Acquire::Retries=5 install -y --no-install-recommends \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
       bash \
       bowtie2 \
       ca-certificates \
@@ -24,12 +15,7 @@ RUN for i in 1 2 3 4 5; do \
       pigz \
       procps \
       samtools \
-    || { \
-      echo "FATAL: apt-get install failed. Package availability follows:"; \
-      apt-cache policy bash bowtie2 ca-certificates coreutils fastp pigz procps samtools; \
-      exit 1; \
-    }; \
-    rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 RUN python -m pip install --no-cache-dir --upgrade pip \
     && python -m pip install --no-cache-dir snakemake==8.25.3
