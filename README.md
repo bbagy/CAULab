@@ -11,14 +11,14 @@ Bacterial Genome, Metagenome, RNA-seq, and 16S/ITS analysis.
 
 | Pipeline | Analysis |
 |---|---|
+| daDake2 | DADA2 16S/ITS analysis and RDS checkpoints |
 | GoQC | Paired-end FASTQ QC and host read removal |
-| longWGS | ONT assembly, polishing, QC, and annotation |
-| shortWGS | Illumina typing: MLST, ARG, plasmids, and TETyper |
 | KBracken | Kraken2 / Bracken taxonomic profiling |
 | Humannake | HUMAnN3 / MetaPhlAn4 functional profiling |
-| RNake | Bacterial RNA-seq trimming, mapping, and gene counts |
-| daDake2 | DADA2 16S/ITS analysis and RDS checkpoints |
 | MAGs (testing) | Metagenome QC, assembly, binning, and annotation |
+| longWGS | ONT assembly, polishing, QC, and annotation |
+| shortWGS | Illumina typing: MLST, ARG, plasmids, and TETyper |
+| RNake | Bacterial RNA-seq trimming, mapping, and gene counts |
 
 ## Install
 
