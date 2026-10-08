@@ -35,7 +35,6 @@ Commands on PATH after sourcing caulab.env:
   Go_MAGs_QC.sh
   Go_MAGs_Assembly.sh
   Go_MAGs_Annotation.sh
-  Go_PFsnake.sh
   Go_container_image.sh
   download_databases.sh
   caulab_usage.sh

@@ -19,7 +19,6 @@ Container launchers share `common/container.sh` and support Docker or Apptainer.
 | RNake | Bacterial RNA-seq trimming, mapping, and counts |
 | daDake2 | DADA2 16S/ITS processing with project checkpoints |
 | MAGs (in testing) | Metagenome QC, assembly/binning, and annotation |
-| PFsnake (in testing) | P. falciparum variant/CNV/drug summary |
 
 ## Install and Update
 
@@ -31,7 +30,7 @@ source "$HOME/caulab-pipelines/caulab.env"
 caulab_usage.sh
 ```
 
-All pipeline code is installed by default. `--build-core` builds GoQC, KBracken, and Humann; `--build-all` also builds longWGS, shortWGS, RNake, PFsnake, and the three MAGs images.
+All pipeline code is installed by default. `--build-core` builds GoQC, KBracken, and Humann; `--build-all` also builds longWGS, shortWGS, RNake, and the three MAGs images.
 For an existing installation:
 
 ```bash

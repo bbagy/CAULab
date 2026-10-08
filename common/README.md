@@ -29,7 +29,6 @@ workstation image list before exporting; the images themselves are not in Git.
 | shortWGS | `shortwgs` (implicit `latest` tag) |
 | longWGS | `longwgs` (implicit `latest` tag) |
 | RNake | `rnake:1.0` |
-| PFsnake | `pf-snake:1.0` |
 | KBracken | `kbracken:caulab` |
 | Humann | `humann:caulab` |
 | MAGs QC | `mags-qc:1.0` |

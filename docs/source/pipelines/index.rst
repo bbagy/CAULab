@@ -8,5 +8,4 @@ Pipelines
    shortwgs
    kbracken
    mags
-   pfsnake
    rnake

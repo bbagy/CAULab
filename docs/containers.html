@@ -20,7 +20,6 @@
         <a href="kbracken.html">KBracken</a>
         <a href="humann.html">Humann</a>
         <a href="mags.html">MAGs</a>
-        <a href="pfsnake.html">PFsnake</a>
         <a href="rnake.html">RNake</a>
         <a href="dadake2.html">daDake2</a>
       </nav>
@@ -58,7 +57,7 @@ bash shortWGS/Go_shortWGS.sh --container apptainer \
       <p>Replace <code>[existing options]</code> with the pipeline's required input and database options.
       <code>--container-image</code> selects a Docker image or SIF file. Existing <code>-m</code>
       image options also work; longWGS uses <code>--container-image</code> because it has no image <code>-m</code> option.</p>
-      <p>This applies to longWGS, shortWGS, RNake, PFsnake, KBracken, Humann, and all three MAGs stages.
+      <p>This applies to longWGS, shortWGS, RNake, KBracken, Humann, and all three MAGs stages.
 
       <h2>Move an existing Docker image to HPC</h2>
       <div class="flow" aria-label="Docker to HPC image transfer">
@@ -85,7 +84,6 @@ docker info --format &#x27;{{.DockerRootDir}}&#x27;</code></pre></div>
             <tr><td>shortWGS</td><td><code>shortwgs</code> (implicit latest)</td></tr>
             <tr><td>longWGS</td><td><code>longwgs</code> (implicit latest)</td></tr>
             <tr><td>RNake</td><td><code>rnake:1.0</code></td></tr>
-            <tr><td>PFsnake</td><td><code>pf-snake:1.0</code></td></tr>
             <tr><td>KBracken</td><td><code>kbracken:caulab</code></td></tr>
             <tr><td>Humann</td><td><code>humann:caulab</code></td></tr>
             <tr><td>MAGs QC / Assembly / Annotation</td><td><code>mags-qc:1.0</code> / <code>mags-assembly:1.0</code> / <code>mags-annotation:1.0</code></td></tr>

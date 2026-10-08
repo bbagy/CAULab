@@ -22,7 +22,7 @@ Notes:
   - Use --platform linux/amd64 on Apple Silicon if Bioconda cannot solve linux/arm64 packages.
   - Use --no-cache when replacing a broken Docker image.
   - --build-core builds GoQC, KBracken, and Humann images.
-  - --build-all also builds WGS, RNake, PFsnake, and all three MAGs stages.
+  - --build-all also builds WGS, RNake, and all three MAGs stages.
   - daDake2 runs on the host and requires Snakemake, R/DADA2, and FIGARO.
   - --update refreshes an existing install while preserving config/lab_paths.yaml.
 EOF
@@ -145,7 +145,7 @@ prepare_update_target() {
 
 copy_install_files() {
   mkdir -p "$PREFIX"
-  for pipeline in GoQC KBracken Humann longWGS shortWGS RNake daDake2 MAGs PFsnake common docs; do
+  for pipeline in GoQC KBracken Humann longWGS shortWGS RNake daDake2 MAGs common docs; do
     cp -R "$SCRIPT_DIR/$pipeline" "$PREFIX/"
   done
   cp -R "$SCRIPT_DIR/config" "$PREFIX/"
@@ -184,7 +184,7 @@ mkdir -p "$PREFIX/bin"
 ln -sf "../GoQC/Go_QC.sh" "$PREFIX/bin/Go_QC.sh"
 ln -sf "../KBracken/Go_KBracken.sh" "$PREFIX/bin/Go_KBracken.sh"
 ln -sf "../Humann/Go_Humann.sh" "$PREFIX/bin/Go_Humann.sh"
-for launcher in longWGS/Go_longWGS.sh shortWGS/Go_shortWGS.sh RNake/Go_Rnake.sh daDake2/Go_daDake2.sh MAGs/Go_MAGs_QC.sh MAGs/Go_MAGs_Assembly.sh MAGs/Go_MAGs_Annotation.sh PFsnake/Go_PFsnake.sh common/Go_container_image.sh; do
+for launcher in longWGS/Go_longWGS.sh shortWGS/Go_shortWGS.sh RNake/Go_Rnake.sh daDake2/Go_daDake2.sh MAGs/Go_MAGs_QC.sh MAGs/Go_MAGs_Assembly.sh MAGs/Go_MAGs_Annotation.sh common/Go_container_image.sh; do
   ln -sf "../$launcher" "$PREFIX/bin/$(basename "$launcher")"
 done
 ln -sf "../download_databases.sh" "$PREFIX/bin/download_databases.sh"
@@ -297,7 +297,6 @@ if [ "$BUILD_ALL" -eq 1 ]; then
   build_image longwgs "$PREFIX/longWGS"
   build_image shortwgs "$PREFIX/shortWGS"
   build_image rnake:1.0 "$PREFIX/RNake"
-  build_image pf-snake:1.0 "$PREFIX/PFsnake"
   for stage in qc assembly annotation; do
     build_image "mags-$stage:1.0" "$PREFIX/MAGs" "$PREFIX/MAGs/docker/Dockerfile.$stage"
   done
@@ -336,7 +335,6 @@ cat <<EOF
   Go_MAGs_QC.sh
   Go_MAGs_Assembly.sh
   Go_MAGs_Annotation.sh
-  Go_PFsnake.sh
   Go_container_image.sh
   download_databases.sh
   caulab_usage.sh
