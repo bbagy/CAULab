@@ -3,6 +3,10 @@
 Snakemake pipelines for Illumina and ONT data.
 Bacterial Genome, Metagenome, RNA-seq, and 16S/ITS analysis.
 
+## Documentation
+
+[Documentation Portal](https://bbagy.github.io/KParkLab/)
+
 ## Pipelines
 
 | Pipeline | Analysis |
@@ -84,17 +88,6 @@ source "$HOME/kpark-pipelines/config/lab_paths.sh"
 - Included: CHM13 host index, Kraken2/Bracken, HUMAnN/MetaPhlAn.
 - Other references: [DB preparation guide](https://bbagy.github.io/KParkLab/workstations.html#databases).
 - Local DB paths: `config/lab_paths.sh`.
-
-## Documentation
-
-- [Documentation Portal — Korean](https://bbagy.github.io/KParkLab/)
-- [Installation guide](INSTALL_KParkLab.md)
-- [Docker / Conda environments](https://bbagy.github.io/KParkLab/environments.html)
-- [Container guide](common/README.md)
-- Command list: `kpark_usage.sh`
-
-Repository documentation: English. Web documentation: Korean.
-GitHub Pages: `main` → `/docs`; static files with `docs/.nojekyll`.
 
 ## Maintainer
 
