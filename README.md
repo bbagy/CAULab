@@ -68,11 +68,12 @@ Local database settings belong in `config/lab_paths.sh`; databases and analysis 
 ## Documentation
 
 - [Installation guide](INSTALL_CAULab.md)
+- [Documentation Portal](https://bbagy.github.io/CAULab/)
 - [Documentation portal source](docs/index.html)
 - [Container guide](common/README.md)
 - `caulab_usage.sh` lists installed commands and core examples.
 
-Repository documentation is maintained in English. The [web documentation portal](docs/index.html) provides Korean introductions and guides with a CAULab-specific design. GitHub Pages deployment requires a supported repository plan and visibility setting; the public site is not yet available.
+Repository documentation is maintained in English. The [Documentation Portal](https://bbagy.github.io/CAULab/) provides Korean introductions and guides with a CAULab-specific design. GitHub Pages publishes the static files from **main → /docs**; `docs/.nojekyll` preserves them without Jekyll processing.
 
 ## Maintainer
 
