@@ -141,7 +141,7 @@ prepare_update_target() {
     rm -f "$keep_yaml"
   fi
   if [ -n "$keep_shell" ]; then
-    sed 's/CAULAB_/KPARK_/g' "$keep_shell" > "$PREFIX/config/lab_paths.sh"
+    sed -e 's/CAULAB_/KPARK_/g' -e 's/:caulab/:kpark/g' "$keep_shell" > "$PREFIX/config/lab_paths.sh"
     rm -f "$keep_shell"
   fi
 }
