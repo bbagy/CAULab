@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GoQC</title>
+  <link rel="stylesheet" href="styles.css?v=20260305-13">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">CAULab</div>
+      <nav class="nav">
+        <a href="./">Home</a>
+        <a href="containers.html">Docker &amp; Apptainer</a>
+        <a href="workstations.html">CAULab Setup</a>
+        <a href="longwgs.html">longWGS</a>
+        <a href="shortwgs.html">shortWGS</a>
+        <a class="active" href="goqc.html">GoQC</a>
+        <a href="kbracken.html">KBracken</a>
+        <a href="humann.html">Humann</a>
+        <a href="mags.html">MAGs</a>
+        <a href="pfsnake.html">PFsnake</a>
+        <a href="rnake.html">RNake</a>
+        <a href="dadake2.html">daDake2</a>
+      </nav>
+      <div class="sidebar-foot">
+        <a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">Open bbagy GitHub</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <span class="badge">Metagenome QC</span>
+      <h1>GoQC</h1>
+      <p>Paired-end FASTQ quality control and host read depletion with fastp and Bowtie2.</p>
+      <div class="card"><pre><code>source "$HOME/caulab-pipelines/caulab.env"
+Go_QC.sh -i /path/to/raw_fastq -o /path/to/output/ProjectA_QC -c 8 -j 4 -K</code></pre></div>
+      <p>Configure <code>CAULAB_HOST_BT2_PREFIX</code> in <code>config/lab_paths.sh</code>, or pass <code>-d /path/to/host_index</code>.</p>
+      <p>Docker image: <code>goqc:caulab</code>. Downstream input: <code>host_filtered_fastq/</code>.</p>
+      <p><a href="https://github.com/bbagy/CAULab/blob/main/GoQC/README.md">Full GoQC guide</a></p>
+    </main>
+  </div>
+</body>
+</html>

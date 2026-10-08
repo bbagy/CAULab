@@ -16,9 +16,7 @@ from pathlib import Path
 
 FASTQ_DIR = config.get("fastq_dir", "input_fastqs")
 OUTPUT_DIR = config.get("output_dir", config.get("output", "output"))
-DB = config.get("db", "")
-if not DB:
-    raise ValueError("[KBracken] config 'db' is required. Use Go_KBracken.sh -d /path/to/kraken2_db.")
+DB = config.get("db", "/media/uhlemann/core4/DB/kraken2DB/k2_pluspfp_16gb_20241228")
 
 DELIMITER = config.get("delimiter", "_")
 if DELIMITER not in ["_", "."]:

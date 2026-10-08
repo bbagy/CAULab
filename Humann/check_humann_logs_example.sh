@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd /data/projects/ProjectA
+cd /media/uhlemann/core5/01_MG/20260409_DEAPIM30
 
 tail -n 100 humann3_out/6_logs/DPM10014_S213.humann.log || true
 echo

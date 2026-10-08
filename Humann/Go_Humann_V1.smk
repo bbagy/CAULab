@@ -2,7 +2,7 @@
 # Go_Humann_V1.smk
 #
 # Snakemake rewrite of the HUMAnN3 execution block
-# used in CAULab shotgun workflows.
+# used in Uhlemann Lab shotgun workflows.
 # Output contract is intentionally kept close to the
 # shell history:
 #   1_humann3_out/
@@ -21,8 +21,8 @@ from pathlib import Path
 
 FASTQ_DIR = config.get("fastq_dir", "host_filtered_fastq")
 OUTPUT_DIR = config.get("output_dir", config.get("output", "output"))
-NUCLEOTIDE_DB = config.get("nucleotide_db", "")
-PROTEIN_DB = config.get("protein_db", "")
+NUCLEOTIDE_DB = config.get("nucleotide_db", "/media/uhlemann/core4/DB/humann_db/humann3/chocophlan")
+PROTEIN_DB = config.get("protein_db", "/media/uhlemann/core4/DB/humann_db/humann3/uniref")
 METAPHLAN_DB = config.get("metaphlan_db", "")
 METAPHLAN_INDEX = config.get("metaphlan_index", "")
 THREADS_PER_SAMPLE = int(config.get("humann_threads", config.get("threads", 4)))

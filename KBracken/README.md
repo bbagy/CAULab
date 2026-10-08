@@ -42,14 +42,7 @@ flowchart LR
 
 ```bash
 cd KBracken
-docker build -t kbracken:caulab .
-```
-
-On Apple Silicon Mac, if the normal build fails while solving Bioconda packages:
-
-```bash
-docker build --platform linux/amd64 -t kbracken:caulab .
-export DOCKER_PLATFORM=linux/amd64
+docker build --network=host -t kbracken:caulab .
 ```
 
 The wrapper defaults to image `kbracken:caulab`; override with `-m <tag>` if needed.
@@ -77,7 +70,7 @@ docker run --rm kbracken:caulab bracken -h
 ./KBracken/Go_KBracken.sh \
   -i /path/to/input_fastqs \
   -o output \
-  -d /data/db/kraken2DB/k2_pluspfp_16gb_20241228 \
+  -d /media/uhlemann/core4/DB/kraken2DB/k2_pluspfp_16gb_20241228 \
   -c 8 -j 4 \
   -K
 ```
@@ -88,7 +81,7 @@ Kraken2 only (skip Bracken):
 ./KBracken/Go_KBracken.sh \
   -i /path/to/input_fastqs \
   -o output \
-  -d /data/db/kraken2DB/k2_pluspfp_16gb_20241228 \
+  -d /media/uhlemann/core4/DB/kraken2DB/k2_pluspfp_16gb_20241228 \
   --kraken-only
 ```
 
@@ -98,8 +91,8 @@ Real example:
 Go_KBracken.sh \
   -i 1_fastq \
   -o 2_kbracken_out \
-  -d /data/db/kraken2DB/k2_pluspfp_16gb_20241228 \
-  -s $CAULAB_PIPELINES \
+  -d /media/uhlemann/core4/DB/kraken2DB/k2_pluspfp_16gb_20241228 \
+  -s /home/uhlemann/heekuk_path \
   -c 8 -j 4 \
   -K
 ```
@@ -119,21 +112,21 @@ Go_KBracken.sh \
 | `-K` | off | Keep going (`--keep-going`) |
 | `--kraken-only` | off | Skip Bracken step (Kraken2-only mode) |
 
-## File Layout
+## Workstation Layout
 
-KBracken follows the standard CAULab wrapper layout:
+After `Go_toWorkstation.sh KBracken`, files are placed as:
 
 ```text
-KBracken/
-  Dockerfile
+/home/uhlemann*/heekuk_path/
   Go_KBracken.sh
-  Go_KBracken_V1.smk
-  README.md
+  Go_KBracken.smk
   scripts/
     bracken_to_mpa.py
     fill_bracken_taxonomy.py
     kraken_masterlog.py
     merge_mpa_tables.py
+  docker/KBracken/
+    Dockerfile
 ```
 
 ## Input Layout
@@ -189,9 +182,9 @@ Key files:
 ```bash
 fastq_dir="input_fastqs"
 output_dir="output"
-DB="/data/db/kraken2DB/k2_pluspfp_16gb_20241228"
+DB="/media/uhlemann/core4/DB/kraken2DB/k2_pluspfp_16gb_20241228"
 
-snakemake --snakefile $CAULAB_PIPELINES/KBracken/Go_KBracken_V1.smk \
+snakemake --snakefile /home/uhlemann/heekuk_path/Go_KBracken.smk \
   --config fastq_dir="$fastq_dir" output_dir="$output_dir" db="$DB" \
   --cores 8 --jobs 4 \
   --latency-wait 60 --rerun-incomplete
@@ -256,3 +249,10 @@ Kraken2 only:
 ## Maintainer
 
 Heekuk Park
+
+## Container runtime
+
+Shell launchers accept `--container docker|apptainer` (default: `docker`).
+For HPC use `--container apptainer --container-image /path/to/pipeline.sif`
+with the existing analysis options. See [shared runtime instructions](../README.md#docker--apptainer-selection)
+for SIF preparation and deployment of `common/container.sh`.

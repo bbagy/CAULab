@@ -21,7 +21,7 @@
 #
 # 임시 대안:
 #   - 급할 때는 예전 conda 방식 (humann3 env + MetaPhlAn3_v3 DB) 사용 가능
-#   - DB: /data/db/humann_db/humann3/MetaPhlAn3_v3
+#   - DB: /media/uhlemann/core4/DB/humann_db/humann3/MetaPhlAn3_v3
 #
 # 다음 할 일:
 #   1. test/ 샘플 2쌍으로 Docker 테스트 → direct humann stderr 확인
@@ -29,14 +29,23 @@
 # =============================================================================
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd -P)"
-cd /data/projects/ProjectA
+# Resolve the launcher path so invocation through a symlink also finds common/.
+_CONTAINER_SELF="$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null || realpath "${BASH_SOURCE[0]}" 2>/dev/null || printf '%s' "${BASH_SOURCE[0]}")"
+_CONTAINER_DIR="$(cd "$(dirname "$_CONTAINER_SELF")" && pwd -P)"
+_CONTAINER_HELPER="$_CONTAINER_DIR/../common/container.sh"
+[ -f "$_CONTAINER_HELPER" ] || _CONTAINER_HELPER="$_CONTAINER_DIR/common/container.sh"
+source "$_CONTAINER_HELPER"
+set -- ${CONTAINER_ARGS[@]+"${CONTAINER_ARGS[@]}"}
+
+
+SCRIPT_DIR="$_CONTAINER_DIR"
+cd /media/uhlemann/core5/01_MG/20260409_DEAPIM30
 
 inputDIR="DEAPIM30_QC/test"
 outDIR="humann3_out_test"
-chocophlanDB="/data/db/humann_db/humann3/chocophlan"
-uniref90DB="/data/db/humann_db/humann3/uniref"
-metaphlanDB="/data/db/humann_db/metaphlan4"
+chocophlanDB="/media/uhlemann/core4/DB/humann_db/humann3/chocophlan"
+uniref90DB="/media/uhlemann/core4/DB/humann_db/humann3/uniref"
+metaphlanDB="/media/uhlemann/core4/DB/humann_db/metaphlan4"
 metaphlanIndex="mpa_vJan25_CHOCOPhlAnSGB_202503"
 image="humann:caulab"
 
@@ -47,12 +56,12 @@ image="humann:caulab"
 # ---------------------------------------------------------------------------
 
 cat <<'EOF'
-Go_Humann.sh \
+Go_Humann.sh --container "$CONTAINER_RUNTIME" ${CONTAINER_IMAGE:+--container-image "$CONTAINER_IMAGE"} \
    -i DEAPIM30_QC/test \
    -o humann3_out_test \
-   -n /data/db/humann_db/humann3/chocophlan \
-   -p /data/db/humann_db/humann3/uniref \
-   -b /data/db/humann_db/metaphlan4_vJun23 \
+   -n /media/uhlemann/core4/DB/humann_db/humann3/chocophlan \
+   -p /media/uhlemann/core4/DB/humann_db/humann3/uniref \
+   -b /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23 \
    -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
    -c 4 \
    -j 1 \
@@ -62,7 +71,7 @@ EOF
 
 # 실제 실행이 필요하면 아래 블록을 사용
 #
-# Go_Humann.sh \
+# Go_Humann.sh --container "$CONTAINER_RUNTIME" ${CONTAINER_IMAGE:+--container-image "$CONTAINER_IMAGE"} \
 #   -i "$inputDIR" \
 #   -o "$outDIR" \
 #   -n "$chocophlanDB" \
@@ -88,10 +97,10 @@ zcat \
   > "humann_direct_debug/${sample}.fastq"
 
 echo "[check] image=$image"
-docker run --rm "$image" which humann
-docker run --rm "$image" python -c "import humann; print(humann.__file__)"
+container_run --rm "$image" which humann
+container_run --rm "$image" python -c "import humann; print(humann.__file__)"
 
-docker run --rm \
+container_run --rm \
   -u "$(id -u):$(id -g)" \
   -v "$(pwd)":/work \
   -v "$chocophlanDB":/db/chocophlan:ro \
@@ -111,22 +120,22 @@ docker run --rm \
 tail -n 100 "humann_direct_debug/${sample}.direct.log" || true
 
 
-docker run --rm \
+container_run --rm \
      -u "$(id -u):$(id -g)" \
-     -v /data/db/humann_db/metaphlan4_vJun23:/db \
+     -v /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23:/db \
      humann:caulab \
      metaphlan --install --index mpa_vJun23_CHOCOPhlAnSGB_202307 --bowtie2db /db
-  docker run --rm \
+  container_run --rm \
     -u "$(id -u):$(id -g)" \
-    -v /data/db/humann_db/metaphlan4_vJun23:/db \
+    -v /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23:/db \
     humann:caulab \
     metaphlan --install --index mpa_vJun23_CHOCOPhlAnSGB_202307 --bowtie2db /db
 
 
 
- docker run --rm \
+ container_run --rm \
     -u "$(id -u):$(id -g)" \
-    -v /data/db/humann_db/metaphlan4_vJun23:/db \
+    -v /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23:/db \
     humann:caulab \
     bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH; which bowtie2-build; /opt/conda/envs/humann/bin/bowtie2-build --version; /opt/conda/envs/humann/bin/bowtie2-build --large-index -f /db/mpa_vJun23_CHOCOPhlAnSGB_202307.fna /db/mpa_vJun23_CHOCOPhlAnSGB_202307'
 
@@ -146,7 +155,7 @@ docker run --rm \
 # 1. Check image toolchain versions inside the exact container.
 #
 cat <<'EOF'
-docker run --rm humann:caulab \
+container_run --rm humann:caulab \
   bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH; \
     echo "[humann]"; humann --version; \
     echo "[bowtie2-build]"; bowtie2-build --version | head -n 1; \
@@ -157,9 +166,9 @@ EOF
 # 2. Confirm mounted DB path, free space, inode usage, and write test.
 #
 cat <<'EOF'
-docker run --rm \
+container_run --rm \
   -u "$(id -u):$(id -g)" \
-  -v /data/db/humann_db/metaphlan4_vJun23:/db \
+  -v /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23:/db \
   humann:caulab \
   bash -lc 'set -euo pipefail; \
     echo "[mount]"; ls -ld /db; realpath /db; \
@@ -172,9 +181,9 @@ EOF
 #    stdout/stderr in a log file for the exact failure point.
 #
 cat <<'EOF'
-docker run --rm \
+container_run --rm \
   -u "$(id -u):$(id -g)" \
-  -v /data/db/humann_db/metaphlan4_vJun23:/db \
+  -v /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23:/db \
   humann:caulab \
   bash -lc 'set -euo pipefail; \
     export PATH=/opt/conda/envs/humann/bin:$PATH; \
@@ -190,14 +199,14 @@ EOF
 #    contains the matching .pkl and .bt2/.bt2l files for the selected index.
 
 
-  docker run --rm humann:caulab \
+  container_run --rm humann:caulab \
     bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH;bowtie2-build --version | head -n 1'
 
  grep -n "bowtie2" Dockerfile
-  docker run --rm humann:caulab bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH; conda list bowtie2 || micromamba list -n humann bowtie2'
+  container_run --rm humann:caulab bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH; conda list bowtie2 || micromamba list -n humann bowtie2'
 
 
-    docker run --rm humann:caulab \
+    container_run --rm humann:caulab \
     bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH; \
       echo "[which]"; which bowtie2-build; \
       echo "[ls]"; ls -l "$(which bowtie2-build)"; \
@@ -206,18 +215,18 @@ EOF
 
 
 
-  docker run --rm humann:caulab \
+  container_run --rm humann:caulab \
     bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH; \
       echo "[which]"; which bowtie2-build; \
       echo "[type]"; type -a bowtie2-build; \
       echo "[ls]"; ls -l "$(which bowtie2-build)"; \
       echo "[find]"; find / -name bowtie2-build 2>/dev/null'
 
-  docker run --rm humann:caulab \
+  container_run --rm humann:caulab \
     bash -lc '/opt/conda/envs/humann/bin/bowtie2-build --version | head -n 3'
 
 
-  docker run --rm humann:caulab \
+  container_run --rm humann:caulab \
     bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH;export LD_LIBRARY_PATH=/opt/conda/envs/humann/lib:$LD_LIBRARY_PATH; bowtie2-build --version | head -n 3'
 
 
@@ -239,15 +248,15 @@ EOF
 # Recommended order:
 #   1. Retry `metaphlan --install --index ... --bowtie2db /db`
 #   2. If install succeeds, use that DB directly with:
-#        -b /data/db/humann_db/metaphlan4_vJun23
+#        -b /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23
 #        -I mpa_vJun23_CHOCOPhlAnSGB_202307
 #   3. Only if official install still fails, fall back to manual bowtie2-build
 #
 # Official MetaPhlAn install retry:
 cat <<'EOF'
-docker run --rm \
+container_run --rm \
   -u "$(id -u):$(id -g)" \
-  -v /data/db/humann_db/metaphlan4_vJun23:/db \
+  -v /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23:/db \
   humann:caulab \
   bash -lc 'set -euo pipefail; \
     export PATH=/opt/conda/envs/humann/bin:$PATH; \
@@ -258,9 +267,9 @@ EOF
 #
 # Post-install check:
 cat <<'EOF'
-docker run --rm \
+container_run --rm \
   -u "$(id -u):$(id -g)" \
-  -v /data/db/humann_db/metaphlan4_vJun23:/db \
+  -v /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23:/db \
   humann:caulab \
   bash -lc 'set -euo pipefail; \
     ls -lh /db/mpa_vJun23_CHOCOPhlAnSGB_202307*'
@@ -275,6 +284,7 @@ EOF
 #   - diamond 임시파일 생성 실패 원인 조사 중
 #
 # 1. 오래된 Docker 이미지 삭제 (OrthoVenn3 + islandpath, ~11GB)
+if [ "$CONTAINER_RUNTIME" = docker ]; then
 docker rmi \
   lufang0411/orthovenn3-api:latest \
   leeoluo/orthovenn3-front:latest \
@@ -284,6 +294,7 @@ docker rmi \
 
 # 2. 멈춘 컨테이너 정리
 docker container prune -f
+fi
 
 # 3. root 파티션 용량 범인 찾기
 df -h /

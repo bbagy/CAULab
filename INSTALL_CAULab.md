@@ -205,3 +205,19 @@ download_databases.sh --db-root /Volumes/CAULabDB --tools kraken2 --kraken2-16gb
 - Local DB paths are loaded from `config/lab_paths.sh` after `source "$CAULAB_PIPELINES/caulab.env"`.
 - Keep generated outputs outside the pipeline install root.
 - Avoid workstation names, user home directories, and lab names inside Snakefiles.
+
+## Extended Pipeline Family
+
+All installations now include longWGS, shortWGS, RNake, daDake2, MAGs, PFsnake, shared Docker/Apptainer helpers, and the documentation portal.
+Existing GoQC, database download commands, and local DB settings are retained.
+
+```bash
+./install_mac.sh --update --build-all
+source "$HOME/caulab-pipelines/caulab.env"
+```
+
+`--build-core` still builds only GoQC, KBracken, and Humann. `--build-all` additionally builds longWGS, shortWGS, RNake, PFsnake, and all three MAGs stages.
+For selective builds, use the Dockerfile and image name in each pipeline README.
+daDake2 requires a host Snakemake/R/DADA2/FIGARO environment; it has no Docker build.
+New pipelines take explicit reference/database flags. The downloader continues to cover only host filtering, Kraken2/Bracken, and HUMAnN/MetaPhlAn databases.
+See `docs/index.html` and the individual pipeline READMEs for usage.

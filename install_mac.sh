@@ -4,7 +4,7 @@ set -euo pipefail
 usage() {
   cat <<'EOF'
 Usage:
-  ./install_mac.sh [--prefix INSTALL_DIR] [--update] [--build-core] [--no-cache] [--platform linux/amd64]
+  ./install_mac.sh [--prefix INSTALL_DIR] [--update] [--build-core|--build-all] [--no-cache] [--platform linux/amd64]
 
 Defaults:
   INSTALL_DIR = $HOME/caulab-pipelines
@@ -22,6 +22,8 @@ Notes:
   - Use --platform linux/amd64 on Apple Silicon if Bioconda cannot solve linux/arm64 packages.
   - Use --no-cache when replacing a broken Docker image.
   - --build-core builds GoQC, KBracken, and Humann images.
+  - --build-all also builds WGS, RNake, PFsnake, and all three MAGs stages.
+  - daDake2 runs on the host and requires Snakemake, R/DADA2, and FIGARO.
   - --update refreshes an existing install while preserving config/lab_paths.yaml.
 EOF
   exit "${1:-1}"
@@ -31,6 +33,7 @@ PREFIX="$HOME/caulab-pipelines"
 BUILD_GOQC=0
 BUILD_KBRACKEN=0
 BUILD_HUMANN=0
+BUILD_ALL=0
 UPDATE=0
 PLATFORM=""
 NO_CACHE=0
@@ -54,7 +57,14 @@ while [ "$#" -gt 0 ]; do
       BUILD_HUMANN=1
       shift
       ;;
-    --build-core|--build-all)
+    --build-all)
+      BUILD_ALL=1
+      BUILD_GOQC=1
+      BUILD_KBRACKEN=1
+      BUILD_HUMANN=1
+      shift
+      ;;
+    --build-core)
       BUILD_GOQC=1
       BUILD_KBRACKEN=1
       BUILD_HUMANN=1
@@ -105,6 +115,14 @@ prepare_update_target() {
     "$PREFIX/GoQC" \
     "$PREFIX/KBracken" \
     "$PREFIX/Humann" \
+    "$PREFIX/longWGS" \
+    "$PREFIX/shortWGS" \
+    "$PREFIX/RNake" \
+    "$PREFIX/daDake2" \
+    "$PREFIX/MAGs" \
+    "$PREFIX/PFsnake" \
+    "$PREFIX/common" \
+    "$PREFIX/docs" \
     "$PREFIX/bin" \
     "$PREFIX/config" \
     "$PREFIX/README.md" \
@@ -127,9 +145,9 @@ prepare_update_target() {
 
 copy_install_files() {
   mkdir -p "$PREFIX"
-  cp -R "$SCRIPT_DIR/GoQC" "$PREFIX/"
-  cp -R "$SCRIPT_DIR/KBracken" "$PREFIX/"
-  cp -R "$SCRIPT_DIR/Humann" "$PREFIX/"
+  for pipeline in GoQC KBracken Humann longWGS shortWGS RNake daDake2 MAGs PFsnake common docs; do
+    cp -R "$SCRIPT_DIR/$pipeline" "$PREFIX/"
+  done
   cp -R "$SCRIPT_DIR/config" "$PREFIX/"
   cp "$SCRIPT_DIR/README.md" "$PREFIX/"
   cp "$SCRIPT_DIR/INSTALL_CAULab.md" "$PREFIX/"
@@ -166,6 +184,9 @@ mkdir -p "$PREFIX/bin"
 ln -sf "../GoQC/Go_QC.sh" "$PREFIX/bin/Go_QC.sh"
 ln -sf "../KBracken/Go_KBracken.sh" "$PREFIX/bin/Go_KBracken.sh"
 ln -sf "../Humann/Go_Humann.sh" "$PREFIX/bin/Go_Humann.sh"
+for launcher in longWGS/Go_longWGS.sh shortWGS/Go_shortWGS.sh RNake/Go_Rnake.sh daDake2/Go_daDake2.sh MAGs/Go_MAGs_QC.sh MAGs/Go_MAGs_Assembly.sh MAGs/Go_MAGs_Annotation.sh PFsnake/Go_PFsnake.sh common/Go_container_image.sh; do
+  ln -sf "../$launcher" "$PREFIX/bin/$(basename "$launcher")"
+done
 ln -sf "../download_databases.sh" "$PREFIX/bin/download_databases.sh"
 ln -sf "../caulab_usage.sh" "$PREFIX/bin/caulab_usage.sh"
 
@@ -185,22 +206,23 @@ fi
 build_image() {
   local image="$1"
   local context="$2"
+  local dockerfile="${3:-$context/Dockerfile}"
   echo "[CAULab install] Building $image from $context"
   if [ "$NO_CACHE" -eq 1 ] && [ -n "$PLATFORM" ]; then
-    if ! docker build --progress=plain --no-cache --platform "$PLATFORM" -t "$image" "$context"; then
-      report_build_failure "$image" "$context"
+    if ! docker build -f "$dockerfile" --progress=plain --no-cache --platform "$PLATFORM" -t "$image" "$context"; then
+      report_build_failure "$image" "$context" "$dockerfile"
     fi
   elif [ "$NO_CACHE" -eq 1 ]; then
-    if ! docker build --progress=plain --no-cache -t "$image" "$context"; then
-      report_build_failure "$image" "$context"
+    if ! docker build -f "$dockerfile" --progress=plain --no-cache -t "$image" "$context"; then
+      report_build_failure "$image" "$context" "$dockerfile"
     fi
   elif [ -n "$PLATFORM" ]; then
-    if ! docker build --progress=plain --platform "$PLATFORM" -t "$image" "$context"; then
-      report_build_failure "$image" "$context"
+    if ! docker build -f "$dockerfile" --progress=plain --platform "$PLATFORM" -t "$image" "$context"; then
+      report_build_failure "$image" "$context" "$dockerfile"
     fi
   else
-    if ! docker build --progress=plain -t "$image" "$context"; then
-      report_build_failure "$image" "$context"
+    if ! docker build -f "$dockerfile" --progress=plain -t "$image" "$context"; then
+      report_build_failure "$image" "$context" "$dockerfile"
     fi
   fi
 }
@@ -208,12 +230,13 @@ build_image() {
 report_build_failure() {
   local image="$1"
   local context="$2"
+  local dockerfile="${3:-$context/Dockerfile}"
   echo "[CAULab install][FATAL] Docker build failed: $image"
   echo "[CAULab install] Re-run this command to see the full plain build log:"
   if [ -n "$PLATFORM" ]; then
-    echo "  docker build --progress=plain --no-cache --platform \"$PLATFORM\" -t \"$image\" \"$context\""
+    echo "  docker build -f \"$dockerfile\" --progress=plain --no-cache --platform \"$PLATFORM\" -t \"$image\" \"$context\""
   else
-    echo "  docker build --progress=plain --no-cache -t \"$image\" \"$context\""
+    echo "  docker build -f \"$dockerfile\" --progress=plain --no-cache -t \"$image\" \"$context\""
   fi
   if [ "$image" = "goqc:caulab" ]; then
     echo "[CAULab install] If the failure is at apt-get, test Docker apt directly:"
@@ -270,6 +293,16 @@ if [ "$BUILD_GOQC" -eq 1 ] || [ "$BUILD_KBRACKEN" -eq 1 ] || [ "$BUILD_HUMANN" -
   report_image_status "humann:caulab"
 fi
 
+if [ "$BUILD_ALL" -eq 1 ]; then
+  build_image longwgs "$PREFIX/longWGS"
+  build_image shortwgs "$PREFIX/shortWGS"
+  build_image rnake:1.0 "$PREFIX/RNake"
+  build_image pf-snake:1.0 "$PREFIX/PFsnake"
+  for stage in qc assembly annotation; do
+    build_image "mags-$stage:1.0" "$PREFIX/MAGs" "$PREFIX/MAGs/docker/Dockerfile.$stage"
+  done
+fi
+
 cat <<EOF
 [CAULab install] Installed/updated to:
   $PREFIX
@@ -296,6 +329,15 @@ cat <<EOF
   Go_QC.sh
   Go_KBracken.sh
   Go_Humann.sh
+  Go_longWGS.sh
+  Go_shortWGS.sh
+  Go_Rnake.sh
+  Go_daDake2.sh
+  Go_MAGs_QC.sh
+  Go_MAGs_Assembly.sh
+  Go_MAGs_Annotation.sh
+  Go_PFsnake.sh
+  Go_container_image.sh
   download_databases.sh
   caulab_usage.sh
 

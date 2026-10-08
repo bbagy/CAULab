@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Resolve the launcher path so invocation through a symlink also finds common/.
+_CONTAINER_SELF="$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null || realpath "${BASH_SOURCE[0]}" 2>/dev/null || printf '%s' "${BASH_SOURCE[0]}")"
+_CONTAINER_DIR="$(cd "$(dirname "$_CONTAINER_SELF")" && pwd -P)"
+_CONTAINER_HELPER="$_CONTAINER_DIR/../common/container.sh"
+[ -f "$_CONTAINER_HELPER" ] || _CONTAINER_HELPER="$_CONTAINER_DIR/common/container.sh"
+source "$_CONTAINER_HELPER"
+set -- ${CONTAINER_ARGS[@]+"${CONTAINER_ARGS[@]}"}
+
+
 usage(){
-  echo "Usage: $0 -i FASTQ_DIR -o OUTPUT_DIR [-n NUCLEOTIDE_DB] [-p PROTEIN_DB] [-b METAPHLAN_DB] [-I METAPHLAN_INDEX] [-s SNAKEDIR] [-c CORES] [-j JOBS] [-t THREADS] [-m IMAGE] [-x] [-K] [--run-musicc] [--skip-gene-norm] [--skip-path-split] [--skip-pathcoverage]"
-  echo "  If DB options are omitted, CAULAB_HUMANN_* values from config/lab_paths.sh are used."
+  echo "Usage: $0 [--container docker|apptainer] [--container-image IMAGE_OR_SIF] -i FASTQ_DIR -o OUTPUT_DIR -n NUCLEOTIDE_DB -p PROTEIN_DB [-b METAPHLAN_DB] [-I METAPHLAN_INDEX] [-s SNAKEDIR] [-c CORES] [-j JOBS] [-t THREADS] [-m IMAGE] [-x] [-K] [--run-musicc] [--skip-gene-norm] [--skip-path-split] [--skip-pathcoverage]"
   echo "  Recommended MetaPhlAn input: -b /path/to/metaphlan_db_dir -I mpa_vJan25_CHOCOPhlAnSGB_202503"
   echo "  Backward-compatible shortcut: -b /path/to/mpa_vJan25_CHOCOPhlAnSGB_202503.pkl"
   exit 1
@@ -20,20 +28,6 @@ abs_path(){
   fi
 }
 
-script_dir(){
-  local source="$1"
-  local dir target
-  while [ -L "$source" ]; do
-    dir="$(cd -P "$(dirname "$source")" && pwd)"
-    target="$(readlink "$source")"
-    case "$target" in
-      /*) source="$target" ;;
-      *) source="$dir/$target" ;;
-    esac
-  done
-  cd -P "$(dirname "$source")" && pwd
-}
-
 FASTQ_DIR=""
 OUTPUT_DIR=""
 NUCLEOTIDE_DB=""
@@ -45,7 +39,6 @@ CORES=8
 JOBS=4
 THREADS=4
 IMAGE="${CAULAB_HUMANN_IMAGE:-humann:caulab}"
-DOCKER_PLATFORM="${DOCKER_PLATFORM:-}"
 DRYRUN=0
 KEEP_GOING=0
 RUN_GENE_NORM=1
@@ -134,18 +127,10 @@ done
 
 [ -z "$FASTQ_DIR" ] && usage
 [ -z "$OUTPUT_DIR" ] && usage
-if [ -z "$NUCLEOTIDE_DB" ]; then
-  NUCLEOTIDE_DB="${CAULAB_HUMANN_CHOCOPHLAN:-}"
-fi
-if [ -z "$PROTEIN_DB" ]; then
-  PROTEIN_DB="${CAULAB_HUMANN_UNIREF:-}"
-fi
-if [ -z "$METAPHLAN_DB" ]; then
-  METAPHLAN_DB="${CAULAB_HUMANN_METAPHLAN:-}"
-fi
-if [ -z "$METAPHLAN_INDEX" ]; then
-  METAPHLAN_INDEX="${CAULAB_METAPHLAN_INDEX:-}"
-fi
+NUCLEOTIDE_DB="${NUCLEOTIDE_DB:-${CAULAB_HUMANN_CHOCOPHLAN:-}}"
+PROTEIN_DB="${PROTEIN_DB:-${CAULAB_HUMANN_UNIREF:-}}"
+METAPHLAN_DB="${METAPHLAN_DB:-${CAULAB_HUMANN_METAPHLAN:-}}"
+METAPHLAN_INDEX="${METAPHLAN_INDEX:-${CAULAB_METAPHLAN_INDEX:-}}"
 [ -z "$NUCLEOTIDE_DB" ] && usage
 [ -z "$PROTEIN_DB" ] && usage
 
@@ -153,7 +138,7 @@ FASTQ_DIR_ABS="$(abs_path "$FASTQ_DIR")" || { echo "[Humann] FASTQ_DIR not found
 NUCLEOTIDE_DB_ABS="$(abs_path "$NUCLEOTIDE_DB")" || { echo "[Humann] NUCLEOTIDE_DB not found: $NUCLEOTIDE_DB"; exit 1; }
 PROTEIN_DB_ABS="$(abs_path "$PROTEIN_DB")" || { echo "[Humann] PROTEIN_DB not found: $PROTEIN_DB"; exit 1; }
 
-SCRIPT_DIR="$(script_dir "$0")"
+SCRIPT_DIR="$_CONTAINER_DIR"
 PIPELINE_DIR="$SCRIPT_DIR"
 if [ -n "$SNAKEDIR" ]; then
   [ -d "$SNAKEDIR" ] || { echo "[Humann] SNAKEDIR not found: $SNAKEDIR"; exit 1; }
@@ -169,23 +154,13 @@ if [ ! -f "$PIPELINE_DIR/$SNAKEFILE_NAME" ]; then
   exit 1
 fi
 
-if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
-  echo "[Humann][FATAL] Docker image not found locally: $IMAGE"
-  echo "[Humann] Build example:"
-  echo "  cd \"$SCRIPT_DIR\" && docker build -t humann:caulab ."
-  exit 1
-fi
+container_require_image "$IMAGE" || exit 1
 
 WORKDIR="$(pwd)"
 CONTAINER_HOME="/work/.codex_home_humann"
 
-DOCKER_ARGS=(
-  docker run --rm
-)
-if [ -n "$DOCKER_PLATFORM" ]; then
-  DOCKER_ARGS+=(--platform "$DOCKER_PLATFORM")
-fi
-DOCKER_ARGS+=(
+CONTAINER_RUN_ARGS=(
+  container_run --rm
   -u "$(id -u):$(id -g)"
   -v "$WORKDIR":/work
   -v "$PIPELINE_DIR":/pipeline:ro
@@ -213,12 +188,12 @@ if [ -n "$METAPHLAN_DB" ]; then
         ;;
     esac
   fi
-  DOCKER_ARGS+=(-v "$METAPHLAN_DB_ABS":/db/metaphlan:ro)
-  DOCKER_ARGS+=(-e METAPHLAN_DB_DIR=/db/metaphlan)
+  CONTAINER_RUN_ARGS+=(-v "$METAPHLAN_DB_ABS":/db/metaphlan:ro)
+  CONTAINER_RUN_ARGS+=(-e METAPHLAN_DB_DIR=/db/metaphlan)
 fi
 
 run(){
-  "${DOCKER_ARGS[@]}" "$IMAGE" "$@"
+  "${CONTAINER_RUN_ARGS[@]}" "$IMAGE" "$@"
 }
 
 mkdir -p "$WORKDIR/.codex_home_humann/.cache"

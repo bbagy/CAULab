@@ -1,0 +1,1 @@
+Go_shortWGS_V10_docker.smk

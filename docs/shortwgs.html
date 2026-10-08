@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>shortWGS</title>
+  <link rel="stylesheet" href="styles.css?v=20260305-13">
+</head>
+<body class="theme-short">
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">CAULab</div>
+      <nav class="nav">
+        <a href="./">Home</a>
+        <a href="containers.html">Docker &amp; Apptainer</a>
+        <a href="workstations.html">CAULab Setup</a>
+        <a href="longwgs.html">longWGS</a>
+        <a class="active" href="shortwgs.html">shortWGS</a>
+        <a href="goqc.html">GoQC</a>
+        <a href="kbracken.html">KBracken</a>
+        <a href="humann.html">Humann</a>
+        <a href="mags.html">MAGs</a>
+        <a href="pfsnake.html">PFsnake</a>
+        <a href="rnake.html">RNake</a>
+        <a href="dadake2.html">daDake2</a>
+      </nav>
+      <div class="sidebar-foot">
+        <a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">Open bbagy GitHub</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <span class="badge">Illumina WGS</span>
+      <h1>shortWGS</h1>
+      <p>QC, Kraken2 species inference, SRST2 typing, TETyper, and HTML/CSV summary generation.</p>
+      <div class="status-banner status-tested">
+        STATUS: TESTED IN CORE2 WORKSTATION
+      </div>
+
+      <h2>Pipeline Flow</h2>
+      <div class="flow">
+        <span class="node">Prefilter</span><span class="arrow">→</span>
+        <span class="node">fastp</span><span class="arrow">→</span>
+        <span class="node">Kraken2</span><span class="arrow">→</span>
+        <span class="node">SRST2 (MLST/ARG/Plasmid)</span><span class="arrow">→</span>
+        <span class="node">TETyper</span><span class="arrow">→</span>
+        <span class="node">MultiQC + Summary</span>
+      </div>
+
+      <h2>Build</h2>
+      <div class="card"><pre><code>cd shortWGS
+docker build --network=host -t shortwgs .</code></pre></div>
+
+      <h2>Run</h2>
+      <div class="card"><pre><code>./shortWGS/Go_shortWGS.sh \
+  -i /path/to/fastq \
+  -o /path/to/output \
+  -d /path/to/WGS_DB2 \
+  -k /path/to/kraken2_db \
+  -r /path/to/GoWGS \
+  -K</code></pre></div>
+
+      <h2>Real Example</h2>
+      <div class="card"><pre><code>Go_shortWGS.sh \
+  -i shortWGS/20261101_WGS_HKP \
+  -o shortWGS/20261101_WGS_HKP_out \
+  -d /media/uhlemann/core4/DB/WGS_DB2 \
+  -k /media/uhlemann/core4/DB/kraken2DB/k2_pluspfp_16gb_20241228 \
+  -r $CAULAB_PIPELINES/GoWGS \
+  -K</code></pre></div>
+
+      <h2>Options</h2>
+      <table>
+        <tr><th>Flag</th><th>Description</th></tr>
+        <tr><td><code>-n</code></td><td>Dry-run</td></tr>
+        <tr><td><code>-K</code></td><td>Keep-going</td></tr>
+        <tr><td><code>-c</code></td><td>Snakemake cores</td></tr>
+        <tr><td><code>-m</code></td><td>Custom docker image tag</td></tr>
+      </table>
+
+      <h2>Expected Input</h2>
+      <div class="card"><pre><code>shortWGS/
+|-- 20251101_WGS_HKP/
+|-- 20251101_WGS_HKP_out/
+|-- 20261101_WGS_HKP/
+|   |-- SAMPLE1_R1.fastq.gz
+|   `-- SAMPLE1_R2.fastq.gz
+`-- 20261101_WGS_HKP_out/
+
+WGS_DB2/
+|-- CARD/
+|-- PlasmidFinder/
+|-- MLST/
+`-- tetyper/
+
+kraken2_db/
+`-- (kraken2 index files)
+
+GoWGS/
+`-- scripts/
+    `-- 20251007_Summary_WGS_tem_v3.Rmd</code></pre></div>
+
+      <h2>Main Outputs</h2>
+      <div class="card"><pre><code>shortWGS/
+|-- 20251101_WGS_HKP/
+|-- 20251101_WGS_HKP_out/
+|-- 20261101_WGS_HKP/
+`-- 20261101_WGS_HKP_out/
+    |-- 1_fastp_out/
+    |-- 2a_kraken2/
+    |-- 2_ST_srst2_out/
+    |-- 3_ARGs_srst2_out/
+    |-- 4_Plasmid_srst2_out/
+    |-- 5_TETyper/
+    |-- multiqc_report.html
+    |-- summary_master.csv
+    `-- summary_report.html   &lt;-- FINAL REPORT FILE</code></pre></div>
+    </main>
+  </div>
+</body>
+</html>

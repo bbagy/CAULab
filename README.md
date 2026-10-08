@@ -4,28 +4,24 @@
 ![Docker](https://img.shields.io/badge/Docker-Containerized-0db7ed)
 ![Status](https://img.shields.io/badge/Status-Active-2e7d32)
 
-Containerized shotgun metagenomics pipelines for routine analysis in CAULab and other labs.
-Each pipeline is self-contained with its own `Dockerfile`, workflow, wrapper script, and README.
-
----
+Sequencing pipelines using the UhlemannLab pipeline structure, with CAULab installation and database settings.
+Container launchers share `common/container.sh` and support Docker or Apptainer. GoQC remains available for standalone metagenome QC.
 
 ## Pipeline Catalog
 
-Available now (production-ready):
+| Pipeline | Purpose |
+|---|---|
+| GoQC | Paired-end FASTQ QC and host read depletion |
+| longWGS | ONT assembly, polishing, QC, and annotation |
+| shortWGS | Illumina typing: MLST, ARG, plasmid, and TETyper |
+| KBracken | Kraken2 + Bracken taxonomic profiling |
+| Humann | HUMAnN3 + MetaPhlAn4 functional profiling |
+| RNake | Bacterial RNA-seq trimming, mapping, and counts |
+| daDake2 | DADA2 16S/ITS processing with project checkpoints |
+| MAGs (in testing) | Metagenome QC, assembly/binning, and annotation |
+| PFsnake (in testing) | P. falciparum variant/CNV/drug summary |
 
-- `GoQC`: paired-end FASTQ QC and host read depletion
-- `KBracken`: Kraken2 + Bracken profiling and merged MPA-style tables
-- `Humann`: HUMAnN3 + MetaPhlAn4 functional profiling with KEGG orthology output
-
----
-
-## Documentation
-
-- CAULab setup notes: `INSTALL_CAULab.md`
-- Command usage helper: `caulab_usage.sh`
-- Public documentation can be added after the CAULab repository URL is finalized.
-
-## Quick Install
+## Install and Update
 
 ```bash
 git clone https://github.com/bbagy/CAULab.git
@@ -35,119 +31,49 @@ source "$HOME/caulab-pipelines/caulab.env"
 caulab_usage.sh
 ```
 
-If `$HOME/caulab-pipelines` already exists, use the installed commands directly:
+All pipeline code is installed by default. `--build-core` builds GoQC, KBracken, and Humann; `--build-all` also builds longWGS, shortWGS, RNake, PFsnake, and the three MAGs images.
+For an existing installation:
 
 ```bash
-source "$HOME/caulab-pipelines/caulab.env"
-caulab_usage.sh
-```
-
-To refresh an existing install from a newly pulled clone:
-
-```bash
-cd CAULab
 git pull
 ./install_mac.sh --update --build-core
 source "$HOME/caulab-pipelines/caulab.env"
 ```
 
-`--update` refreshes the installed `.sh` wrappers, Snakefiles, Dockerfiles, and `bin/` links while preserving local DB settings in `config/lab_paths.sh` and `config/lab_paths.yaml`.
+`--update` refreshes pipeline code, shared helpers, documentation, and command links while preserving `config/lab_paths.sh` and `config/lab_paths.yaml`.
+Use `--prefix /path/to/caulab-pipelines` for another install location. Use `--platform linux/amd64` on Apple Silicon when needed, and `--no-cache` to rebuild a broken image.
+`daDake2` runs on the host: install Snakemake, R with DADA2 and its required packages, and FIGARO as described in [its README](daDake2/README.md).
+GoQC uses Docker; the other container launchers also accept Apptainer.
 
-If Docker images are missing, make sure Docker Desktop is running, then rerun:
-
-```bash
-./install_mac.sh --update --build-core
-docker image inspect goqc:caulab kbracken:caulab humann:caulab >/dev/null
-```
-
-If GoQC or another image fails with `failed to launch x86-64-v3 version`, update and rebuild:
+## Docker and Apptainer
 
 ```bash
-git pull
-./install_mac.sh --update --build-goqc --no-cache
+Go_shortWGS.sh --container docker [pipeline options]
+Go_shortWGS.sh --container apptainer --container-image /shared/shortwgs.sif [pipeline options]
 ```
 
-GoQC is built without conda/micromamba to avoid conda-forge CPU variant launch errors on older Intel Macs and amd64 emulation.
+See [the container image guide](common/README.md) for image export and SIF conversion.
+Pipeline wrappers locate shared helpers and workflows relative to the repository, including when invoked through installed command links.
+Inputs, databases, and outputs remain outside the repository. New pipelines use explicit database/reference flags; CAULab's existing KBracken and Humann database defaults are retained.
 
-On Apple Silicon Mac, if package solving fails during Docker build:
-
-```bash
-cd CAULab
-./install_mac.sh --build-core --platform linux/amd64
-source "$HOME/caulab-pipelines/caulab.env"
-caulab_usage.sh
-```
-
----
-
-## Common Conventions
-
-- Data and DB files are mounted from host paths.
-- Outputs are written under user-defined output directories.
-- Wrapper scripts auto-retry lock issues with Snakemake `--unlock`.
-- DB paths are configured once in `config/lab_paths.sh`; command-line DB flags can still override them.
-- Keep a stable install root on each workstation, usually `$HOME/caulab-pipelines`; use another writable path if needed.
-- Wrapper scripts, Snakefiles, and Dockerfiles live together in each pipeline directory.
-- Common wrapper flags:
-  - `-n` (or `-x` for `Go_Humann.sh`): dry-run (show execution plan only)
-  - `-K`: keep-going (continue independent jobs even if some fail)
-
----
-
-## Reference DB Download
-
-After Docker images are built, download the needed DBs to a large disk:
-
-```bash
-source "$HOME/caulab-pipelines/caulab.env"
-download_databases.sh --db-root /Volumes/CAULabDB --tools host --threads 8
-download_databases.sh --db-root /Volumes/CAULabDB --tools kraken2 --threads 8
-download_databases.sh --db-root /Volumes/CAULabDB --tools humann --threads 8
-source "$HOME/caulab-pipelines/caulab.env"
-```
-
-Or download all three groups:
+## Reference Databases
 
 ```bash
 download_databases.sh --db-root /Volumes/CAULabDB --tools all --threads 8
+source "$HOME/caulab-pipelines/caulab.env"
 ```
 
-The downloader updates `config/lab_paths.sh`, so normal wrappers can omit DB flags after `source caulab.env`.
-GoQC host filtering uses a CHM13/T2T Bowtie2 index by default.
-Kraken2 uses the latest available prebuilt `k2_pluspfp_16gb_YYYYMMDD` database by default, then builds the matching Bracken read-length file locally.
+The downloader covers GoQC host filtering (CHM13/T2T), Kraken2/Bracken, and HUMAnN/MetaPhlAn. Other pipelines require their own references as documented in each pipeline README.
+Local database settings belong in `config/lab_paths.sh`; databases and analysis outputs are not versioned.
 
----
+## Documentation
 
-## Suggested Install Layout
+- [Installation guide](INSTALL_CAULab.md)
+- [Documentation portal source](docs/index.html)
+- [Container guide](common/README.md)
+- `caulab_usage.sh` lists installed commands and core examples.
 
-```bash
-caulab-pipelines/
-  GoQC/
-    Go_QC.sh
-    Go_QC_V1.smk
-    Dockerfile
-  KBracken/
-    Go_KBracken.sh
-    Go_KBracken_V1.smk
-    Dockerfile
-  Humann/
-    Go_Humann.sh
-    Go_Humann_V1.smk
-    Dockerfile
-  download_databases.sh
-  config/lab_paths.sh
-  config/lab_paths.yaml
-```
-
----
-
-## Notes
-
-- Reference databases are not versioned in this repository.
-- Local DB paths belong in `config/lab_paths.sh`; commit only `config/lab_paths.sh.example`.
-- Large outputs should stay outside Git-tracked paths.
-
----
+The HTML portal uses the same layout as UhlemannLab. To publish it at https://bbagy.github.io/CAULab/, configure GitHub Pages with **Deploy from a branch → main → /docs**. `docs/.nojekyll` preserves the static files.
 
 ## Maintainer
 

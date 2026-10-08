@@ -1,0 +1,1 @@
+Go_bacteriaRNake_paired_V4.smk

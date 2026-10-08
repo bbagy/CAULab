@@ -1,0 +1,1 @@
+Go_longWGS_V6_5_docker.smk

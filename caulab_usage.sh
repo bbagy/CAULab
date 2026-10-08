@@ -4,7 +4,7 @@ set -euo pipefail
 PIPELINES="${CAULAB_PIPELINES:-$(cd "$(dirname "$0")" && pwd -P)}"
 
 cat <<EOF
-CAULab core tools
+CAULab pipeline tools
 =================
 
 Pipeline root:
@@ -28,6 +28,15 @@ Commands on PATH after sourcing caulab.env:
   Go_QC.sh
   Go_KBracken.sh
   Go_Humann.sh
+  Go_longWGS.sh
+  Go_shortWGS.sh
+  Go_Rnake.sh
+  Go_daDake2.sh
+  Go_MAGs_QC.sh
+  Go_MAGs_Assembly.sh
+  Go_MAGs_Annotation.sh
+  Go_PFsnake.sh
+  Go_container_image.sh
   download_databases.sh
   caulab_usage.sh
 
@@ -44,6 +53,15 @@ List CAULab images:
 
 Build all three images during install:
   ./install_mac.sh --build-core
+
+Build the complete container family:
+  ./install_mac.sh --build-all
+
+Extended pipeline usage:
+  See "$PIPELINES/docs/index.html" and each pipeline README.
+  Container launchers accept --container docker|apptainer and --container-image IMAGE_OR_SIF.
+  GoQC is Docker-only; daDake2 requires the host Snakemake/R/DADA2/FIGARO environment.
+  New pipelines require explicit database/reference flags.
 
 Apple Silicon fallback:
   ./install_mac.sh --build-core --platform linux/amd64

@@ -46,14 +46,7 @@ flowchart LR
 
 ```bash
 cd Humann
-docker build -t humann:caulab .
-```
-
-On Apple Silicon Mac, if the normal build fails while solving Bioconda packages:
-
-```bash
-docker build --platform linux/amd64 -t humann:caulab .
-export DOCKER_PLATFORM=linux/amd64
+docker build --network=host -t humann:caulab .
 ```
 
 The wrapper defaults to image `humann:caulab`; override with `-m <tag>` if needed.
@@ -82,9 +75,9 @@ docker run --rm humann:caulab metaphlan --version
 ./Humann/Go_Humann.sh \
   -i /path/to/host_filtered_fastq \
   -o humann_run \
-  -n /data/db/humann_db/humann3/chocophlan \
-  -p /data/db/humann_db/humann3/uniref \
-  -b /data/db/humann_db/metaphlan4 \
+  -n /media/uhlemann/core4/DB/humann_db/humann3/chocophlan \
+  -p /media/uhlemann/core4/DB/humann_db/humann3/uniref \
+  -b /media/uhlemann/core4/DB/humann_db/metaphlan4 \
   -I mpa_vJan25_CHOCOPhlAnSGB_202503 \
   -c 8 -j 4 -t 4 \
   --run-musicc \
@@ -97,11 +90,11 @@ Real example:
 Go_Humann.sh \
   -i 1_host_filtered \
   -o 2_humann_out \
-  -n /data/db/humann_db/humann3/chocophlan \
-  -p /data/db/humann_db/humann3/uniref \
-  -b /data/db/humann_db/metaphlan4 \
+  -n /media/uhlemann/core4/DB/humann_db/humann3/chocophlan \
+  -p /media/uhlemann/core4/DB/humann_db/humann3/uniref \
+  -b /media/uhlemann/core4/DB/humann_db/metaphlan4 \
   -I mpa_vJan25_CHOCOPhlAnSGB_202503 \
-  -s "$CAULAB_PIPELINES/Humann" \
+  -s /home/uhlemann/heekuk_path \
   -c 8 -j 4 -t 4 \
   --run-musicc \
   -K
@@ -134,7 +127,7 @@ Go_Humann.sh \
 After `Go_toWorkstation.sh Humann`, files are placed as:
 
 ```text
-$CAULAB_PIPELINES/
+/home/uhlemann*/heekuk_path/
   Go_Humann.sh
   Go_Humann.smk
   scripts/
@@ -199,12 +192,12 @@ Key files:
 ```bash
 fastq_dir="host_filtered_fastq"
 output_dir="humann_run"
-chocophlan="/data/db/humann_db/humann3/chocophlan"
-uniref="/data/db/humann_db/humann3/uniref"
-metaphlan_db="/data/db/humann_db/metaphlan4"
+chocophlan="/media/uhlemann/core4/DB/humann_db/humann3/chocophlan"
+uniref="/media/uhlemann/core4/DB/humann_db/humann3/uniref"
+metaphlan_db="/media/uhlemann/core4/DB/humann_db/metaphlan4"
 metaphlan_index="mpa_vJan25_CHOCOPhlAnSGB_202503"
 
-snakemake --snakefile $CAULAB_PIPELINES/Humann/Go_Humann_V1.smk \
+snakemake --snakefile /home/uhlemann/heekuk_path/Go_Humann.smk \
   --config \
   fastq_dir="$fastq_dir" \
   output_dir="$output_dir" \
@@ -285,3 +278,10 @@ Skip normalization (raw HUMAnN tables only):
 ## Maintainer
 
 Heekuk Park
+
+## Container runtime
+
+Shell launchers accept `--container docker|apptainer` (default: `docker`).
+For HPC use `--container apptainer --container-image /path/to/pipeline.sif`
+with the existing analysis options. See [shared runtime instructions](../README.md#docker--apptainer-selection)
+for SIF preparation and deployment of `common/container.sh`.

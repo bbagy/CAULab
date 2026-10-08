@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CAULab Setup</title>
+  <link rel="stylesheet" href="styles.css?v=20260305-13">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">CAULab</div>
+      <nav class="nav">
+        <a href="./">Home</a>
+        <a href="containers.html">Docker &amp; Apptainer</a>
+        <a class="active" href="workstations.html">CAULab Setup</a>
+        <a href="longwgs.html">longWGS</a>
+        <a href="shortwgs.html">shortWGS</a>
+        <a href="goqc.html">GoQC</a>
+        <a href="kbracken.html">KBracken</a>
+        <a href="humann.html">Humann</a>
+        <a href="mags.html">MAGs</a>
+        <a href="pfsnake.html">PFsnake</a>
+        <a href="rnake.html">RNake</a>
+        <a href="dadake2.html">daDake2</a>
+      </nav>
+      <div class="sidebar-foot">
+        <a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">Open bbagy GitHub</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <span class="badge">Installation</span>
+      <h1>CAULab Setup</h1>
+      <p>Install the pipeline family to a stable local directory; keep data and databases on a separate large disk.</p>
+      <div class="card"><pre><code>git clone https://github.com/bbagy/CAULab.git
+cd CAULab
+./install_mac.sh --build-core
+source "$HOME/caulab-pipelines/caulab.env"
+caulab_usage.sh</code></pre></div>
+      <p>Use <code>--build-all</code> for all container images. daDake2 uses host Snakemake, R/DADA2, and FIGARO.</p>
+      <h2>Update</h2>
+      <div class="card"><pre><code>git pull
+./install_mac.sh --update --build-core
+source "$HOME/caulab-pipelines/caulab.env"</code></pre></div>
+      <p>Local database settings in <code>config/lab_paths.sh</code> and <code>config/lab_paths.yaml</code> are preserved.</p>
+      <p><a href="https://github.com/bbagy/CAULab/blob/main/INSTALL_CAULab.md">Full installation guide</a></p>
+    </main>
+  </div>
+</body>
+</html>
