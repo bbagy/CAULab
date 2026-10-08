@@ -17,7 +17,7 @@ Bacterial RNA-seq workflow for trimming, Bowtie2 mapping, HTSeq counting, and me
 ```mermaid
 flowchart LR
   A[Paired FASTQ] --> B[Prefilter gzip check]
-  B --> C[Trimmomatic trimming]
+  B --> C[fastp trimming]
   C --> D[Bowtie2 mapping]
   D --> E[SAMtools sort/index]
   E --> F[HTSeq-count]
@@ -46,7 +46,7 @@ The wrapper defaults to image `rnake:1.0`; override with `-m <tag>` if needed.
 Representative tools in the image:
 
 - `snakemake`
-- `trimmomatic`
+- `fastp`
 - `bowtie2`
 - `samtools`
 - `htseq-count`
@@ -201,4 +201,4 @@ for SIF preparation and deployment of `common/container.sh`.
 
 ## Library strandedness
 
-`-S no|yes|reverse` sets HTSeq strandedness (default: `no`). Select the value from the library preparation protocol; dUTP stranded libraries typically use `reverse`. TruSeq adapters are removed with Trimmomatic. Trimming, indexing, and mapping request 8 threads, capped by Snakemake cores.
+`-S no|yes|reverse` sets HTSeq strandedness (default: `no`). Select the value from the library preparation protocol; dUTP stranded libraries typically use `reverse`. Adapters are removed with fastp (auto-detected; paired-end also uses read overlap); no deduplication. Trimming, indexing, and mapping request 8 threads, capped by Snakemake cores.

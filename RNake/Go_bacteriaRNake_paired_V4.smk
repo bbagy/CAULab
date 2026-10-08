@@ -160,36 +160,36 @@ rule trim_reads:
         trimmed_r1_paired = f"{master_dir}/1_trim/{{sample}}.R1.paired.output.fastq.gz",
         trimmed_r2_paired = f"{master_dir}/1_trim/{{sample}}.R2.paired.output.fastq.gz",
         trimmed_r1_unpaired = f"{master_dir}/1_trim/{{sample}}.R1.unpaired.output.fastq.gz",
-        trimmed_r2_unpaired = f"{master_dir}/1_trim/{{sample}}.R2.unpaired.output.fastq.gz"
+        trimmed_r2_unpaired = f"{master_dir}/1_trim/{{sample}}.R2.unpaired.output.fastq.gz",
+        html = f"{master_dir}/1_trim/{{sample}}.fastp.html",
+        json = f"{master_dir}/1_trim/{{sample}}.fastp.json"
     log:
-        f"{master_dir}/1_trim/{{sample}}.trimmomatic.log"
+        f"{master_dir}/1_trim/{{sample}}.fastp.log"
     threads: 8
     shell:
         '''
         echo "Trimming {wildcards.sample} ..."
 
-        # Illumina TruSeq adapters bundled with the bioconda trimmomatic package
-        adapter_dir="$(dirname "$(readlink -f "$(command -v trimmomatic)")")/adapters"
+        # fastp: adapter auto-detection (PE: overlap + --detect_adapter_for_pe),
+        # Quality thresholds follow the previous settings; fastp and Trimmomatic algorithms differ.
+        # No deduplication: removing duplicate reads would distort expression counts.
+        qc_opts=(--cut_front --cut_front_mean_quality 3 --cut_tail --cut_tail_mean_quality 3
+          --cut_right --cut_right_window_size 4 --cut_right_mean_quality 20
+          --length_required 36 --thread {threads} --html {output.html:q} --json {output.json:q})
 
         if [ "{params.is_paired}" = "True" ]; then
             echo "Detected paired-end"
-            trimmomatic PE -threads {threads} -phred33 \
-              {input.r1} {input.r2} \
-              {output.trimmed_r1_paired} {output.trimmed_r1_unpaired} \
-              {output.trimmed_r2_paired} {output.trimmed_r2_unpaired} \
-              ILLUMINACLIP:"$adapter_dir/TruSeq3-PE-2.fa":2:30:10:2:True \
-              LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:36 2> {log}
-
+            fastp -i {input.r1:q} -I {input.r2:q} \
+              -o {output.trimmed_r1_paired:q} -O {output.trimmed_r2_paired:q} \
+              --unpaired1 {output.trimmed_r1_unpaired:q} --unpaired2 {output.trimmed_r2_unpaired:q} \
+              --detect_adapter_for_pe "${{qc_opts[@]}}" 2> {log:q}
+            touch {output.trimmed_r1_unpaired:q} {output.trimmed_r2_unpaired:q}
         else
             echo "Detected single-end"
-            trimmomatic SE -threads {threads} -phred33 \
-              {input.r1} \
-              {output.trimmed_r1_paired} \
-              ILLUMINACLIP:"$adapter_dir/TruSeq3-SE.fa":2:30:10 \
-              LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:36 2> {log}
+            fastp -i {input.r1:q} -o {output.trimmed_r1_paired:q} "${{qc_opts[@]}}" 2> {log:q}
 
             # dummy outputs
-            touch {output.trimmed_r2_paired} {output.trimmed_r2_unpaired} {output.trimmed_r1_unpaired}
+            touch {output.trimmed_r2_paired:q} {output.trimmed_r2_unpaired:q} {output.trimmed_r1_unpaired:q}
         fi
         '''
 
@@ -223,12 +223,12 @@ rule map_reads:
         if [ "{params.is_paired}" = "True" ]; then
             echo "Detected paired-end"
             bowtie2 --no-unal -p {threads} -x {master_dir}/2_bowtie2_index/index \
-              -1 {input.r1} -2 {input.r2} \
+              -1 {input.r1:q} -2 {input.r2:q} \
               -S {output} 2>{master_dir}/3_bowtie2_files/{wildcards.sample}.log
         else
             echo "Detected single-end"
             bowtie2 --no-unal -p {threads} -x {master_dir}/2_bowtie2_index/index \
-              -U {input.r1} \
+              -U {input.r1:q} \
               -S {output} 2>{master_dir}/3_bowtie2_files/{wildcards.sample}.log
         fi
         '''

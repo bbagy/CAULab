@@ -10,7 +10,7 @@ RUN micromamba create -y -n ${ENV_NAME} \
     python=3.11 \
     snakemake \
     pandas \
-    trimmomatic \
+    fastp \
     bowtie2 \
     samtools \
     htseq \
