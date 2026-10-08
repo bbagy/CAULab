@@ -18,7 +18,7 @@ from pathlib import Path
 # ---------- Config ----------
 FASTQ_DIR  = config["fastq_dir"]
 OUTPUT_DIR = config["output_dir"]
-DB_DIR     = config["wgs_db"]             # e.g., /media/uhlemann/core4/DB/WGS_DB2
+DB_DIR     = config["wgs_db"]             # e.g., $HOME/caulab-db/shortWGS
 KRAKEN_DB  = config["kraken_db"]          # e.g., /media/.../kraken2DB/k2_pluspfp_...
 
 # DB: WGS_DB2 내부 고정 경로
@@ -1058,9 +1058,11 @@ rule summary_report:
 
         shell(f"""
           mkdir -p {os.path.dirname(summary_html)} /work/.rmd_tmp
-          Rscript -e "src <- '/home/uhlemann/heekuk_path/GoWGS/scripts/20251007_Summary_WGS_tem_v3.Rmd'; \
+          Rscript -e "src <- '/report/scripts/20251007_Summary_WGS_tem_v3.Rmd'; \
             tmp <- '/work/.rmd_tmp/20251007_Summary_WGS_tem_v3.Rmd'; \
             file.copy(src, tmp, overwrite=TRUE); \
+            css <- file.path(dirname(src), 'styles.css'); \
+            if (file.exists(css)) file.copy(css, '/work/.rmd_tmp/styles.css', overwrite=TRUE); \
             rmarkdown::render(tmp, \
               output_file='{summary_html}', \
               intermediates_dir='/work/.rmd_tmp', \

@@ -11,7 +11,7 @@ set -- ${CONTAINER_ARGS[@]+"${CONTAINER_ARGS[@]}"}
 
 
 usage(){
-  echo "Usage: $0 [--container docker|apptainer] [--container-image IMAGE_OR_SIF] -i FASTQ_DIR -o OUTPUT_DIR -d WGS_DB_DIR -k KRAKEN_DB_DIR -r GOWGS_DIR [-s SNAKEDIR] [-c CORES] [-m IMAGE] [-n] [-K] [-P 0|1]"
+  echo "Usage: $0 [--container docker|apptainer] [--container-image IMAGE_OR_SIF] -i FASTQ_DIR -o OUTPUT_DIR -d WGS_DB_DIR -k KRAKEN_DB_DIR [-r REPORT_DIR] [-s SNAKEDIR] [-c CORES] [-m IMAGE] [-n] [-K] [-P 0|1]"
   exit 1
 }
 
@@ -163,7 +163,7 @@ FASTQ_DIR=""
 OUTPUT_DIR=""
 WGS_DB_DIR=""
 KRAKEN_DB_DIR=""
-GOWGS_DIR=""
+REPORT_DIR=""
 SNAKEDIR=""
 CORES=8
 IMAGE="shortwgs"
@@ -179,7 +179,7 @@ while getopts "i:o:d:k:r:s:c:m:nKP:" opt; do
     o) OUTPUT_DIR="$OPTARG" ;;
     d) WGS_DB_DIR="$OPTARG" ;;
     k) KRAKEN_DB_DIR="$OPTARG" ;;
-    r) GOWGS_DIR="$OPTARG" ;;
+    r) REPORT_DIR="$OPTARG" ;;
     s) SNAKEDIR="$OPTARG" ;;
     c) CORES="$OPTARG" ;;
     m) IMAGE="$OPTARG" ;;
@@ -194,12 +194,10 @@ done
 [ -z "$OUTPUT_DIR" ] && usage
 [ -z "$WGS_DB_DIR" ] && usage
 [ -z "$KRAKEN_DB_DIR" ] && usage
-[ -z "$GOWGS_DIR" ] && usage
 
 FASTQ_DIR_ABS="$(abs_path "$FASTQ_DIR")" || { echo "[Go_shortWGS] FASTQ_DIR not found: $FASTQ_DIR"; exit 1; }
 WGS_DB_DIR_ABS="$(abs_path "$WGS_DB_DIR")" || { echo "[Go_shortWGS] WGS_DB_DIR not found: $WGS_DB_DIR"; exit 1; }
 KRAKEN_DB_DIR_ABS="$(abs_path "$KRAKEN_DB_DIR")" || { echo "[Go_shortWGS] KRAKEN_DB_DIR not found: $KRAKEN_DB_DIR"; exit 1; }
-GOWGS_DIR_ABS="$(abs_path "$GOWGS_DIR")" || { echo "[Go_shortWGS] GOWGS_DIR not found: $GOWGS_DIR"; exit 1; }
 
 prefilter_illumina_pairs "$FASTQ_DIR_ABS"
 
@@ -291,6 +289,9 @@ if [ ! -f "$PIPELINE_DIR/$SNAKEFILE_NAME" ]; then
   echo "[Go_shortWGS][FATAL] Snakefile not found: $PIPELINE_DIR/$SNAKEFILE_NAME"
   exit 1
 fi
+REPORT_DIR="${REPORT_DIR:-$PIPELINE_DIR}"
+REPORT_DIR_ABS="$(abs_path "$REPORT_DIR")" || { echo "[Go_shortWGS] REPORT_DIR not found: $REPORT_DIR"; exit 1; }
+[ -f "$REPORT_DIR_ABS/scripts/20251007_Summary_WGS_tem_v3.Rmd" ] || { echo "[Go_shortWGS] Report template not found under $REPORT_DIR_ABS/scripts"; exit 1; }
 echo "[Go_shortWGS] Using Snakefile: $PIPELINE_DIR/$SNAKEFILE_NAME"
 
 container_require_image "$IMAGE" || exit 1
@@ -303,7 +304,7 @@ run(){
     -v "$FASTQ_DIR_ABS":/fastq:ro \
     -v "$WGS_DB_DIR_ABS":/db/wgs_db:ro \
     -v "$KRAKEN_DB_DIR_ABS":/db/kraken2:ro \
-    -v "$GOWGS_DIR_ABS":/home/uhlemann/heekuk_path/GoWGS \
+    -v "$REPORT_DIR_ABS":/report:ro \
     -w /work \
     "$IMAGE" \
     "$@"
@@ -319,6 +320,7 @@ BASE_ARGS=(
   fastq_dir=/fastq
   output_dir="$OUTPUT_DIR"
   wgs_db=/db/wgs_db
+  report_rmd=/report/scripts/20251007_Summary_WGS_tem_v3.Rmd
   kraken_db=/db/kraken2
   kraken_db_host="$KRAKEN_DB_DIR_ABS"
   kraken_db_name="$(basename "$KRAKEN_DB_DIR_ABS")"

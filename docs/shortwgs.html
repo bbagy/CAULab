@@ -24,21 +24,19 @@
   -o /path/to/output \
   -d /path/to/WGS_DB2 \
   -k /path/to/kraken2_db \
-  -r "$HOME/caulab-pipelines/shortWGS" \
   -K</code></pre></div>
 
       <h2>실행 예시</h2>
       <div class="card"><pre><code>Go_shortWGS.sh \
   -i shortWGS/20261001_WGS_HKP \
   -o shortWGS/20261001_WGS_HKP_out \
-  -d /media/uhlemann/core4/DB/WGS_DB2 \
-  -k /media/uhlemann/core4/DB/kraken2DB/k2_pluspfp_16gb_20241228 \
-  -r "$HOME/caulab-pipelines/shortWGS" \
+  -d "$HOME/caulab-db/shortWGS" \
+  -k "$HOME/caulab-db/kraken2" \
   -K</code></pre></div>
 
       <h2>옵션</h2>
       <table>
-        <tr><th>옵션</th><th>설명</th></tr><tr><td><code>-r</code></td><td>설치된 shortWGS 폴더 · 보고서 템플릿 포함</td></tr>
+        <tr><th>옵션</th><th>설명</th></tr><tr><td><code>-r</code></td><td>보고서 폴더 지정(선택) · 기본값: 설치된 shortWGS 폴더</td></tr>
         <tr><td><code>-n</code></td><td>실행 계획 확인</td></tr>
         <tr><td><code>-K</code></td><td>오류 발생 시 나머지 샘플 계속 실행</td></tr>
         <tr><td><code>-c</code></td><td>Snakemake CPU 수</td></tr>

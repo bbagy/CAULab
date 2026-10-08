@@ -26,9 +26,9 @@
 # Example run:
 # dir="test"
 # output_dir="3_assembled_test"
-# DB="/media/uhlemannlab/Nook01/DB"
+# DB="$HOME/caulab-db/longWGS"
 #
-# snakemake --snakefile /home/uhlemannlab/heekuk_path/Go_autocycler.smk \
+# snakemake --snakefile $HOME/caulab-pipelines/longWGS/Go_longWGS.smk \
 #   --config Fastq_DIRS="$dir" output="$output_dir" database="$DB" threads=4 \
 #   --cores 8 --rerun-incomplete --keep-going
 #############################################

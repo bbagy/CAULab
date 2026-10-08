@@ -88,7 +88,6 @@ docker run --rm shortwgs micromamba run -n tetyper python /usr/local/bin/TETyper
   -o /path/to/output \
   -d /path/to/WGS_DB2 \
   -k /path/to/kraken2_db \
-  -r "$HOME/caulab-pipelines/shortWGS" \
   -c 8 \
   -K
 ```
@@ -101,7 +100,7 @@ docker run --rm shortwgs micromamba run -n tetyper python /usr/local/bin/TETyper
 | `-o` | - | Output directory |
 | `-d` | - | WGS DB root (`WGS_DB2`) |
 | `-k` | - | Kraken2 DB directory |
-| `-r` | - | Installed `shortWGS` directory (legacy report mount) |
+| `-r` | script directory | Optional report directory override (`scripts/` contains Rmd and CSS) |
 | `-s` | script directory | Optional Snakefile directory override |
 | `-c` | `8` | Snakemake cores |
 | `-m` | `shortwgs` | Docker image name |
@@ -189,19 +188,19 @@ Prefilter artifacts (sibling of input FASTQ dir):
 Dry-run:
 
 ```bash
-./shortWGS/Go_shortWGS.sh -i IN -o OUT -d DB -k KRAKEN -r "$HOME/caulab-pipelines/shortWGS" -n
+./shortWGS/Go_shortWGS.sh -i IN -o OUT -d DB -k KRAKEN -n
 ```
 
 Production run:
 
 ```bash
-./shortWGS/Go_shortWGS.sh -i IN -o OUT -d DB -k KRAKEN -r "$HOME/caulab-pipelines/shortWGS" -K
+./shortWGS/Go_shortWGS.sh -i IN -o OUT -d DB -k KRAKEN -K
 ```
 
 Use custom image tag:
 
 ```bash
-./shortWGS/Go_shortWGS.sh -i IN -o OUT -d DB -k KRAKEN -r "$HOME/caulab-pipelines/shortWGS" -m shortwgs
+./shortWGS/Go_shortWGS.sh -i IN -o OUT -d DB -k KRAKEN -m shortwgs
 ```
 
 ## Troubleshooting

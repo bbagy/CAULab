@@ -5,7 +5,7 @@ output:
     toc_float:
       collapsed: true
       smooth_scroll: true
-    css: /home/uhlemann/heekuk_path/GoWGS/scripts/styles.css
+    css: styles.css
 params:
   mlst_files: NULL        # 벡터
   args_full_files: NULL   # 벡터
@@ -353,6 +353,4 @@ cat("***")
 
 
 
-```{r logo, echo=FALSE, out.width='50%', fig.align='center'}
-knitr::include_graphics("/home/uhlemann/heekuk_path/GoWGS/scripts/Columbia_CUIMC_Uhlemann4.png")
-```
+CAULab

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
-cd /media/uhlemann/core5/01_MG/20260409_DEAPIM30
-
-tail -n 100 humann3_out/6_logs/DPM10014_S213.humann.log || true
+# Usage: bash check_humann_logs_example.sh OUTPUT_DIR SAMPLE_NAME
+output_dir="${1:?Specify the Humannake output directory}"
+sample="${2:?Specify the sample name}"
+tail -n 100 "$output_dir/6_logs/$sample.humann.log" || true
 echo
-tail -n 100 humann3_out/1_humann3_out/DPM10014_S213_humann_temp/DPM10014_S213.log || true
+tail -n 100 "$output_dir/1_humann3_out/${sample}_humann_temp/$sample.log" || true

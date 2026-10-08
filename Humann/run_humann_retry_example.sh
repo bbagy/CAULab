@@ -21,7 +21,7 @@
 #
 # 임시 대안:
 #   - 급할 때는 예전 conda 방식 (humann3 env + MetaPhlAn3_v3 DB) 사용 가능
-#   - DB: /media/uhlemann/core4/DB/humann_db/humann3/MetaPhlAn3_v3
+#   - DB: $DB_ROOT/humann/MetaPhlAn3_v3
 #
 # 다음 할 일:
 #   1. test/ 샘플 2쌍으로 Docker 테스트 → direct humann stderr 확인
@@ -39,13 +39,14 @@ set -- ${CONTAINER_ARGS[@]+"${CONTAINER_ARGS[@]}"}
 
 
 SCRIPT_DIR="$_CONTAINER_DIR"
-cd /media/uhlemann/core5/01_MG/20260409_DEAPIM30
+cd "${PROJECT_DIR:?Set PROJECT_DIR to your analysis directory}"
+DB_ROOT="${DB_ROOT:-$HOME/caulab-db}"
 
 inputDIR="DEAPIM30_QC/test"
 outDIR="humann3_out_test"
-chocophlanDB="/media/uhlemann/core4/DB/humann_db/humann3/chocophlan"
-uniref90DB="/media/uhlemann/core4/DB/humann_db/humann3/uniref"
-metaphlanDB="/media/uhlemann/core4/DB/humann_db/metaphlan4"
+chocophlanDB="$DB_ROOT/humann/chocophlan"
+uniref90DB="$DB_ROOT/humann/uniref"
+metaphlanDB="$DB_ROOT/humann/metaphlan4"
 metaphlanIndex="mpa_vJun23_CHOCOPhlAnSGB_202307"
 image="humann:caulab"
 
@@ -59,9 +60,9 @@ cat <<'EOF'
 Go_Humannake.sh --container "$CONTAINER_RUNTIME" ${CONTAINER_IMAGE:+--container-image "$CONTAINER_IMAGE"} \
    -i DEAPIM30_QC/test \
    -o humann3_out_test \
-   -n /media/uhlemann/core4/DB/humann_db/humann3/chocophlan \
-   -p /media/uhlemann/core4/DB/humann_db/humann3/uniref \
-   -b /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23 \
+   -n $DB_ROOT/humann/chocophlan \
+   -p $DB_ROOT/humann/uniref \
+   -b $DB_ROOT/humann/metaphlan4 \
    -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
    -c 4 \
    -j 1 \
@@ -122,12 +123,12 @@ tail -n 100 "humann_direct_debug/${sample}.direct.log" || true
 
 container_run --rm \
      -u "$(id -u):$(id -g)" \
-     -v /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23:/db \
+     -v "$DB_ROOT/humann/metaphlan4":/db \
      humann:caulab \
      metaphlan --install --index mpa_vJun23_CHOCOPhlAnSGB_202307 --bowtie2db /db
   container_run --rm \
     -u "$(id -u):$(id -g)" \
-    -v /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23:/db \
+    -v "$DB_ROOT/humann/metaphlan4":/db \
     humann:caulab \
     metaphlan --install --index mpa_vJun23_CHOCOPhlAnSGB_202307 --bowtie2db /db
 
@@ -135,7 +136,7 @@ container_run --rm \
 
  container_run --rm \
     -u "$(id -u):$(id -g)" \
-    -v /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23:/db \
+    -v "$DB_ROOT/humann/metaphlan4":/db \
     humann:caulab \
     bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH; which bowtie2-build; /opt/conda/envs/humann/bin/bowtie2-build --version; /opt/conda/envs/humann/bin/bowtie2-build --large-index -f /db/mpa_vJun23_CHOCOPhlAnSGB_202307.fna /db/mpa_vJun23_CHOCOPhlAnSGB_202307'
 
@@ -168,7 +169,7 @@ EOF
 cat <<'EOF'
 container_run --rm \
   -u "$(id -u):$(id -g)" \
-  -v /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23:/db \
+  -v "$DB_ROOT/humann/metaphlan4":/db \
   humann:caulab \
   bash -lc 'set -euo pipefail; \
     echo "[mount]"; ls -ld /db; realpath /db; \
@@ -183,7 +184,7 @@ EOF
 cat <<'EOF'
 container_run --rm \
   -u "$(id -u):$(id -g)" \
-  -v /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23:/db \
+  -v "$DB_ROOT/humann/metaphlan4":/db \
   humann:caulab \
   bash -lc 'set -euo pipefail; \
     export PATH=/opt/conda/envs/humann/bin:$PATH; \
@@ -248,7 +249,7 @@ EOF
 # Recommended order:
 #   1. Retry `metaphlan --install --index ... --bowtie2db /db`
 #   2. If install succeeds, use that DB directly with:
-#        -b /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23
+#        -b $DB_ROOT/humann/metaphlan4
 #        -I mpa_vJun23_CHOCOPhlAnSGB_202307
 #   3. Only if official install still fails, fall back to manual bowtie2-build
 #
@@ -256,7 +257,7 @@ EOF
 cat <<'EOF'
 container_run --rm \
   -u "$(id -u):$(id -g)" \
-  -v /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23:/db \
+  -v "$DB_ROOT/humann/metaphlan4":/db \
   humann:caulab \
   bash -lc 'set -euo pipefail; \
     export PATH=/opt/conda/envs/humann/bin:$PATH; \
@@ -269,7 +270,7 @@ EOF
 cat <<'EOF'
 container_run --rm \
   -u "$(id -u):$(id -g)" \
-  -v /media/uhlemann/core4/DB/humann_db/metaphlan4_vJun23:/db \
+  -v "$DB_ROOT/humann/metaphlan4":/db \
   humann:caulab \
   bash -lc 'set -euo pipefail; \
     ls -lh /db/mpa_vJun23_CHOCOPhlAnSGB_202307*'

@@ -21,6 +21,6 @@ bash ~/CAULab/shortWGS/Go_shortWGS.sh \
   --container apptainer \
   --container-image "$HOME/containers/shortwgs.sif" \
   -i /shared/fastq -o shortwgs_out \
-  -d /shared/db/wgs -k /shared/db/kraken2 -r "$HOME/CAULab/shortWGS" \
+  -d /shared/db/wgs -k /shared/db/kraken2 \
   -c 8 -n</code></pre></div><p>입력 / 출력 / DB: 실제 경로로 변경<br>dry-run 성공 → <code>-n</code> 제거 후 실행<br>CPU / 메모리: 할당 자원 기준 · Slurm 제출 별도</p>
 <h2>기록 항목</h2><div class="card"><ul><li>Git 커밋 · Docker 이미지 ID · SIF 체크섬</li><li>이미지 / TAR / SIF: 코드 저장소 밖에 보관</li><li>실행 스크립트 복사 시 <code>common/container.sh</code> 포함</li></ul></div><p><a href="https://github.com/bbagy/CAULab/blob/main/common/README.md">이미지 목록과 전송 방법 ↗</a></p><footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div><script src="assets/copy-code.js?v=compact" defer></script></body></html>

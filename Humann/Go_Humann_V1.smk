@@ -21,8 +21,8 @@ from pathlib import Path
 
 FASTQ_DIR = config.get("fastq_dir", "host_filtered_fastq")
 OUTPUT_DIR = config.get("output_dir", config.get("output", "output"))
-NUCLEOTIDE_DB = config.get("nucleotide_db", "/media/uhlemann/core4/DB/humann_db/humann3/chocophlan")
-PROTEIN_DB = config.get("protein_db", "/media/uhlemann/core4/DB/humann_db/humann3/uniref")
+NUCLEOTIDE_DB = config["nucleotide_db"]
+PROTEIN_DB = config["protein_db"]
 METAPHLAN_DB = config.get("metaphlan_db", "")
 METAPHLAN_INDEX = config.get("metaphlan_index", "")
 THREADS_PER_SAMPLE = int(config.get("humann_threads", config.get("threads", 4)))

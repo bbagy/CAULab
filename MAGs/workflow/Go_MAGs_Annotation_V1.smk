@@ -28,7 +28,7 @@
 # mags_dir="mags_assembly_out/7_DAS_tool_out/all_bins"
 # output_dir="mags_annotation_out"
 #
-# snakemake --snakefile /home/uhlemann/heekuk_path/MAGs/workflow/Go_MAGs_Annotation_V1.smk \
+# snakemake --snakefile $HOME/caulab-pipelines/MAGs/workflow/Go_MAGs_Annotation_V1.smk \
 #   --config mags_dir="$mags_dir" output_dir="$output_dir" \
 #   gtdbtk_data_dir="/db/gtdbtk" gtdbtk_mash_db="/db/gtdbtk/mash_db/genomic_mash_db.msh" \
 #   eggnog_data_dir="/db/eggnog" kofam_scan_dir="/db/kofam_scan" \

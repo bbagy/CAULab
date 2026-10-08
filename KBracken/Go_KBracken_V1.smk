@@ -16,7 +16,7 @@ from pathlib import Path
 
 FASTQ_DIR = config.get("fastq_dir", "input_fastqs")
 OUTPUT_DIR = config.get("output_dir", config.get("output", "output"))
-DB = config.get("db", "/media/uhlemann/core4/DB/kraken2DB/k2_pluspfp_16gb_20241228")
+DB = config["db"]
 
 DELIMITER = config.get("delimiter", "_")
 if DELIMITER not in ["_", "."]:
