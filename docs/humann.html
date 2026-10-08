@@ -35,14 +35,14 @@
 
       <h2>실행 예시</h2>
       <div class="card"><pre><code>Go_Humannake.sh \
-  -i Humann/20261001_MG_HKP_nohuman \
-  -o Humann/20261001_MG_HKP_humann_out \
+  -i Humannake/20261001_MG_HKP_nohuman \
+  -o Humannake/20261001_MG_HKP_humann_out \
   -n "$HOME/kpark-db/humann/chocophlan" \
   -p "$HOME/kpark-db/humann/uniref90_diamond" \
   -u "$HOME/kpark-db/humann/utility_mapping" \
   -b "$HOME/kpark-db/humann/metaphlan4" \
   -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
-  -s "$KPARK_PIPELINES/Humann" \
+  -s "$KPARK_PIPELINES/Humannake" \
   -c 8 -j 4 -t 4 \
   -K</code></pre></div>
 
@@ -64,7 +64,7 @@
       </table>
 
       <h2>입력 구성</h2>
-      <div class="card"><pre><code>Humann/
+      <div class="card"><pre><code>Humannake/
 |-- 20260901_MG_HKP_nohuman/
 |   |-- SAMPLE1_R1_nohuman.fastq.gz
 |   `-- SAMPLE1_R2_nohuman.fastq.gz

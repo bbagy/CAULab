@@ -45,7 +45,7 @@ flowchart LR
 ## Build
 
 ```bash
-cd Humann
+cd Humannake
 docker build --network=host -t humann:kpark .
 ```
 
@@ -72,7 +72,7 @@ docker run --rm humann:kpark metaphlan --version
 ## Quick Start
 
 ```bash
-./Humann/Go_Humannake.sh \
+./Humannake/Go_Humannake.sh \
   -i /path/to/host_filtered_fastq \
   -o humann_run \
   -n "$HOME/kpark-db/humann/chocophlan" \
@@ -95,7 +95,7 @@ Go_Humannake.sh \
   -u "$HOME/kpark-db/humann/utility_mapping" \
   -b "$HOME/kpark-db/humann/metaphlan4" \
   -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
-  -s "$HOME/kpark-pipelines/Humann" \
+  -s "$HOME/kpark-pipelines/Humannake" \
   -c 8 -j 4 -t 4 \
   -K
 ```
@@ -125,7 +125,7 @@ Go_Humannake.sh \
 
 ## Workstation Layout
 
-After `Go_toWorkstation.sh Humann`, files are placed as:
+After `Go_toWorkstation.sh Humannake`, files are placed as:
 
 ```text
 /home/uhlemann*/heekuk_path/
@@ -133,7 +133,7 @@ After `Go_toWorkstation.sh Humann`, files are placed as:
   Go_Humann.smk
   scripts/
     humann_masterlog.py
-  docker/Humann/
+  docker/Humannake/
     Dockerfile
 ```
 
@@ -198,7 +198,7 @@ uniref=""$HOME/kpark-db/humann/uniref90_diamond""
 metaphlan_db=""$HOME/kpark-db/humann/metaphlan4""
 metaphlan_index="mpa_vJun23_CHOCOPhlAnSGB_202307"
 
-snakemake --snakefile "$HOME/kpark-pipelines/Humann"/Go_Humann.smk \
+snakemake --snakefile "$HOME/kpark-pipelines/Humannake"/Go_Humann.smk \
   --config \
   fastq_dir="$fastq_dir" \
   output_dir="$output_dir" \
@@ -248,25 +248,25 @@ snakemake --snakefile "$HOME/kpark-pipelines/Humann"/Go_Humann.smk \
 Dry-run:
 
 ```bash
-./Humann/Go_Humannake.sh -i IN -o OUT -n CHOCO -p UNIREF -b MPA -I mpa_index -x
+./Humannake/Go_Humannake.sh -i IN -o OUT -n CHOCO -p UNIREF -b MPA -I mpa_index -x
 ```
 
 Production run with MUSiCC:
 
 ```bash
-./Humann/Go_Humannake.sh -i IN -o OUT -n CHOCO -p UNIREF -b MPA -I mpa_index --run-musicc -K
+./Humannake/Go_Humannake.sh -i IN -o OUT -n CHOCO -p UNIREF -b MPA -I mpa_index --run-musicc -K
 ```
 
 Skip normalization (raw HUMAnN tables only):
 
 ```bash
-./Humann/Go_Humannake.sh -i IN -o OUT -n CHOCO -p UNIREF -b MPA -I mpa_index --skip-gene-norm -K
+./Humannake/Go_Humannake.sh -i IN -o OUT -n CHOCO -p UNIREF -b MPA -I mpa_index --skip-gene-norm -K
 ```
 
 ## Troubleshooting
 
 - `Docker image not found locally: humann:kpark`
-  - build with `docker build -t humann:kpark Humann`
+  - build with `docker build -t humann:kpark Humannake`
 - MetaPhlAn DB errors mentioning `mpa_*.pkl` not found
   - pass `-b <dir>` and `-I <index_basename>`, not the `.pkl` itself (or use the legacy `.pkl` shortcut)
 - Lock-related failure in `humann.log`

@@ -76,7 +76,7 @@ def _validate_runtime():
     if not missing_paths and not missing_bins:
         return
 
-    msg = ["[Humann] Runtime validation failed."]
+    msg = ["[Humannake] Runtime validation failed."]
     if missing_paths:
         msg.append("Missing paths: " + ", ".join(missing_paths))
     if missing_bins:
@@ -113,7 +113,7 @@ def _discover_fastqs():
         fastqs.extend(glob.glob(os.path.join(FASTQ_DIR, pat)))
     fastqs = sorted(set(fastqs))
     if not fastqs:
-        raise ValueError(f"[Humann] No FASTQ files found in {FASTQ_DIR}")
+        raise ValueError(f"[Humannake] No FASTQ files found in {FASTQ_DIR}")
 
     sample_map = {}
     for f in fastqs:
@@ -124,7 +124,7 @@ def _discover_fastqs():
         if len(files) == 1:
             continue
         if len(files) != 2:
-            raise ValueError(f"[Humann] Expected 1 or 2 FASTQs for {sample}, found {len(files)}: {files}")
+            raise ValueError(f"[Humannake] Expected 1 or 2 FASTQs for {sample}, found {len(files)}: {files}")
 
         names = [os.path.basename(f) for f in sorted(files)]
         is_pair = (
@@ -132,7 +132,7 @@ def _discover_fastqs():
             and any(re.search(r"_R2(_nohuman)?(\.|$)|\.R2(\.|$)|_R2_001", name, flags=re.IGNORECASE) for name in names)
         )
         if not is_pair:
-            raise ValueError(f"[Humann] Multiple FASTQs for {sample} do not look like an R1/R2 pair: {files}")
+            raise ValueError(f"[Humannake] Multiple FASTQs for {sample} do not look like an R1/R2 pair: {files}")
 
         sample_map[sample] = sorted(
             files,

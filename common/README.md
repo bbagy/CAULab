@@ -30,7 +30,7 @@ workstation image list before exporting; the images themselves are not in Git.
 | longWGS | `longwgs` (implicit `latest` tag) |
 | RNake | `rnake:1.0` |
 | KBracken | `kbracken:kpark` |
-| Humann | `humann:kpark` |
+| Humannake | `humann:kpark` |
 | MAGs QC | `mags-qc:1.0` |
 | MAGs Assembly | `mags-assembly:1.0` |
 | MAGs Annotation | `mags-annotation:1.0` |

@@ -21,7 +21,7 @@ Notes:
   - Docker must already be installed and running if a build option is used.
   - Use --platform linux/amd64 on Apple Silicon if Bioconda cannot solve linux/arm64 packages.
   - Use --no-cache when replacing a broken Docker image.
-  - --build-core builds GoQC, KBracken, and Humann images.
+  - --build-core builds GoQC, KBracken, and Humannake images.
   - --build-all also builds WGS, RNake, and all three MAGs stages.
   - daDake2 runs on the host and requires Snakemake, R/DADA2, and FIGARO.
   - --update refreshes an existing install while preserving config/lab_paths.yaml.
@@ -115,6 +115,7 @@ prepare_update_target() {
     "$PREFIX/GoQC" \
     "$PREFIX/KBracken" \
     "$PREFIX/Humann" \
+    "$PREFIX/Humannake" \
     "$PREFIX/longWGS" \
     "$PREFIX/shortWGS" \
     "$PREFIX/RNake" \
@@ -148,7 +149,7 @@ prepare_update_target() {
 
 copy_install_files() {
   mkdir -p "$PREFIX"
-  for pipeline in GoQC KBracken Humann longWGS shortWGS RNake daDake2 MAGs common docs; do
+  for pipeline in GoQC KBracken Humannake longWGS shortWGS RNake daDake2 MAGs common docs; do
     cp -R "$SCRIPT_DIR/$pipeline" "$PREFIX/"
   done
   cp -R "$SCRIPT_DIR/config" "$PREFIX/"
@@ -186,7 +187,7 @@ fi
 mkdir -p "$PREFIX/bin"
 ln -sf "../GoQC/Go_QC.sh" "$PREFIX/bin/Go_QC.sh"
 ln -sf "../KBracken/Go_KBracken.sh" "$PREFIX/bin/Go_KBracken.sh"
-ln -sf "../Humann/Go_Humannake.sh" "$PREFIX/bin/Go_Humannake.sh"
+ln -sf "../Humannake/Go_Humannake.sh" "$PREFIX/bin/Go_Humannake.sh"
 for launcher in longWGS/Go_longWGS.sh shortWGS/Go_shortWGS.sh RNake/Go_Rnake.sh daDake2/Go_daDake2.sh MAGs/Go_MAGs_QC.sh MAGs/Go_MAGs_Assembly.sh MAGs/Go_MAGs_Annotation.sh common/Go_container_image.sh; do
   ln -sf "../$launcher" "$PREFIX/bin/$(basename "$launcher")"
 done
@@ -285,7 +286,7 @@ if [ "$BUILD_KBRACKEN" -eq 1 ]; then
   check_image_runtime "kbracken:kpark"
 fi
 if [ "$BUILD_HUMANN" -eq 1 ]; then
-  build_image "humann:kpark" "$PREFIX/Humann"
+  build_image "humann:kpark" "$PREFIX/Humannake"
   check_image_runtime "humann:kpark"
 fi
 
@@ -345,5 +346,5 @@ cat <<EOF
 [K-park Lab install] Updated wrapper scripts:
   $PREFIX/GoQC/Go_QC.sh
   $PREFIX/KBracken/Go_KBracken.sh
-  $PREFIX/Humann/Go_Humannake.sh
+  $PREFIX/Humannake/Go_Humannake.sh
 EOF

@@ -1,7 +1,7 @@
 FROM mambaorg/micromamba:1.5.10
 
 LABEL author="Heekuk Park"
-LABEL project="Humann"
+LABEL project="Humannake"
 
 ENV ENV_NAME=humann
 ENV CONDA_OVERRIDE_ARCHSPEC=x86_64

@@ -96,7 +96,7 @@ $HOME/kpark-pipelines/
     kpark_usage.sh
   GoQC/
   KBracken/
-  Humann/
+  Humannake/
   config/lab_paths.yaml
   kpark_usage.sh
 ```
@@ -113,7 +113,7 @@ cd "$KPARK_PIPELINES/GoQC"
 docker build -t goqc:kpark .
 cd "$KPARK_PIPELINES/KBracken"
 docker build -t kbracken:kpark .
-cd "$KPARK_PIPELINES/Humann"
+cd "$KPARK_PIPELINES/Humannake"
 docker build -t humann:kpark .
 ```
 
@@ -124,7 +124,7 @@ cd "$KPARK_PIPELINES/GoQC"
 docker build --platform linux/amd64 -t goqc:kpark .
 cd "$KPARK_PIPELINES/KBracken"
 docker build --platform linux/amd64 -t kbracken:kpark .
-cd "$KPARK_PIPELINES/Humann"
+cd "$KPARK_PIPELINES/Humannake"
 docker build --platform linux/amd64 -t humann:kpark .
 export DOCKER_PLATFORM=linux/amd64
 ```
@@ -197,7 +197,7 @@ download_databases.sh --db-root $HOME/kpark-db --tools kraken2 --kraken2-16gb k2
 
 `GoQC/Go_QC.sh` follows the same structure as `KBracken/Go_KBracken.sh`: the wrapper lives next to its Dockerfile and versioned Snakefile, and it resolves `Go_QC.smk` first, then `Go_QC_V1.smk`.
 
-`Humann/Go_Humannake.sh` follows the same structure: the wrapper lives next to `Dockerfile` and `Go_Humann_V1.smk`, and it resolves `Go_Humann.smk` first, then `Go_Humann_V1.smk`.
+`Humannake/Go_Humannake.sh` follows the same structure: the wrapper lives next to `Dockerfile` and `Go_Humann_V1.smk`, and it resolves `Go_Humann.smk` first, then `Go_Humann_V1.smk`.
 
 ## Path Rules
 
@@ -218,7 +218,7 @@ Existing GoQC, database download commands, and local DB settings are retained.
 source "$HOME/kpark-pipelines/kpark.env"
 ```
 
-`--build-core` still builds only GoQC, KBracken, and Humann. `--build-all` additionally builds longWGS, shortWGS, RNake, and all three MAGs stages.
+`--build-core` still builds only GoQC, KBracken, and Humannake. `--build-all` additionally builds longWGS, shortWGS, RNake, and all three MAGs stages.
 For selective builds, use the Dockerfile and image name in each pipeline README.
 daDake2 requires a host Snakemake/R/DADA2/FIGARO environment; it has no Docker build.
 New pipelines take explicit reference/database flags. The downloader continues to cover only host filtering, Kraken2/Bracken, and HUMAnN/MetaPhlAn databases.

@@ -117,7 +117,7 @@ Kraken2-only mode:
   Go_KBracken.sh -i IN -o OUT --kraken-only -K
 
 
-3. Humann: host-filtered FASTQ -> HUMAnN3 functional profiles
+3. Humannake: host-filtered FASTQ -> HUMAnN3 functional profiles
 -------------------------------------------------------------
 
 Go_Humannake.sh \\
@@ -136,7 +136,7 @@ Typical order
 -------------
 
 1) GoQC on raw paired FASTQs.
-2) Humann on GoQC host_filtered_fastq.
+2) Humannake on GoQC host_filtered_fastq.
 3) KBracken on raw FASTQ or host_filtered_fastq, depending on the analysis policy.
 
 
@@ -153,8 +153,8 @@ KBracken:
   -> "$PIPELINES/KBracken/Go_KBracken.smk" if present
   -> "$PIPELINES/KBracken/Go_KBracken_V1.smk" otherwise
 
-Humann:
-  "$PIPELINES/Humann/Go_Humannake.sh"
-  -> "$PIPELINES/Humann/Go_Humann.smk" if present
-  -> "$PIPELINES/Humann/Go_Humann_V1.smk" otherwise
+Humannake:
+  "$PIPELINES/Humannake/Go_Humannake.sh"
+  -> "$PIPELINES/Humannake/Go_Humann.smk" if present
+  -> "$PIPELINES/Humannake/Go_Humann_V1.smk" otherwise
 EOF

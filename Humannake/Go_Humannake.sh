@@ -141,14 +141,14 @@ UTILITY_DB="${UTILITY_DB:-${KPARK_HUMANN_UTILITY:-}}"
 [ -z "$NUCLEOTIDE_DB" ] && usage
 [ -z "$PROTEIN_DB" ] && usage
 
-FASTQ_DIR_ABS="$(abs_path "$FASTQ_DIR")" || { echo "[Humann] FASTQ_DIR not found: $FASTQ_DIR"; exit 1; }
-NUCLEOTIDE_DB_ABS="$(abs_path "$NUCLEOTIDE_DB")" || { echo "[Humann] NUCLEOTIDE_DB not found: $NUCLEOTIDE_DB"; exit 1; }
-PROTEIN_DB_ABS="$(abs_path "$PROTEIN_DB")" || { echo "[Humann] PROTEIN_DB not found: $PROTEIN_DB"; exit 1; }
+FASTQ_DIR_ABS="$(abs_path "$FASTQ_DIR")" || { echo "[Humannake] FASTQ_DIR not found: $FASTQ_DIR"; exit 1; }
+NUCLEOTIDE_DB_ABS="$(abs_path "$NUCLEOTIDE_DB")" || { echo "[Humannake] NUCLEOTIDE_DB not found: $NUCLEOTIDE_DB"; exit 1; }
+PROTEIN_DB_ABS="$(abs_path "$PROTEIN_DB")" || { echo "[Humannake] PROTEIN_DB not found: $PROTEIN_DB"; exit 1; }
 
 SCRIPT_DIR="$_CONTAINER_DIR"
 PIPELINE_DIR="$SCRIPT_DIR"
 if [ -n "$SNAKEDIR" ]; then
-  [ -d "$SNAKEDIR" ] || { echo "[Humann] SNAKEDIR not found: $SNAKEDIR"; exit 1; }
+  [ -d "$SNAKEDIR" ] || { echo "[Humannake] SNAKEDIR not found: $SNAKEDIR"; exit 1; }
   PIPELINE_DIR="$(cd "$SNAKEDIR" && pwd -P)"
 fi
 
@@ -157,7 +157,7 @@ if [ ! -f "$PIPELINE_DIR/$SNAKEFILE_NAME" ] && [ -f "$PIPELINE_DIR/Go_Humann_V1.
   SNAKEFILE_NAME="Go_Humann_V1.smk"
 fi
 if [ ! -f "$PIPELINE_DIR/$SNAKEFILE_NAME" ]; then
-  echo "[Humann][FATAL] Snakefile not found: $PIPELINE_DIR/$SNAKEFILE_NAME"
+  echo "[Humannake][FATAL] Snakefile not found: $PIPELINE_DIR/$SNAKEFILE_NAME"
   exit 1
 fi
 
@@ -180,7 +180,7 @@ CONTAINER_RUN_ARGS=(
 )
 
 if [ -n "$METAPHLAN_DB" ]; then
-  METAPHLAN_DB_ABS="$(abs_path "$METAPHLAN_DB")" || { echo "[Humann] METAPHLAN_DB not found: $METAPHLAN_DB"; exit 1; }
+  METAPHLAN_DB_ABS="$(abs_path "$METAPHLAN_DB")" || { echo "[Humannake] METAPHLAN_DB not found: $METAPHLAN_DB"; exit 1; }
   if [ -f "$METAPHLAN_DB_ABS" ]; then
     case "$METAPHLAN_DB_ABS" in
       *.pkl)
@@ -190,7 +190,7 @@ if [ -n "$METAPHLAN_DB" ]; then
         METAPHLAN_DB_ABS="$(dirname "$METAPHLAN_DB_ABS")"
         ;;
       *)
-        echo "[Humann] METAPHLAN_DB file must be a MetaPhlAn .pkl index file: $METAPHLAN_DB"
+        echo "[Humannake] METAPHLAN_DB file must be a MetaPhlAn .pkl index file: $METAPHLAN_DB"
         exit 1
         ;;
     esac
@@ -206,7 +206,7 @@ if [ "$RUN_GENE_NORM" -eq 1 ]; then
     UTILITY_DB_ABS="$UTILITY_DB_ABS/utility_mapping"
   fi
   if [ -z "$UTILITY_DB_ABS" ] || ! compgen -G "$UTILITY_DB_ABS/map_ko_uniref*.txt.gz" >/dev/null; then
-    echo "[Humann][FATAL] KO tables need map_ko_uniref90/50.txt.gz (HUMAnN utility_mapping full): ${UTILITY_DB:-not set}"
+    echo "[Humannake][FATAL] KO tables need map_ko_uniref90/50.txt.gz (HUMAnN utility_mapping full): ${UTILITY_DB:-not set}"
     echo "  Download: download_databases.sh --db-root \"$HOME/kpark-db\" --tools humann-utility  (or set -u / KPARK_HUMANN_UTILITY)"
     echo "  Skip KO tables: --skip-gene-norm"
     exit 1
@@ -254,7 +254,7 @@ rc=${PIPESTATUS[0]}
 set -e
 
 if [ "$rc" -ne 0 ] && grep -qiE "lock|unlock|LockException|cannot be locked" humann.log; then
-  echo "[Humann] Detected lock issue -> running --unlock then retry..."
+  echo "[Humannake] Detected lock issue -> running --unlock then retry..."
   run "${BASE_ARGS[@]}" --unlock
   set +e
   run "${BASE_ARGS[@]}" 2>&1 | tee -a humann.log
