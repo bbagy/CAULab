@@ -1,4 +1,4 @@
-# Humannak
+# Humannake
 
 ![HUMAnN3](https://img.shields.io/badge/Profiler-HUMAnN3-e67e22)
 ![Workflow](https://img.shields.io/badge/Workflow-Snakemake-039be5)
@@ -9,7 +9,7 @@ Shotgun metagenome functional profiling workflow using HUMAnN3 + MetaPhlAn4 with
 
 ## Current Entrypoints
 
-- Wrapper: `Go_Humannake.sh`
+- Wrapper: `Go_Humannakee.sh`
 - Snakefile (current): `Go_Humann_V1.smk`
 - Auxiliary scripts:
   - `scripts/humann_masterlog.py`: merges per-sample HUMAnN logs into `humann3_log.txt`
@@ -72,7 +72,7 @@ docker run --rm humann:caulab metaphlan --version
 ## Quick Start
 
 ```bash
-./Humann/Go_Humannake.sh \
+./Humann/Go_Humannakee.sh \
   -i /path/to/host_filtered_fastq \
   -o humann_run \
   -n /media/uhlemann/core4/DB/humann_db/humann3/chocophlan \
@@ -87,7 +87,7 @@ docker run --rm humann:caulab metaphlan --version
 Real example:
 
 ```bash
-Go_Humannake.sh \
+Go_Humannakee.sh \
   -i 1_host_filtered \
   -o 2_humann_out \
   -n /media/uhlemann/core4/DB/humann_db/humann3/chocophlan \
@@ -100,7 +100,7 @@ Go_Humannake.sh \
   -K
 ```
 
-## Options (`Go_Humannake.sh`)
+## Options (`Go_Humannakee.sh`)
 
 | Flag | Default | Description |
 |---|---:|---|
@@ -128,7 +128,7 @@ After `Go_toWorkstation.sh Humann`, files are placed as:
 
 ```text
 /home/uhlemann*/heekuk_path/
-  Go_Humannake.sh
+  Go_Humannakee.sh
   Go_Humann.smk
   scripts/
     humann_masterlog.py
@@ -231,7 +231,7 @@ snakemake --snakefile /home/uhlemann/heekuk_path/Go_Humann.smk \
 ## Operational Notes
 
 - Recommended MetaPhlAn input is `-b <metaphlan_db_dir>` plus `-I <index_basename>`.
-- `Go_Humannake.sh` also accepts a `.pkl` path via `-b` and auto-converts it to directory + index for backward compatibility.
+- `Go_Humannakee.sh` also accepts a `.pkl` path via `-b` and auto-converts it to directory + index for backward compatibility.
 - Input discovery is intentionally simple: every `*.fastq`, `*.fq`, `*.fastq.gz`, `*.fq.gz` is treated as one HUMAnN input unit.
 - Paired inputs (`_R1` / `_R2` or `_R1_nohuman` / `_R2_nohuman`) are merged per sample into `7_intermediate/<sample>.merged.fastq.gz` before HUMAnN.
 - Per-sample `.humann.done` markers let interrupted runs resume cleanly.
@@ -247,19 +247,19 @@ snakemake --snakefile /home/uhlemann/heekuk_path/Go_Humann.smk \
 Dry-run:
 
 ```bash
-./Humann/Go_Humannake.sh -i IN -o OUT -n CHOCO -p UNIREF -b MPA -I mpa_index -x
+./Humann/Go_Humannakee.sh -i IN -o OUT -n CHOCO -p UNIREF -b MPA -I mpa_index -x
 ```
 
 Production run with MUSiCC:
 
 ```bash
-./Humann/Go_Humannake.sh -i IN -o OUT -n CHOCO -p UNIREF -b MPA -I mpa_index --run-musicc -K
+./Humann/Go_Humannakee.sh -i IN -o OUT -n CHOCO -p UNIREF -b MPA -I mpa_index --run-musicc -K
 ```
 
 Skip normalization (raw HUMAnN tables only):
 
 ```bash
-./Humann/Go_Humannake.sh -i IN -o OUT -n CHOCO -p UNIREF -b MPA -I mpa_index --skip-gene-norm -K
+./Humann/Go_Humannakee.sh -i IN -o OUT -n CHOCO -p UNIREF -b MPA -I mpa_index --skip-gene-norm -K
 ```
 
 ## Troubleshooting
