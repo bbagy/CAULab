@@ -1,4 +1,4 @@
-# Humann
+# Humannak
 
 ![HUMAnN3](https://img.shields.io/badge/Profiler-HUMAnN3-e67e22)
 ![Workflow](https://img.shields.io/badge/Workflow-Snakemake-039be5)

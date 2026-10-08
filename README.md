@@ -15,7 +15,7 @@ Container launchers share `common/container.sh` and support Docker or Apptainer.
 | longWGS | ONT assembly, polishing, QC, and annotation |
 | shortWGS | Illumina typing: MLST, ARG, plasmid, and TETyper |
 | KBracken | Kraken2 + Bracken taxonomic profiling |
-| Humann | HUMAnN3 + MetaPhlAn4 functional profiling |
+| Humannak | HUMAnN3 + MetaPhlAn4 functional profiling |
 | RNake | Bacterial RNA-seq trimming, mapping, and counts |
 | daDake2 | DADA2 16S/ITS processing with project checkpoints |
 | MAGs (in testing) | Metagenome QC, assembly/binning, and annotation |
@@ -30,7 +30,7 @@ source "$HOME/caulab-pipelines/caulab.env"
 caulab_usage.sh
 ```
 
-All pipeline code is installed by default. `--build-core` builds GoQC, KBracken, and Humann; `--build-all` also builds longWGS, shortWGS, RNake, and the three MAGs images.
+All pipeline code is installed by default. `--build-core` builds GoQC, KBracken, and Humannak; `--build-all` also builds longWGS, shortWGS, RNake, and the three MAGs images.
 For an existing installation:
 
 ```bash
@@ -53,7 +53,7 @@ Go_shortWGS.sh --container apptainer --container-image /shared/shortwgs.sif [pip
 
 See [the container image guide](common/README.md) for image export and SIF conversion.
 Pipeline wrappers locate shared helpers and workflows relative to the repository, including when invoked through installed command links.
-Inputs, databases, and outputs remain outside the repository. New pipelines use explicit database/reference flags; CAULab's existing KBracken and Humann database defaults are retained.
+Inputs, databases, and outputs remain outside the repository. New pipelines use explicit database/reference flags; CAULab's existing KBracken and Humannak database defaults are retained.
 
 ## Reference Databases
 
