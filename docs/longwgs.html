@@ -40,8 +40,8 @@ bash Go_merge_rename.sh -i fastq_pass -o merged_fastqs -m samples_barcodes.txt -
 bash Go_merge_rename.sh -i fastq_pass -o merged_fastqs -m samples_barcodes.txt</code></pre></div>
       <p>Then use <code>merged_fastqs/</code> as the <code>-i</code> input for the pipeline.</p>
 
-      <h2>실행 방법</h2>
-      <div class="card"><pre><code>./longWGS/Go_longWGS_V1_1.sh \
+      <h2>실행 방법</h2><p>새 터미널에서는 먼저 <code>source "$HOME/caulab-pipelines/caulab.env"</code>를 실행합니다. 이후 어느 폴더에서든 아래 명령을 사용할 수 있습니다.</p>
+      <div class="card"><pre><code>Go_longWGS.sh \
   -i /path/to/fastq \
   -o /path/to/output \
   -d /path/to/db \
@@ -50,10 +50,10 @@ bash Go_merge_rename.sh -i fastq_pass -o merged_fastqs -m samples_barcodes.txt</
 
       <h2>실패 단계 처리</h2>
       <div class="card"><pre><code># default: stop on stage failures
-./longWGS/Go_longWGS_V1_1.sh -i IN -o OUT -d DB -M strict -K
+Go_longWGS.sh -i IN -o OUT -d DB -M strict -K
 
 # continue to summary Excel even if some Bakta jobs fail
-./longWGS/Go_longWGS_V1_1.sh -i IN -o OUT -d DB -M permissive -K</code></pre></div>
+Go_longWGS.sh -i IN -o OUT -d DB -M permissive -K</code></pre></div>
       <p>In <code>permissive</code> mode, failed Bakta samples are recorded in <code>0_failed_samples.tsv</code> and <code>7_bakta/&lt;sample&gt;/FAILED.txt</code>, while the final summary workbook is still generated from available outputs.</p>
 
       <h2>실행 예시</h2>
