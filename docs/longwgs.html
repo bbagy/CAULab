@@ -5,7 +5,7 @@
       <p class="lead">ONT Bacterial Genome · 조립 · 오류 교정 · 품질 평가 · 유전체 주석</p>
 <p><a href="workstations.html#db-longwgs">설치 및 DB 준비 →</a></p>
       <div class="status-banner status-tested">
-        STATUS: TESTED IN NOOK AND CORE3 WORKSTATION
+        실행 환경: Docker / Apptainer
       </div>
 
       <h2>분석 흐름</h2>
@@ -57,7 +57,7 @@ Go_longWGS.sh -i IN -o OUT -d DB -M permissive -K</code></pre></div>
       <div class="card"><pre><code>Go_longWGS.sh \
   -i longWGS/20261001_ONT_HKP \
   -o longWGS/20261001_ONT_HKP_out \
-  -d /media/uhlemann/core4/DB/longWGS_DB \
+  -d "$HOME/caulab-db/longWGS" \
   -s "$CAULAB_PIPELINES/longWGS" \
   -M strict \
   -p 0 \

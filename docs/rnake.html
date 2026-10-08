@@ -5,7 +5,7 @@
       <p class="lead">Bacterial RNA-seq · 트리밍 · 참조 유전체 매핑 · 유전자 카운트 · 샘플별 표 통합</p>
 <p><a href="workstations.html#db-rnake">설치 및 DB 준비 →</a></p>
       <div class="status-banner status-tested">
-        STATUS: AVAILABLE — TESTED IN CORE3 WORKSTATION
+        실행 환경: Docker / Apptainer
       </div>
 
       <h2>분석 흐름</h2>
@@ -30,8 +30,8 @@
       <div class="card"><pre><code>Go_Rnake.sh \
   -i RNake/20261001_RNA_HKP \
   -o RNake/20261001_RNA_HKP_out \
-  -g /media/uhlemann/Core3_V2/REF/ecoli.fna \
-  -a /media/uhlemann/Core3_V2/REF/ecoli.gff \
+  -g "$HOME/caulab-db/rnake/ecoli.fna" \
+  -a "$HOME/caulab-db/rnake/ecoli.gff" \
   -s "$CAULAB_PIPELINES/RNake" \
   -K</code></pre></div>
 

@@ -5,7 +5,7 @@
       <p class="lead">16S / ITS · DADA2 · ASV 추정 · 분류 · 단계별 RDS</p>
 <p><a href="workstations.html#db-dadake2">설치 및 DB 준비 →</a></p>
       <div class="status-banner status-tested">
-        STATUS: AVAILABLE — TESTED IN CORE4 WORKSTATION
+        실행 환경: Conda · R
       </div>
 
       <h2>지원 데이터</h2>
@@ -52,7 +52,7 @@
 
       <h2>실행 방법</h2><p>UNITE: <a href="https://benjjneb.github.io/dada2/training.html">General FASTA · All eukaryotes 다운로드 ↗</a><br>예시 경로: 받은 파일을 <code>$HOME/caulab-db/dadake2/unite_general.fasta</code>로 저장 · 배포 버전 / 날짜 기록<br>DB 형식: FASTA 또는 gzip 압축 FASTA</p>
       <div class="card"><pre><code># 16S V3V4 — multiple projects
-DB="/media/uhlemann/core4/DB/DADA2/Bacteria/silva_nr99_v138.1_wSpecies_train_set.fa.gz"
+DB="$HOME/caulab-db/dadake2/silva_nr99_v138.1_wSpecies_train_set.fa.gz"
 dirs="ProjA,ProjB,ProjC"
 smk="$CAULAB_PIPELINES/daDake2"
 
