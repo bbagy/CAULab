@@ -2,7 +2,7 @@
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="CAULab 시퀀싱 분석 파이프라인: 유전체, 메타유전체, 전사체, 앰플리콘 분석 안내"><title>longWGS | CAULab</title><link rel="stylesheet" href="styles.css?v=20261008-copy"></head><body><a class="skip-link" href="#content">본문으로 건너뛰기</a><div class="layout"><aside class="sidebar"><a class="brand" href="index.html"><span class="brand-mark">CAU</span><span>CAULab<small>시퀀싱 분석 안내</small></span></a><nav class="nav" aria-label="문서 탐색"><a href="index.html">홈</a><a href="workstations.html">설치와 업데이트</a><a href="environments.html">Docker / Conda 환경</a><a href="containers.html">Docker / Apptainer</a><span class="nav-label">분석 파이프라인</span><a class="active" aria-current="page" href="longwgs.html"><span>longWGS</span><small>롱리드 유전체</small></a><a href="shortwgs.html"><span>shortWGS</span><small>숏리드 유전체</small></a><a href="goqc.html"><span>GoQC</span><small>메타유전체</small></a><a href="kbracken.html"><span>KBracken</span><small>메타유전체</small></a><a href="humann.html"><span>Humannake</span><small>메타유전체</small></a><a href="rnake.html"><span>RNake</span><small>전사체</small></a><a href="dadake2.html"><span>daDake2</span><small>16S/ITS</small></a><a href="mags.html"><span>MAGs</span><small>메타유전체</small></a></nav><div class="sidebar-foot"><span>소스 코드</span><a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">GitHub 저장소 ↗</a></div></aside><main class="main" id="content">
       <span class="badge">롱리드 유전체</span>
       <h1>longWGS</h1>
-      <p class="lead">ONT 세균 유전체 분석. 조립, 오류 교정, 품질 평가, 유전체 주석을 수행합니다.</p>
+      <p class="lead">ONT Bacterial Genome · 조립 · 오류 교정 · 품질 평가 · 유전체 주석</p>
 <p><a href="workstations.html#db-longwgs">설치 및 DB 준비 →</a></p>
       <div class="status-banner status-tested">
         STATUS: TESTED IN NOOK AND CORE3 WORKSTATION
@@ -25,11 +25,8 @@
       </div>
 
       <h2>전처리: 병합과 이름 정리</h2>
-      <p>
-        ONT output produces per-barcode directories. Before running the pipeline,
-        merge reads and rename to sample names using <code>Go_merge_rename.sh</code>.
-      </p>
-      <p>Map file format (tab or space separated):</p>
+      <p>ONT barcode별 FASTQ → <code>Go_merge_rename.sh</code>로 병합 / 샘플명 변경</p>
+      <p>샘플 매핑 파일: 탭 / 공백 구분</p>
       <div class="card"><pre><code>KP0011  barcode01
 KP0063  barcode02
 ...</code></pre></div>
@@ -38,9 +35,9 @@ bash Go_merge_rename.sh -i fastq_pass -o merged_fastqs -m samples_barcodes.txt -
 
 # apply
 bash Go_merge_rename.sh -i fastq_pass -o merged_fastqs -m samples_barcodes.txt</code></pre></div>
-      <p>Then use <code>merged_fastqs/</code> as the <code>-i</code> input for the pipeline.</p>
+      <p>분석 입력: <code>-i merged_fastqs/</code></p>
 
-      <h2>실행 방법</h2><p>새 터미널에서는 먼저 <code>source "$HOME/caulab-pipelines/caulab.env"</code>를 실행합니다. 이후 어느 폴더에서든 아래 명령을 사용할 수 있습니다.</p>
+      <h2>실행 방법</h2><p>새 터미널 설정: <code>source "$HOME/caulab-pipelines/caulab.env"</code></p>
       <div class="card"><pre><code>Go_longWGS.sh \
   -i /path/to/fastq \
   -o /path/to/output \
@@ -54,7 +51,7 @@ Go_longWGS.sh -i IN -o OUT -d DB -M strict -K
 
 # continue to summary Excel even if some Bakta jobs fail
 Go_longWGS.sh -i IN -o OUT -d DB -M permissive -K</code></pre></div>
-      <p>In <code>permissive</code> mode, failed Bakta samples are recorded in <code>0_failed_samples.tsv</code> and <code>7_bakta/&lt;sample&gt;/FAILED.txt</code>, while the final summary workbook is still generated from available outputs.</p>
+      <p><code>permissive</code>: Bakta 실패 샘플 기록 후 가용 결과로 요약 생성<br>실패 기록: <code>0_failed_samples.tsv</code> · <code>7_bakta/&lt;sample&gt;/FAILED.txt</code></p>
 
       <h2>실행 예시</h2>
       <div class="card"><pre><code>Go_longWGS.sh \
@@ -77,14 +74,14 @@ Go_longWGS.sh -i IN -o OUT -d DB -M permissive -K</code></pre></div>
       </table>
 
       <h2>입력 구성</h2>
-      <p>Raw ONT output (before pre-processing):</p>
+      <p>ONT 원본 출력</p>
       <div class="card"><pre><code>fastq_pass/
 |-- barcode01/
 |   `-- *.fastq.gz
 |-- barcode02/
 |   `-- *.fastq.gz
 `-- ...</code></pre></div>
-      <p>After <code>Go_merge_rename.sh</code> (pipeline input <code>-i</code>):</p>
+      <p>병합 / 이름 변경 후: 분석 입력 <code>-i</code></p>
       <div class="card"><pre><code>merged_fastqs/
 |-- KP0011.fastq.gz
 |-- KP0063.fastq.gz

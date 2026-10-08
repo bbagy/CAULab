@@ -2,7 +2,7 @@
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="CAULab 시퀀싱 분석 파이프라인: 유전체, 메타유전체, 전사체, 앰플리콘 분석 안내"><title>daDake2 | CAULab</title><link rel="stylesheet" href="styles.css?v=20261008-copy"></head><body><a class="skip-link" href="#content">본문으로 건너뛰기</a><div class="layout"><aside class="sidebar"><a class="brand" href="index.html"><span class="brand-mark">CAU</span><span>CAULab<small>시퀀싱 분석 안내</small></span></a><nav class="nav" aria-label="문서 탐색"><a href="index.html">홈</a><a href="workstations.html">설치와 업데이트</a><a href="environments.html">Docker / Conda 환경</a><a href="containers.html">Docker / Apptainer</a><span class="nav-label">분석 파이프라인</span><a href="longwgs.html"><span>longWGS</span><small>롱리드 유전체</small></a><a href="shortwgs.html"><span>shortWGS</span><small>숏리드 유전체</small></a><a href="goqc.html"><span>GoQC</span><small>메타유전체</small></a><a href="kbracken.html"><span>KBracken</span><small>메타유전체</small></a><a href="humann.html"><span>Humannake</span><small>메타유전체</small></a><a href="rnake.html"><span>RNake</span><small>전사체</small></a><a class="active" aria-current="page" href="dadake2.html"><span>daDake2</span><small>16S/ITS</small></a><a href="mags.html"><span>MAGs</span><small>메타유전체</small></a></nav><div class="sidebar-foot"><span>소스 코드</span><a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">GitHub 저장소 ↗</a></div></aside><main class="main" id="content">
       <span class="badge">16S/ITS</span>
       <h1>daDake2</h1>
-      <p class="lead">16S·ITS 앰플리콘 분석. DADA2로 ASV를 추정하고 분류합니다. 단계별 RDS 파일을 저장해 재실행 시 사용합니다.</p>
+      <p class="lead">16S / ITS · DADA2 · ASV 추정 · 분류 · 단계별 RDS</p>
 <p><a href="workstations.html#db-dadake2">설치 및 DB 준비 →</a></p>
       <div class="status-banner status-tested">
         STATUS: AVAILABLE — TESTED IN CORE4 WORKSTATION
@@ -34,7 +34,7 @@
         <span class="node">phyloseq + CSV</span><span class="arrow">→</span>
         <span class="node">qiime2 tree</span>
       </div>
-      <p style="margin-top:8px;font-size:0.88rem;">Gray node (cutadapt) runs only for <code>illumina_ITS</code>.</p>
+      <p style="margin-top:8px;font-size:0.88rem;">cutadapt: <code>illumina_ITS</code> 전용</p>
 
       <h2>단계별 체크포인트</h2>
       <div class="card">
@@ -114,14 +114,14 @@ Go_daDake2.sh -t standard_V3V4 -i "ProjA" -d $DB -s $smk -n</code></pre></div>
       <h2>실행 시 참고 사항</h2>
       <div class="card">
         <ul>
-          <li>DATE is fixed at pipeline launch (<code>yymmdd</code>) and baked into all filenames — rerunning on a different day never overwrites prior outputs.</li>
-          <li>Small samples (&lt; <code>-m</code> bytes) are written to <code>failed.csv</code> at DAG construction time before any rules run.</li>
-          <li>Samples with zero reads after filterAndTrim are appended to <code>failed.csv</code> and excluded from downstream steps.</li>
-          <li>Host removal (NA phylum, Chloroplast, Mitochondria) applies to 16S types only.</li>
-          <li><code>addSpecies()</code> is not used; no species DB needed.</li>
-          <li>Mapping template CSVs (<code>3_map/</code>) are generated for 16S types only.</li>
-          <li>qiime2 tree step calls <code>conda run -n qiime2 qiime ...</code> directly.</li>
-          <li>Lock errors are auto-handled by the wrapper (<code>--unlock</code> then retry).</li>
+          <li>파일 날짜: 실행 시점 <code>yymmdd</code> · 날짜별 출력 분리</li>
+          <li><code>-m</code> 미만 샘플: <code>failed.csv</code> 기록</li>
+          <li>필터 후 0 reads: <code>failed.csv</code> 기록 · 후속 단계 제외</li>
+          <li>16S 전용 제거: NA phylum · Chloroplast · Mitochondria</li>
+          <li><code>addSpecies()</code>: 미사용 · species DB 불필요</li>
+          <li>16S 매핑 템플릿: <code>3_map/</code></li>
+          <li>계통수 환경: <code>qiime2</code></li>
+          <li>잠금 오류: <code>--unlock</code> 후 자동 재시도</li>
         </ul>
       </div>
 

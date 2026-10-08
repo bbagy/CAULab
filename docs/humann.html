@@ -2,7 +2,7 @@
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="CAULab 시퀀싱 분석 파이프라인: 유전체, 메타유전체, 전사체, 앰플리콘 분석 안내"><title>Humannake | CAULab</title><link rel="stylesheet" href="styles.css?v=20261008-copy"></head><body><a class="skip-link" href="#content">본문으로 건너뛰기</a><div class="layout"><aside class="sidebar"><a class="brand" href="index.html"><span class="brand-mark">CAU</span><span>CAULab<small>시퀀싱 분석 안내</small></span></a><nav class="nav" aria-label="문서 탐색"><a href="index.html">홈</a><a href="workstations.html">설치와 업데이트</a><a href="environments.html">Docker / Conda 환경</a><a href="containers.html">Docker / Apptainer</a><span class="nav-label">분석 파이프라인</span><a href="longwgs.html"><span>longWGS</span><small>롱리드 유전체</small></a><a href="shortwgs.html"><span>shortWGS</span><small>숏리드 유전체</small></a><a href="goqc.html"><span>GoQC</span><small>메타유전체</small></a><a href="kbracken.html"><span>KBracken</span><small>메타유전체</small></a><a class="active" aria-current="page" href="humann.html"><span>Humannake</span><small>메타유전체</small></a><a href="rnake.html"><span>RNake</span><small>전사체</small></a><a href="dadake2.html"><span>daDake2</span><small>16S/ITS</small></a><a href="mags.html"><span>MAGs</span><small>메타유전체</small></a></nav><div class="sidebar-foot"><span>소스 코드</span><a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">GitHub 저장소 ↗</a></div></aside><main class="main" id="content">
       <span class="badge">메타유전체</span>
       <h1>Humannake</h1>
-      <p class="lead">샷건 메타유전체 기능 분석. HUMAnN3·MetaPhlAn4로 유전자군, 대사경로, KEGG orthology 결과를 생성합니다.</p>
+      <p class="lead">Metagenome 기능 분석 · HUMAnN3 / MetaPhlAn4 · 유전자군 · 대사경로 · KEGG orthology</p>
 <p><a href="workstations.html#db-humann">설치 및 DB 준비 →</a></p>
       <div class="status-banner status-tested">
         STATUS: AVAILABLE — TESTED IN CORE4 WORKSTATION
@@ -21,7 +21,7 @@
         <span class="node">stratified split</span>
       </div>
 
-      <h2>실행 방법</h2><p>새 터미널에서는 먼저 <code>source "$HOME/caulab-pipelines/caulab.env"</code>를 실행합니다. 이후 어느 폴더에서든 아래 명령을 사용할 수 있습니다.</p>
+      <h2>실행 방법</h2><p>새 터미널 설정: <code>source "$HOME/caulab-pipelines/caulab.env"</code></p>
       <div class="card"><pre><code>Go_Humannake.sh \
   -i /path/to/host_filtered_fastq \
   -o humann_run \
@@ -101,10 +101,10 @@ humann_db/
 
       <h2>참고 사항</h2>
       <ul>
-        <li>Recommended MetaPhlAn input: <code>-b &lt;dir&gt;</code> + <code>-I &lt;index_basename&gt;</code>; <code>.pkl</code> shortcut auto-resolves for legacy use.</li>
-        <li>Paired <code>_R1 / _R2</code> (including <code>_nohuman</code> variants) are merged per sample into <code>7_intermediate/&lt;sample&gt;.merged.fastq.gz</code> before HUMAnN runs.</li>
-        <li>Per-sample <code>.humann.done</code> markers allow safe resume after interruption.</li>
-        <li><code>--run-musicc</code> enables MUSiCC correction on the regrouped KO table.</li>
+        <li>MetaPhlAn DB: <code>-b DB_DIR</code> · 인덱스: <code>-I INDEX_NAME</code></li>
+        <li>R1/R2 병합: <code>7_intermediate/&lt;sample&gt;.merged.fastq.gz</code></li>
+        <li>재시작 체크포인트: 샘플별 <code>.humann.done</code></li>
+        <li><code>--run-musicc</code>: KO 표 MUSiCC 보정</li>
       </ul>
 
 

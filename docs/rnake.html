@@ -2,7 +2,7 @@
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="CAULab 시퀀싱 분석 파이프라인: 유전체, 메타유전체, 전사체, 앰플리콘 분석 안내"><title>RNake | CAULab</title><link rel="stylesheet" href="styles.css?v=20261008-copy"></head><body><a class="skip-link" href="#content">본문으로 건너뛰기</a><div class="layout"><aside class="sidebar"><a class="brand" href="index.html"><span class="brand-mark">CAU</span><span>CAULab<small>시퀀싱 분석 안내</small></span></a><nav class="nav" aria-label="문서 탐색"><a href="index.html">홈</a><a href="workstations.html">설치와 업데이트</a><a href="environments.html">Docker / Conda 환경</a><a href="containers.html">Docker / Apptainer</a><span class="nav-label">분석 파이프라인</span><a href="longwgs.html"><span>longWGS</span><small>롱리드 유전체</small></a><a href="shortwgs.html"><span>shortWGS</span><small>숏리드 유전체</small></a><a href="goqc.html"><span>GoQC</span><small>메타유전체</small></a><a href="kbracken.html"><span>KBracken</span><small>메타유전체</small></a><a href="humann.html"><span>Humannake</span><small>메타유전체</small></a><a class="active" aria-current="page" href="rnake.html"><span>RNake</span><small>전사체</small></a><a href="dadake2.html"><span>daDake2</span><small>16S/ITS</small></a><a href="mags.html"><span>MAGs</span><small>메타유전체</small></a></nav><div class="sidebar-foot"><span>소스 코드</span><a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">GitHub 저장소 ↗</a></div></aside><main class="main" id="content">
       <span class="badge">전사체</span>
       <h1>RNake</h1>
-      <p class="lead">세균 RNA-seq 분석. 리드 트리밍, 참조 유전체 매핑, 유전자별 카운트를 수행하고 샘플별 카운트 표를 통합합니다.</p>
+      <p class="lead">Bacterial RNA-seq · 트리밍 · 참조 유전체 매핑 · 유전자 카운트 · 샘플별 표 통합</p>
 <p><a href="workstations.html#db-rnake">설치 및 DB 준비 →</a></p>
       <div class="status-banner status-tested">
         STATUS: AVAILABLE — TESTED IN CORE3 WORKSTATION
@@ -17,7 +17,7 @@
         <span class="node">Merged Table</span>
       </div>
 
-      <h2>실행 방법</h2><p>새 터미널에서는 먼저 <code>source "$HOME/caulab-pipelines/caulab.env"</code>를 실행합니다. 이후 어느 폴더에서든 아래 명령을 사용할 수 있습니다.</p>
+      <h2>실행 방법</h2><p>새 터미널 설정: <code>source "$HOME/caulab-pipelines/caulab.env"</code></p>
       <div class="card"><pre><code>Go_Rnake.sh \
   -i /path/to/reads \
   -o project_name \
