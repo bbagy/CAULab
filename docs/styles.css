@@ -41,3 +41,8 @@ table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;text-al
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.card-link{transition:none}.card-link:hover{transform:none}}
 
 .code-block{position:relative}.code-block pre{padding:18px 54px 18px 18px}.copy-code{position:absolute;top:9px;right:9px;display:flex;align-items:center;justify-content:center;width:30px;height:30px;padding:6px;border:1px solid #c9dcd5;border-radius:5px;background:#fff;color:#30675e;font:inherit;font-size:12px;cursor:pointer}.copy-code:hover{background:#edf5f1}.copy-code:focus-visible{outline:2px solid #30675e;outline-offset:2px}.copy-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* Homepage DNA rotation; the frame and caption stay still. */
+.dna-rotation{transform-box:view-box;transform-origin:center;animation:dna-turn 14s linear infinite}
+@keyframes dna-turn{from{transform:perspective(700px) rotateY(0deg)}to{transform:perspective(700px) rotateY(360deg)}}
+@media(prefers-reduced-motion:reduce){.dna-rotation{animation:none}}
