@@ -111,9 +111,21 @@ humann_db/
         <li><code>--run-musicc</code> enables MUSiCC correction on the regrouped KO table.</li>
       </ul>
 
-<section id="databases"><h2>참조 DB 준비</h2><table><tr><th>DB / 참조 파일</th><th>저장 위치 · 실행 옵션</th></tr><tr><td>ChocoPhlAn</td><td><code>$DB_ROOT/humann/chocophlan</code> → <code>-n</code></td></tr><tr><td>UniRef90 DIAMOND</td><td><code>$DB_ROOT/humann/uniref90_diamond</code> → <code>-p</code></td></tr><tr><td>MetaPhlAn4</td><td><code>$DB_ROOT/humann/metaphlan4</code> → <code>-b</code>, 인덱스 이름 → <code>-I</code></td></tr></table><div class="card"><pre><code>source &quot;$HOME/caulab-pipelines/caulab.env&quot;
-DB_ROOT=&quot;/path/to/DB&quot;
+<section id="databases"><h2>참조 DB 준비</h2><table><tr><th>DB / 참조 파일</th><th>저장 위치 · 실행 옵션</th></tr><tr><td>ChocoPhlAn</td><td><code>$DB_ROOT/humann/chocophlan</code> → <code>-n</code></td></tr><tr><td>UniRef90 DIAMOND</td><td><code>$DB_ROOT/humann/uniref90_diamond</code> → <code>-p</code></td></tr><tr><td>MetaPhlAn4</td><td><code>$DB_ROOT/humann/metaphlan4</code> → <code>-b</code>, 인덱스 이름 → <code>-I</code></td></tr></table><p>CAULab이 <code>$HOME/caulab-pipelines</code>에 설치되어 있고 Docker가 실행 중이면 아래 명령을 터미널에 복사해 실행할 수 있습니다. DB는 <code>$HOME/caulab-db</code>에 저장됩니다. 다른 디스크에 받으려면 <code>DB_ROOT</code> 한 줄을 실제 저장 경로로 바꿉니다. 다운로드는 대용량이므로 저장할 디스크의 여유 공간을 먼저 확인하세요. 앞 단계에서 오류가 나면 다음 단계로 넘어가지 않습니다.</p><div class="card"><pre><code># 1. 기본 경로에 설치된 CAULab 환경 불러오기
+source &quot;$HOME/caulab-pipelines/caulab.env&quot;
+
+# 2. Docker를 실행한 상태에서 이미지 준비 (이미 있으면 생략)
+docker build -t humann:caulab &quot;$CAULAB_PIPELINES/Humann&quot;
+
+# 3. DB 저장 위치: 홈 폴더의 caulab-db
+DB_ROOT=&quot;$HOME/caulab-db&quot;
+
+# 4. ChocoPhlAn, UniRef90, MetaPhlAn DB 다운로드
 bash &quot;$CAULAB_PIPELINES/download_databases.sh&quot; --db-root &quot;$DB_ROOT&quot; --tools humann --humann-uniref uniref90_diamond
+
+# 5. 완료 후 DB 경로 설정 불러오기
 source &quot;$CAULAB_PIPELINES/config/lab_paths.sh&quot;
+
+# 6. 받은 MetaPhlAn 인덱스 이름 확인 (추가 다운로드 아님)
 find &quot;$DB_ROOT/humann/metaphlan4&quot; -maxdepth 1 -name &quot;*.pkl&quot;</code></pre></div><p>Docker 이미지 <code>humann:caulab</code>를 먼저 빌드합니다. 이 파이프라인의 UniRef90 후처리에 맞춰 UniRef90을 받습니다. 다운로드한 <code>.pkl</code> 파일명에서 확장자를 뺀 값을 <code>-I</code>에 지정하세요. 기존 예시의 인덱스 이름과 새로 받은 DB 이름이 다르면 새 이름으로 바꿉니다. 재현 분석에는 동일한 DB 버전을 사용합니다.</p><p><a href="https://github.com/biobakery/humann" target="_blank" rel="noopener noreferrer">HUMAnN DB 안내 ↗</a> · <a href="https://github.com/biobakery/MetaPhlAn/wiki/MetaPhlAn-4" target="_blank" rel="noopener noreferrer">MetaPhlAn4 DB 안내 ↗</a></p></section>
 <footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div></body></html>
