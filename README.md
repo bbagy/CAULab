@@ -58,6 +58,8 @@ DBs and analysis outputs stored outside the repository.
 
 ## Docker / Apptainer
 
+Docker-to-SIF conversion for HPC systems that use Apptainer.
+
 - Local server: Docker
 - HPC: Apptainer / SIF
 - GoQC: Docker only
