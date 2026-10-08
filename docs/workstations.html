@@ -23,7 +23,7 @@ sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo systemctl enable --now docker
 sudo usermod -aG docker &quot;$USER&quot;</code></pre></div><p>로그아웃 후 다시 로그인 → 아래 확인 명령 실행<br>기존 Docker 설치: <a href="https://docs.docker.com/engine/install/ubuntu/">공식 설치 안내 ↗</a></p></details><h3>최종 확인</h3><div class="card"><pre><code>git --version
-docker info</code></pre></div><p>두 명령 성공 후 1번 진행</p></section><section id="install"><h2>1. 코드와 컨테이너 설치</h2><p><a href="environments.html">Docker / Conda 환경 목록 →</a></p><p>실행: 위에서 아래로 코드 블록별 복사 · 오류 발생 시 중단<br>최초 설치: 아래 명령 그대로 사용 · 입력 FASTQ / 균주 / DB 선택은 사용자별 지정</p><p>필수: Git · 실행 중인 Docker Engine<br>코드: <code>$HOME/CAULab</code> · 설치: <code>$HOME/caulab-pipelines</code></p><div class="card"><pre><code>git clone https://github.com/bbagy/CAULab.git &quot;$HOME/CAULab&quot;
+docker info</code></pre></div><p>두 명령 성공 후 1번 진행 · <a href="https://docs.docker.com/engine/install/linux-postinstall/">Docker 사용자 설정 ↗</a></p></section><section id="install"><h2>1. 코드와 컨테이너 설치</h2><p><a href="environments.html">Docker / Conda 환경 목록 →</a></p><p>실행: 위에서 아래로 코드 블록별 복사 · 오류 발생 시 중단<br>최초 설치: 아래 명령 그대로 사용 · 입력 FASTQ / 균주 / DB 선택은 사용자별 지정</p><p>필수: Git · 실행 중인 Docker Engine<br>코드: <code>$HOME/CAULab</code> · 설치: <code>$HOME/caulab-pipelines</code></p><div class="card"><pre><code>git clone https://github.com/bbagy/CAULab.git &quot;$HOME/CAULab&quot;
 cd &quot;$HOME/CAULab&quot;
 bash install_docker_env.sh --build-all
 source &quot;$HOME/caulab-pipelines/caulab.env&quot;
