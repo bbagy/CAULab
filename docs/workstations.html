@@ -3,8 +3,34 @@
 cd &quot;$HOME/CAULab&quot;
 bash install_docker_env.sh --build-all
 source &quot;$HOME/caulab-pipelines/caulab.env&quot;
-caulab_usage.sh</code></pre></div><p><code>--build-all</code>: 이미지 전체 · <code>--build-core</code>: GoQC / KBracken / Humannake<br><code>--prefix</code>: 설치 경로 · <code>--platform</code>: CPU 아키텍처<br>기존 설치: <a href="#update">업데이트</a> · daDake2 환경 / DB: 별도 준비</p><p><a href="https://docs.docker.com/get-started/get-docker/">Docker 설치 ↗</a> · <a href="https://git-scm.com/downloads">Git 설치 ↗</a></p></section><section id="images"><h2>2. Docker 이미지 빌드</h2><h3>기본 빌드</h3><div class="card"><pre><code>cd &quot;$HOME/CAULab&quot;
-bash install_docker_env.sh --update --build-all</code></pre></div><p>기존 설치의 이미지 전체 빌드 · 최초 설치: 1번 명령 사용</p><h3>빌드 확인</h3><div class="card"><pre><code>docker image ls</code></pre></div><p><a href="environments.html">이미지 태그 목록 →</a></p></section><section id="native"><h2>3. daDake2 실행 환경</h2><p>호스트 환경 · <a href="https://conda-forge.org/download/">Miniforge 설치 ↗</a></p><div class="card"><pre><code>conda create -y -n caulab-dadake2 -c conda-forge -c bioconda snakemake r-base r-optparse cutadapt
+caulab_usage.sh</code></pre></div><p><code>--build-all</code>: 이미지 전체 · <code>--build-core</code>: GoQC / KBracken / Humannake<br><code>--prefix</code>: 설치 경로 · <code>--platform</code>: CPU 아키텍처<br>기존 설치: <a href="#update">업데이트</a> · daDake2 환경 / DB: 별도 준비</p><p><a href="https://docs.docker.com/get-started/get-docker/">Docker 설치 ↗</a> · <a href="https://git-scm.com/downloads">Git 설치 ↗</a></p></section><section id="images"><h2>2. 개별 Docker 이미지 빌드</h2><p>전체 빌드 실패 시 아래 개별 빌드 명령 사용</p><div class="card"><pre><code>source &quot;$HOME/caulab-pipelines/caulab.env&quot;</code></pre></div><h3>GoQC</h3><div class="card"><pre><code>cd &quot;$CAULAB_PIPELINES/GoQC&quot;
+docker build -t goqc:caulab .</code></pre></div><h3>KBracken</h3>
+      <div class="card"><pre><code>cd &quot;$CAULAB_PIPELINES/KBracken&quot;
+docker build --network=host -t kbracken:caulab .</code></pre></div>
+
+      <h3>Humannake</h3>
+      <div class="card"><pre><code>cd &quot;$CAULAB_PIPELINES/Humann&quot;
+docker build --network=host -t humann:caulab .</code></pre></div>
+
+      <h3>longWGS</h3>
+      <div class="card"><pre><code>cd &quot;$CAULAB_PIPELINES/longWGS&quot;
+docker build -t longwgs .</code></pre></div>
+
+      <h3>shortWGS</h3>
+      <div class="card"><pre><code>cd &quot;$CAULAB_PIPELINES/shortWGS&quot;
+docker build --network=host -t shortwgs .</code></pre></div>
+
+      <h3>RNake</h3>
+      <div class="card"><pre><code>cd &quot;$CAULAB_PIPELINES/RNake&quot;
+docker build -t rnake:1.0 .</code></pre></div>
+
+      <h3>MAGs</h3>
+      <div class="card"><pre><code>cd &quot;$CAULAB_PIPELINES/MAGs&quot;
+docker build -f docker/Dockerfile.qc -t mags-qc:1.0 .
+docker build -f docker/Dockerfile.assembly -t mags-assembly:1.0 .
+docker build -f docker/Dockerfile.annotation -t mags-annotation:1.0 .</code></pre></div>
+
+      <h3>빌드 확인</h3><div class="card"><pre><code>docker image ls</code></pre></div><p>Humannake 이미지 태그: <code>humann:caulab</code> · daDake2: Docker 미사용</p></section><section id="native"><h2>3. daDake2 실행 환경</h2><p>호스트 환경 · <a href="https://conda-forge.org/download/">Miniforge 설치 ↗</a></p><div class="card"><pre><code>conda create -y -n caulab-dadake2 -c conda-forge -c bioconda snakemake r-base r-optparse cutadapt
 conda activate caulab-dadake2
 snakemake --version
 Rscript -e &#x27;install.packages(&quot;BiocManager&quot;, repos=&quot;https://cloud.r-project.org&quot;); BiocManager::install(c(&quot;dada2&quot;, &quot;phyloseq&quot;), ask=FALSE, update=FALSE)&#x27;
