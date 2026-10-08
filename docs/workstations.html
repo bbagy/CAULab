@@ -3,29 +3,29 @@
 cd &quot;$HOME/CAULab&quot;
 bash install_docker_env.sh --build-all
 source &quot;$HOME/caulab-pipelines/caulab.env&quot;
-caulab_usage.sh</code></pre></div><p><code>--build-all</code>: 이미지 전체 · <code>--build-core</code>: GoQC / KBracken / Humannake<br><code>--prefix</code>: 설치 경로 · <code>--platform</code>: CPU 아키텍처<br>기존 설치: <a href="#update">업데이트</a> · daDake2 환경 / DB: 별도 준비</p><p><a href="https://docs.docker.com/get-started/get-docker/">Docker 설치 ↗</a> · <a href="https://git-scm.com/downloads">Git 설치 ↗</a></p></section><section id="images"><h2>2. 개별 Docker 이미지 빌드</h2><p>전체 빌드 실패 시 아래 개별 빌드 명령 사용</p><div class="card"><pre><code>source &quot;$HOME/caulab-pipelines/caulab.env&quot;</code></pre></div><h3>GoQC</h3><div class="card"><pre><code>cd &quot;$CAULAB_PIPELINES/GoQC&quot;
+caulab_usage.sh</code></pre></div><p><code>--build-all</code>: 이미지 전체 · <code>--build-core</code>: GoQC / KBracken / Humannake<br><code>--prefix</code>: 설치 경로 · <code>--platform</code>: CPU 아키텍처<br>기존 설치: <a href="#update">업데이트</a> · daDake2 환경 / DB: 별도 준비</p><p><a href="https://docs.docker.com/get-started/get-docker/">Docker 설치 ↗</a> · <a href="https://git-scm.com/downloads">Git 설치 ↗</a></p></section><section id="images"><h2>2. 개별 Docker 이미지 빌드</h2><p>전체 빌드 실패 시 아래 개별 빌드 명령 사용<br>설치 위치: <code>$HOME/caulab-pipelines</code> (<code>~/caulab-pipelines</code>)</p><div class="card"><pre><code>source &quot;$HOME/caulab-pipelines/caulab.env&quot;</code></pre></div><h3>GoQC</h3><div class="card"><pre><code>cd &quot;$HOME/caulab-pipelines/GoQC&quot;
 docker build -t goqc:caulab .</code></pre></div><h3>KBracken</h3>
-      <div class="card"><pre><code>cd &quot;$CAULAB_PIPELINES/KBracken&quot;
+      <div class="card"><pre><code>cd &quot;$HOME/caulab-pipelines/KBracken&quot;
 docker build --network=host -t kbracken:caulab .</code></pre></div>
 
       <h3>Humannake</h3>
-      <div class="card"><pre><code>cd &quot;$CAULAB_PIPELINES/Humann&quot;
+      <div class="card"><pre><code>cd &quot;$HOME/caulab-pipelines/Humann&quot;
 docker build --network=host -t humann:caulab .</code></pre></div>
 
       <h3>longWGS</h3>
-      <div class="card"><pre><code>cd &quot;$CAULAB_PIPELINES/longWGS&quot;
+      <div class="card"><pre><code>cd &quot;$HOME/caulab-pipelines/longWGS&quot;
 docker build -t longwgs .</code></pre></div>
 
       <h3>shortWGS</h3>
-      <div class="card"><pre><code>cd &quot;$CAULAB_PIPELINES/shortWGS&quot;
+      <div class="card"><pre><code>cd &quot;$HOME/caulab-pipelines/shortWGS&quot;
 docker build --network=host -t shortwgs .</code></pre></div>
 
       <h3>RNake</h3>
-      <div class="card"><pre><code>cd &quot;$CAULAB_PIPELINES/RNake&quot;
+      <div class="card"><pre><code>cd &quot;$HOME/caulab-pipelines/RNake&quot;
 docker build -t rnake:1.0 .</code></pre></div>
 
       <h3>MAGs</h3>
-      <div class="card"><pre><code>cd &quot;$CAULAB_PIPELINES/MAGs&quot;
+      <div class="card"><pre><code>cd &quot;$HOME/caulab-pipelines/MAGs&quot;
 docker build -f docker/Dockerfile.qc -t mags-qc:1.0 .
 docker build -f docker/Dockerfile.assembly -t mags-assembly:1.0 .
 docker build -f docker/Dockerfile.annotation -t mags-annotation:1.0 .</code></pre></div>
