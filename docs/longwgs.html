@@ -3,7 +3,7 @@
       <span class="badge">롱리드 유전체</span>
       <h1>longWGS</h1>
       <p class="lead">ONT 세균 유전체 분석. 조립, 오류 교정, 품질 평가, 유전체 주석을 수행합니다.</p>
-<p><a href="#databases">참조 DB 준비 ↓</a></p>
+<p><a href="workstations.html#db-longwgs">설치 및 DB 준비 →</a></p>
       <div class="status-banner status-tested">
         STATUS: TESTED IN NOOK AND CORE3 WORKSTATION
       </div>
@@ -23,10 +23,6 @@
         <span class="node">Kraken2</span><span class="arrow">→</span>
         <span class="node">Bakta</span>
       </div>
-
-      <h2>컨테이너 빌드</h2>
-      <div class="card"><pre><code>cd longWGS
-docker build -t longwgs .</code></pre></div>
 
       <h2>전처리: 병합과 이름 정리</h2>
       <p>
@@ -117,11 +113,5 @@ longWGS_DB/
     |-- checkm2_coverage_summary.xlsx
     `-- 8_Bandage_image/ (optional)</code></pre></div>
 
-<section id="databases"><h2>참조 DB 준비</h2><table><tr><th>DB / 참조 파일</th><th>저장 위치 · 실행 옵션</th></tr><tr><td>Bakta full</td><td><code>LONG_DB/bakta_DB/</code></td></tr><tr><td>CheckM2 1.1.0용 DB</td><td><code>LONG_DB/CheckM2_database/uniref100.KO.1.dmnd</code></td></tr><tr><td>PLSDB (Plassembler)</td><td><code>LONG_DB/plassembler_db/</code></td></tr><tr><td>Kraken2</td><td><code>LONG_DB/kraken2DB/</code></td></tr><tr><td>Medaka 모델 캐시</td><td><code>LONG_DB/medaka_models/</code></td></tr></table><div class="card"><pre><code>LONG_DB=&quot;/path/to/longWGS_DB&quot;
-mkdir -p &quot;$LONG_DB/medaka_models&quot;
-docker run --rm -v &quot;$LONG_DB&quot;:/db longwgs bakta_db download --output /db --type full
-# 최초 설치: 다운로드된 db 폴더를 파이프라인 이름에 맞춥니다.
-mv &quot;$LONG_DB/db&quot; &quot;$LONG_DB/bakta_DB&quot;
-docker run --rm -v &quot;$LONG_DB&quot;:/db longwgs micromamba run -n checkm2_110 checkm2 database --download --path /db
-docker run --rm -v &quot;$LONG_DB&quot;:/db longwgs plassembler download -d /db/plassembler_db</code></pre></div><p><code>longwgs</code> 이미지를 먼저 빌드합니다. CheckM2 DB는 이미지에 설치된 1.1.0용으로 받으며, CheckM1 DB로 대체할 수 없습니다. Medaka 모델은 사용한 basecaller 모델에 맞춰 선택하며 캐시 폴더를 유지합니다.</p><p>Kraken2는 <a href="https://benlangmead.github.io/aws-indexes/k2" target="_blank" rel="noopener noreferrer">공식 DB 목록 ↗</a>에서 필요한 아카이브를 받아 <code>LONG_DB/kraken2DB/</code>에 풉니다. 이 폴더 바로 아래에 <code>hash.k2d</code>, <code>opts.k2d</code>, <code>taxo.k2d</code>가 있어야 합니다. 다른 폴더를 가리키는 링크는 컨테이너에서도 접근 가능한 경로여야 합니다. 실행에는 <code>-d "$LONG_DB"</code>를 사용합니다.</p><p><a href="https://github.com/oschwengers/bakta" target="_blank" rel="noopener noreferrer">Bakta ↗</a> · <a href="https://github.com/chklovski/CheckM2" target="_blank" rel="noopener noreferrer">CheckM2 ↗</a> · <a href="https://github.com/gbouras13/plassembler" target="_blank" rel="noopener noreferrer">Plassembler ↗</a> · <a href="https://github.com/nanoporetech/medaka" target="_blank" rel="noopener noreferrer">Medaka ↗</a></p></section>
+
 <footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div></body></html>

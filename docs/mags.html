@@ -3,7 +3,7 @@
       <span class="badge">메타유전체</span>
       <h1>MAGs</h1>
       <p class="lead">메타유전체 조립과 MAG 분석. 품질 관리, 조립·binning, 유전체 주석을 별도로 실행합니다. 현재 시험 중입니다.</p>
-<p><a href="#databases">참조 DB 준비 ↓</a></p>
+<p><a href="workstations.html#db-mags">설치 및 DB 준비 →</a></p>
       <div class="status-banner status-wip">
         STATUS: IN TESTING
       </div>
@@ -12,27 +12,6 @@
       <div class="card image-card">
         <img class="pipeline-image" src="assets/MAGs_pipeline.png" alt="MAGs pipeline overview diagram">
       </div>
-
-      <h2>설치 경로</h2>
-      <div class="card"><pre><code>heekuk_path/
-|-- Go_MAGs_QC.sh
-|-- Go_MAGs_QC.smk
-|-- Go_MAGs_Assembly.sh
-|-- Go_MAGs_Assembly.smk
-|-- Go_MAGs_Annotation.sh
-|-- Go_MAGs_Annotation.smk
-|-- scripts/
-|   `-- summarize_all_results.py
-`-- docker/MAGs/
-    |-- Dockerfile.qc
-    |-- Dockerfile.assembly
-    `-- Dockerfile.annotation</code></pre></div>
-
-      <h2>컨테이너 빌드</h2>
-      <div class="card"><pre><code>cd $CAULAB_PIPELINES/MAGs
-docker build -f Dockerfile.qc -t mags-qc:1.0 .
-docker build -f Dockerfile.assembly -t mags-assembly:1.0 .
-docker build -f Dockerfile.annotation -t mags-annotation:1.0 .</code></pre></div>
 
       <h2>품질 관리 실행</h2>
       <div class="card"><pre><code>Go_MAGs_QC.sh \
@@ -63,13 +42,5 @@ docker build -f Dockerfile.annotation -t mags-annotation:1.0 .</code></pre></div
   -j 4 \
   -K</code></pre></div>
 
-<section id="databases"><h2>참조 DB 준비</h2><table><tr><th>DB / 참조 파일</th><th>저장 위치 · 실행 옵션</th></tr><tr><td>QC: 숙주 Bowtie2 인덱스</td><td><code>Go_MAGs_QC.sh -d INDEX_PREFIX</code> · <a href="goqc.html#databases">GoQC와 공유</a></td></tr><tr><td>Assembly: CheckM1 DB</td><td><code>Go_MAGs_Assembly.sh -d CHECKM_DIR</code></td></tr><tr><td>Annotation: GTDB-Tk</td><td><code>-g GTDB_DIR</code> · <code>mash_db/genomic_mash_db.msh</code> 필요</td></tr><tr><td>Annotation: eggNOG</td><td><code>-e EGGNOG_DIR</code> · <code>eggnog_proteins.dmnd</code>와 annotation DB 필요</td></tr><tr><td>Annotation: Kofam</td><td><code>-k KOFAM_DIR</code> · <code>profiles/</code>와 압축 해제한 <code>ko_list</code></td></tr></table><h3>CheckM1</h3><p><a href="https://github.com/Ecogenomics/CheckM/wiki/Installation" target="_blank" rel="noopener noreferrer">CheckM 설치 안내 ↗</a>의 reference data 링크(<a href="https://zenodo.org/records/7401545" target="_blank" rel="noopener noreferrer">CheckM DB 다운로드 ↗</a>)에서 아카이브를 받아 압축을 푼 폴더를 지정합니다. longWGS에서 쓰는 CheckM2 DB와 별개입니다. CheckM의 DB 경로 설정은 Assembly 워크플로가 처리합니다.</p><h3>GTDB-Tk</h3><div class="card"><pre><code>docker run --rm mags-annotation:1.0 gtdbtk --version</code></pre></div><p><a href="https://ecogenomics.github.io/GTDBTk/installing/index.html" target="_blank" rel="noopener noreferrer">GTDB-Tk 버전별 DB 안내 ↗</a>에서 위 버전에 맞는 full package를 받습니다. 예를 들어 R220은 GTDB-Tk 2.4.0–2.6.1, R232는 2.7 이상에 대응합니다. 압축을 푼 실제 DB 루트를 <code>-g</code>에 지정하고 <code>mash_db/genomic_mash_db.msh</code>가 있는지 확인합니다. 파일이 없다면 해당 버전의 GTDB-Tk 안내에 따라 Mash DB를 준비합니다.</p><h3>eggNOG</h3><div class="card"><pre><code>EGGNOG_DIR=&quot;/path/to/eggnog&quot;
-mkdir -p &quot;$EGGNOG_DIR&quot;
-docker run --rm -v &quot;$EGGNOG_DIR&quot;:/db mags-annotation:1.0 emapper.py --version
-docker run --rm -v &quot;$EGGNOG_DIR&quot;:/db mags-annotation:1.0 download_eggnog_data.py -y --data_dir /db</code></pre></div><p><a href="https://github.com/eggnogdb/eggnog-mapper" target="_blank" rel="noopener noreferrer">eggNOG-mapper 다운로드 안내 ↗</a>에 따라 컨테이너에 설치된 도구로 받습니다. 현재 워크플로는 <code>EGGNOG_DIR/eggnog_proteins.dmnd</code>를 직접 사용합니다. v3의 버전별 하위 폴더 등 다른 배치로 다운로드되면 그대로 실행할 수 없습니다. 이 경우 v2 호환 이미지·DB를 사용하거나 워크플로 경로를 먼저 맞춰야 합니다.</p><h3>Kofam</h3><div class="card"><pre><code>KOFAM_DIR=&quot;/path/to/kofam&quot;
-mkdir -p &quot;$KOFAM_DIR&quot;
-curl -fL https://www.genome.jp/ftp/db/kofam/profiles.tar.gz -o &quot;$KOFAM_DIR/profiles.tar.gz&quot;
-curl -fL https://www.genome.jp/ftp/db/kofam/ko_list.gz -o &quot;$KOFAM_DIR/ko_list.gz&quot;
-tar -xzf &quot;$KOFAM_DIR/profiles.tar.gz&quot; -C &quot;$KOFAM_DIR&quot;
-gzip -dc &quot;$KOFAM_DIR/ko_list.gz&quot; &gt; &quot;$KOFAM_DIR/ko_list&quot;</code></pre></div><p><a href="https://www.genome.jp/ftp/db/kofam/" target="_blank" rel="noopener noreferrer">Kofam 공식 다운로드 ↗</a>의 profiles와 ko_list를 같은 시점에 받습니다. Prokka의 기본 DB는 컨테이너에 포함됩니다.</p></section>
+
 <footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div></body></html>

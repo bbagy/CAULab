@@ -3,7 +3,7 @@
       <span class="badge">숏리드 유전체</span>
       <h1>shortWGS</h1>
       <p class="lead">Illumina 세균 유전체 분석. 균종, MLST, 내성 유전자, 플라스미드를 확인하고 HTML·CSV 결과를 생성합니다.</p>
-<p><a href="#databases">참조 DB 준비 ↓</a></p>
+<p><a href="workstations.html#db-shortwgs">설치 및 DB 준비 →</a></p>
       <div class="status-banner status-tested">
         STATUS: TESTED IN CORE2 WORKSTATION
       </div>
@@ -17,10 +17,6 @@
         <span class="node">TETyper</span><span class="arrow">→</span>
         <span class="node">MultiQC + Summary</span>
       </div>
-
-      <h2>컨테이너 빌드</h2>
-      <div class="card"><pre><code>cd shortWGS
-docker build --network=host -t shortwgs .</code></pre></div>
 
       <h2>실행 방법</h2>
       <div class="card"><pre><code>./shortWGS/Go_shortWGS.sh \
@@ -87,14 +83,5 @@ GoWGS/
     |-- summary_master.csv
     `-- summary_report.html   &lt;-- FINAL REPORT FILE</code></pre></div>
 
-<section id="databases"><h2>참조 DB 준비</h2><table><tr><th>DB / 참조 파일</th><th>저장 위치 · 실행 옵션</th></tr><tr><td>CARD · PlasmidFinder (SRST2 형식)</td><td><code>WGS_DB/CARD/*.fasta</code>, <code>WGS_DB/PlasmidFinder/*.fasta</code></td></tr><tr><td>종별 MLST</td><td><code>WGS_DB/MLST/e_coli/</code> 등: allele FASTA + profile 표</td></tr><tr><td>TETyper</td><td><code>WGS_DB/tetyper/</code>: <code>Tn4401b-1.fasta</code>, <code>struct_profiles.txt</code>, <code>snp_profiles.txt</code></td></tr><tr><td>Kraken2</td><td>KBracken과 같은 DB를 <code>-k</code>로 지정</td></tr></table><div class="card"><pre><code>WGS_DB=&quot;/path/to/WGS_DB2&quot;
-mkdir -p &quot;$WGS_DB/CARD&quot; &quot;$WGS_DB/PlasmidFinder&quot; &quot;$WGS_DB/tetyper&quot;
-curl -fL https://raw.githubusercontent.com/katholt/srst2/master/data/CARD_v3.0.8_SRST2.fasta -o &quot;$WGS_DB/CARD/CARD_v3.0.8_SRST2.fasta&quot;
-curl -fL https://raw.githubusercontent.com/katholt/srst2/master/data/PlasmidFinder.fasta -o &quot;$WGS_DB/PlasmidFinder/PlasmidFinder.fasta&quot;
-for file in Tn4401b-1.fasta struct_profiles.txt snp_profiles.txt; do
-  curl -fL &quot;https://raw.githubusercontent.com/aesheppard/TETyper/master/$file&quot; -o &quot;$WGS_DB/tetyper/$file&quot;
-done</code></pre></div><p>위 CARD와 PlasmidFinder 파일은 SRST2 배포본에 포함된 기존 버전입니다. 최신 DB가 필요하면 원본 서열을 SRST2 형식으로 변환해야 합니다. 각 폴더에 사용할 FASTA 하나만 둡니다. 파이프라인은 정렬상 첫 파일을 선택합니다.</p><div class="card"><pre><code>mkdir -p &quot;$WGS_DB/MLST/e_coli&quot;
-cd &quot;$WGS_DB/MLST/e_coli&quot;
-# SRST2가 설치된 환경에서 실행
-getmlst.py --species &quot;Escherichia coli#1&quot;</code></pre></div><p>MLST는 <a href="https://github.com/katholt/srst2" target="_blank" rel="noopener noreferrer">SRST2의 getmlst.py 안내 ↗</a>에 따라 종·scheme별로 받습니다. 생성된 allele FASTA와 <code>profiles_csv</code> 표를 함께 보관합니다. 다른 종의 폴더 이름은 워크플로의 종 코드에 맞춥니다. 실행 시 전체 폴더는 <code>-d "$WGS_DB"</code>, Kraken2는 <code>-k /path/to/kraken2_db</code>로 지정합니다.</p><p><a href="https://github.com/katholt/srst2/tree/master/data" target="_blank" rel="noopener noreferrer">SRST2 DB ↗</a> · <a href="https://github.com/aesheppard/TETyper" target="_blank" rel="noopener noreferrer">TETyper 참조 파일 ↗</a> · <a href="kbracken.html#databases">Kraken2 받는 방법</a></p></section>
+
 <footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div></body></html>

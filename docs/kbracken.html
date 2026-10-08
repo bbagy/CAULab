@@ -3,7 +3,7 @@
       <span class="badge">메타유전체</span>
       <h1>KBracken</h1>
       <p class="lead">미생물 분류와 풍부도 추정. Kraken2·Bracken 결과를 샘플별로 계산하고 MPA 형식의 표로 통합합니다.</p>
-<p><a href="#databases">참조 DB 준비 ↓</a></p>
+<p><a href="workstations.html#db-kbracken">설치 및 DB 준비 →</a></p>
       <div class="status-banner status-tested">
         STATUS: AVAILABLE — TESTED IN CORE4 WORKSTATION
       </div>
@@ -18,22 +18,6 @@
         <span class="node">bracken_to_mpa</span><span class="arrow">→</span>
         <span class="node">fill_bracken_taxonomy</span>
       </div>
-
-      <h2>설치 경로</h2>
-      <div class="card"><pre><code>heekuk_path/
-|-- Go_KBracken.sh
-|-- Go_KBracken.smk
-|-- scripts/
-|   |-- bracken_to_mpa.py
-|   |-- fill_bracken_taxonomy.py
-|   |-- kraken_masterlog.py
-|   `-- merge_mpa_tables.py
-`-- docker/KBracken/
-    `-- Dockerfile</code></pre></div>
-
-      <h2>컨테이너 빌드</h2>
-      <div class="card"><pre><code>cd $CAULAB_PIPELINES/KBracken
-docker build --network=host -t kbracken:caulab .</code></pre></div>
 
       <h2>실행 방법</h2>
       <div class="card"><pre><code>Go_KBracken.sh \
@@ -50,8 +34,5 @@ ASB_2_R1.fastq.gz / ASB_2_R2.fastq.gz -> sample ASB_2
 S1_1.fastq.gz and S1_2.fastq.gz stay separate single-end samples</code></pre></div>
       <p>Paired-end inference requires explicit <code>R1/R2</code> or <code>forward/reverse</code> tokens.</p>
 
-<section id="databases"><h2>참조 DB 준비</h2><table><tr><th>DB / 참조 파일</th><th>저장 위치 · 실행 옵션</th></tr><tr><td>Kraken2 PlusPFP 16GB + Bracken</td><td><code>$DB_ROOT/kraken2/k2_pluspfp_16gb_latest</code> → <code>-d</code></td></tr></table><div class="card"><pre><code>source &quot;$HOME/caulab-pipelines/caulab.env&quot;
-DB_ROOT=&quot;/path/to/DB&quot;
-bash &quot;$CAULAB_PIPELINES/download_databases.sh&quot; --db-root &quot;$DB_ROOT&quot; --tools kraken2 --threads 8 --bracken-read-len 100
-source &quot;$CAULAB_PIPELINES/config/lab_paths.sh&quot;</code></pre></div><p>Docker 이미지 <code>kbracken:caulab</code>를 먼저 빌드합니다. 위 명령은 Kraken2 DB를 받고 100 bp용 Bracken 파일을 만듭니다. <code>--bracken-read-len</code>은 분석에 사용할 리드 길이에 맞추며, 현재 워크플로 기본값은 100 bp이며, 길이를 바꾸면 <code>bracken_read_len</code> 설정도 함께 변경합니다. 폴더 안에 <code>hash.k2d</code>, <code>opts.k2d</code>, <code>taxo.k2d</code>와 해당 길이의 Bracken 파일이 있어야 합니다.</p><p><a href="https://benlangmead.github.io/aws-indexes/k2" target="_blank" rel="noopener noreferrer">Kraken2 DB 목록 ↗</a></p></section>
+
 <footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div></body></html>
