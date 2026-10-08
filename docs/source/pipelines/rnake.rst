@@ -18,3 +18,6 @@ Highlights
 - Dockerized Snakemake execution
 - Progress monitor and lock auto-retry
 - Dry-run and keep-going support
+
+Preprocessing uses fastp with per-sample HTML/JSON QC reports.
+Strandedness is selected with ``-S no|yes|reverse`` (default: ``no``).

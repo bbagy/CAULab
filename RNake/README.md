@@ -5,7 +5,7 @@
 ![Container](https://img.shields.io/badge/Runtime-Docker-0db7ed)
 ![Status](https://img.shields.io/badge/Status-Available-2e7d32)
 
-Bacterial RNA-seq workflow for trimming, Bowtie2 mapping, HTSeq counting, and merged count-table generation with gene-name annotation.
+Bacterial RNA-seq workflow for fastp QC and trimming, Bowtie2 mapping, HTSeq counting, and merged count-table generation with gene-name annotation.
 
 ## Current Entrypoints
 
@@ -55,6 +55,7 @@ Representative tools in the image:
 ## Run A Single Tool From The Image
 
 ```bash
+docker run --rm rnake:1.0 fastp --version
 docker run --rm rnake:1.0 snakemake --version
 docker run --rm rnake:1.0 bowtie2 --version
 docker run --rm rnake:1.0 htseq-count -h
@@ -93,6 +94,7 @@ Go_Rnake.sh \
 | `-o` | - | Project / output prefix (creates `<prefix>_RNAseq_output/`) |
 | `-g` | - | Reference genome FASTA |
 | `-a` | - | Annotation GFF |
+| `-S` | `no` | HTSeq strandedness: `no`, `yes`, or `reverse` |
 | `-s` | script directory | Optional Snakefile directory override |
 | `-c` | `8` | Snakemake cores |
 | `-m` | `rnake:1.0` | Docker image tag |

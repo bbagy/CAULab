@@ -18,7 +18,7 @@ Bacterial Genome, Metagenome, RNA-seq, and 16S/ITS analysis.
 | MAGs (testing) | Metagenome QC, assembly, binning, and annotation |
 | longWGS | ONT assembly, polishing, QC, and annotation |
 | shortWGS | Illumina typing: MLST, ARG, plasmids, and TETyper |
-| RNake | Bacterial RNA-seq trimming, mapping, and gene counts |
+| RNake | Bacterial RNA-seq: fastp QC, Bowtie2 mapping, and HTSeq counts |
 
 ## Install
 
