@@ -1,79 +1,98 @@
 # CAULab Pipelines
 
-![Snakemake](https://img.shields.io/badge/Snakemake-Workflow-039be5)
-![Docker](https://img.shields.io/badge/Docker-Containerized-0db7ed)
-![Status](https://img.shields.io/badge/Status-Active-2e7d32)
+Snakemake pipelines for Illumina and ONT data.
+Bacterial Genome, Metagenome, RNA-seq, and 16S/ITS analysis.
 
-Sequencing pipelines using the UhlemannLab pipeline structure, with CAULab installation and database settings.
-Container launchers share `common/container.sh` and support Docker or Apptainer. GoQC remains available for standalone metagenome QC.
+## Pipelines
 
-## Pipeline Catalog
-
-| Pipeline | Purpose |
+| Pipeline | Analysis |
 |---|---|
-| GoQC | Paired-end FASTQ QC and host read depletion |
+| GoQC | Paired-end FASTQ QC and host read removal |
 | longWGS | ONT assembly, polishing, QC, and annotation |
-| shortWGS | Illumina typing: MLST, ARG, plasmid, and TETyper |
-| KBracken | Kraken2 + Bracken taxonomic profiling |
-| Humannake | HUMAnN3 + MetaPhlAn4 functional profiling |
-| RNake | Bacterial RNA-seq trimming, mapping, and counts |
-| daDake2 | DADA2 16S/ITS processing with project checkpoints |
-| MAGs (in testing) | Metagenome QC, assembly/binning, and annotation |
+| shortWGS | Illumina typing: MLST, ARG, plasmids, and TETyper |
+| KBracken | Kraken2 / Bracken taxonomic profiling |
+| Humannake | HUMAnN3 / MetaPhlAn4 functional profiling |
+| RNake | Bacterial RNA-seq trimming, mapping, and gene counts |
+| daDake2 | DADA2 16S/ITS analysis and RDS checkpoints |
+| MAGs (testing) | Metagenome QC, assembly, binning, and annotation |
 
-## Install and Update
+## Install
+
+Requirements: Git and a running Docker Engine. Default platform: Ubuntu server.
 
 ```bash
-git clone https://github.com/bbagy/CAULab.git
-cd CAULab
-./install_docker_env.sh --build-core
+git clone https://github.com/bbagy/CAULab.git "$HOME/CAULab"
+cd "$HOME/CAULab"
+bash install_docker_env.sh --build-all
 source "$HOME/caulab-pipelines/caulab.env"
 caulab_usage.sh
 ```
 
-All pipeline code is installed by default. `--build-core` builds GoQC, KBracken, and Humannake; `--build-all` also builds longWGS, shortWGS, RNake, and the three MAGs images.
-For an existing installation:
+- Code: `$HOME/CAULab`
+- Installation: `$HOME/caulab-pipelines`
+- Commands on PATH: `$HOME/caulab-pipelines/bin`
+- `--build-all`: all 9 Docker images; MAGs uses 3 images.
+- `--build-core`: GoQC, KBracken, and Humannake images.
+- daDake2: host Mamba/Conda, Snakemake, R/DADA2, phyloseq, and QIIME 2; FIGARO setup on first `-A` run.
+- DB downloads: separate from installation.
+- Custom installation: `--prefix /path/to/caulab-pipelines`
+- Target architecture: `--platform linux/amd64`
+
+New terminal:
 
 ```bash
-git pull
-./install_docker_env.sh --update --build-core
 source "$HOME/caulab-pipelines/caulab.env"
 ```
 
-`--update` refreshes pipeline code, shared helpers, documentation, and command links while preserving `config/lab_paths.sh` and `config/lab_paths.yaml`.
-Use `--prefix /path/to/caulab-pipelines` for another install location. Use `--platform linux/amd64` on Apple Silicon when needed, and `--no-cache` to rebuild a broken image.
-`daDake2` runs on the host: install Snakemake, R with DADA2 and its required packages, and FIGARO as described in [its README](daDake2/README.md).
-GoQC uses Docker; the other container launchers also accept Apptainer.
+## Update
 
-## Docker and Apptainer
+```bash
+cd "$HOME/CAULab"
+git pull --ff-only
+bash install_docker_env.sh --update --build-all
+source "$HOME/caulab-pipelines/caulab.env"
+```
+
+Local settings preserved: `config/lab_paths.sh` and `config/lab_paths.yaml`.
+DBs and analysis outputs stored outside the repository.
+
+## Docker / Apptainer
+
+- Local server: Docker
+- HPC: Apptainer / SIF
+- GoQC: Docker only
+- daDake2: host environment
 
 ```bash
 Go_shortWGS.sh --container docker [pipeline options]
 Go_shortWGS.sh --container apptainer --container-image /shared/shortwgs.sif [pipeline options]
 ```
 
-See [the container image guide](common/README.md) for image export and SIF conversion.
-Pipeline wrappers locate shared helpers and workflows relative to the repository, including when invoked through installed command links.
-Inputs, databases, and outputs remain outside the repository. New pipelines use explicit database/reference flags; CAULab's existing KBracken and Humannake database defaults are retained.
+Image export and SIF conversion: [container guide](common/README.md).
 
-## Reference Databases
+## Reference DBs
 
 ```bash
-download_databases.sh --db-root $HOME/caulab-db --tools all --threads 8
 source "$HOME/caulab-pipelines/caulab.env"
+DB_ROOT="$HOME/caulab-db"
+bash "$HOME/caulab-pipelines/download_databases.sh" --db-root "$DB_ROOT" --tools all --threads 8
+source "$HOME/caulab-pipelines/config/lab_paths.sh"
 ```
 
-The downloader covers GoQC host filtering (CHM13/T2T), Kraken2/Bracken, and HUMAnN/MetaPhlAn. Other pipelines require their own references as documented in each pipeline README.
-Local database settings belong in `config/lab_paths.sh`; databases and analysis outputs are not versioned.
+- Included: CHM13 host index, Kraken2/Bracken, HUMAnN/MetaPhlAn.
+- Other references: [DB preparation guide](https://bbagy.github.io/CAULab/workstations.html#databases).
+- Local DB paths: `config/lab_paths.sh`.
 
 ## Documentation
 
+- [Documentation Portal — Korean](https://bbagy.github.io/CAULab/)
 - [Installation guide](INSTALL_CAULab.md)
-- [Documentation Portal](https://bbagy.github.io/CAULab/)
-- [Documentation portal source](docs/index.html)
+- [Docker / Conda environments](https://bbagy.github.io/CAULab/environments.html)
 - [Container guide](common/README.md)
-- `caulab_usage.sh` lists installed commands and core examples.
+- Command list: `caulab_usage.sh`
 
-Repository documentation is maintained in English. The [Documentation Portal](https://bbagy.github.io/CAULab/) provides Korean introductions and guides with a CAULab-specific design. GitHub Pages publishes the static files from **main → /docs**; `docs/.nojekyll` preserves them without Jekyll processing.
+Repository documentation: English. Web documentation: Korean.
+GitHub Pages: `main` → `/docs`; static files with `docs/.nojekyll`.
 
 ## Maintainer
 
