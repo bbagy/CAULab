@@ -31,7 +31,7 @@
   -i shortWGS/20261001_WGS_HKP \
   -o shortWGS/20261001_WGS_HKP_out \
   -d "$HOME/caulab-db/shortWGS" \
-  -k "$HOME/caulab-db/kraken2" \
+  -k "$HOME/caulab-db/kraken2/k2_pluspfp_16gb_latest" \
   -K</code></pre></div>
 
       <h2>옵션</h2>
@@ -52,14 +52,16 @@
 |   `-- SAMPLE1_R2.fastq.gz
 `-- 20261001_WGS_HKP_out/
 
-WGS_DB2/
+$HOME/caulab-db/shortWGS/
 |-- CARD/
 |-- PlasmidFinder/
 |-- MLST/
 `-- tetyper/
 
-kraken2_db/
-`-- (kraken2 index files)
+$HOME/caulab-db/kraken2/k2_pluspfp_16gb_latest/
+|-- hash.k2d
+|-- opts.k2d
+`-- taxo.k2d
 
 $HOME/caulab-pipelines/shortWGS/
 `-- scripts/
