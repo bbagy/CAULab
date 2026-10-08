@@ -127,6 +127,9 @@ sed '/^##FASTA$/,$d' your_prokka_output.gff > cleaned.gff
 ```text
 <PROJECT>_RNAseq_output/
   1_trim/
+    <sample>.fastp.html
+    <sample>.fastp.json
+    <sample>.fastp.log
     <sample>.R1.paired.output.fastq.gz
     <sample>.R2.paired.output.fastq.gz
   3_bowtie2_files/
