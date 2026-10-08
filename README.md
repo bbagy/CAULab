@@ -25,7 +25,7 @@ Container launchers share `common/container.sh` and support Docker or Apptainer.
 ```bash
 git clone https://github.com/bbagy/CAULab.git
 cd CAULab
-./install_mac.sh --build-core
+./install_docker_env.sh --build-core
 source "$HOME/caulab-pipelines/caulab.env"
 caulab_usage.sh
 ```
@@ -35,7 +35,7 @@ For an existing installation:
 
 ```bash
 git pull
-./install_mac.sh --update --build-core
+./install_docker_env.sh --update --build-core
 source "$HOME/caulab-pipelines/caulab.env"
 ```
 
@@ -58,7 +58,7 @@ Inputs, databases, and outputs remain outside the repository. New pipelines use 
 ## Reference Databases
 
 ```bash
-download_databases.sh --db-root /Volumes/CAULabDB --tools all --threads 8
+download_databases.sh --db-root $HOME/caulab-db --tools all --threads 8
 source "$HOME/caulab-pipelines/caulab.env"
 ```
 

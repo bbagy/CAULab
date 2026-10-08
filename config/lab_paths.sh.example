@@ -18,7 +18,7 @@ export CAULAB_HUMANN_UNIREF="/data/db/humann/uniref"
 export CAULAB_HUMANN_METAPHLAN="/data/db/humann/metaphlan4"
 export CAULAB_METAPHLAN_INDEX="mpa_vJan25_CHOCOPhlAnSGB_202503"
 
-# Docker images built by install_mac.sh --build-core.
+# Docker images built by install_docker_env.sh --build-core.
 export CAULAB_GOQC_IMAGE="goqc:caulab"
 export CAULAB_KBRACKEN_IMAGE="kbracken:caulab"
 export CAULAB_HUMANN_IMAGE="humann:caulab"

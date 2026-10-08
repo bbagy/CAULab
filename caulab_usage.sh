@@ -51,10 +51,10 @@ List CAULab images:
   docker images --format '{{.Repository}}:{{.Tag}}' | grep -E '^(goqc|kbracken|humann):caulab$'
 
 Build all three images during install:
-  ./install_mac.sh --build-core
+  ./install_docker_env.sh --build-core
 
 Build the complete container family:
-  ./install_mac.sh --build-all
+  ./install_docker_env.sh --build-all
 
 Extended pipeline usage:
   See "$PIPELINES/docs/index.html" and each pipeline README.
@@ -63,12 +63,12 @@ Extended pipeline usage:
   New pipelines require explicit database/reference flags.
 
 Apple Silicon fallback:
-  ./install_mac.sh --build-core --platform linux/amd64
+  ./install_docker_env.sh --build-core --platform linux/amd64
 
 Download reference databases:
-  download_databases.sh --db-root /Volumes/CAULabDB --tools host --threads 8
-  download_databases.sh --db-root /Volumes/CAULabDB --tools kraken2 --threads 8
-  download_databases.sh --db-root /Volumes/CAULabDB --tools humann --threads 8
+  download_databases.sh --db-root $HOME/caulab-db --tools host --threads 8
+  download_databases.sh --db-root $HOME/caulab-db --tools kraken2 --threads 8
+  download_databases.sh --db-root $HOME/caulab-db --tools humann --threads 8
 
 Defaults:
   host    = CHM13/T2T Bowtie2 index
@@ -76,7 +76,7 @@ Defaults:
   humann  = ChocoPhlAn full + UniRef90 Diamond + MetaPhlAn DB
 
 Download all reference databases:
-  download_databases.sh --db-root /Volumes/CAULabDB --tools all --threads 8
+  download_databases.sh --db-root $HOME/caulab-db --tools all --threads 8
 
 After download, reload paths:
   source "$PIPELINES/caulab.env"

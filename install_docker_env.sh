@@ -4,21 +4,21 @@ set -euo pipefail
 usage() {
   cat <<'EOF'
 Usage:
-  ./install_mac.sh [--prefix INSTALL_DIR] [--update] [--build-core|--build-all] [--no-cache] [--platform linux/amd64]
+  ./install_docker_env.sh [--prefix INSTALL_DIR] [--update] [--build-core|--build-all] [--no-cache] [--platform linux/amd64]
 
 Defaults:
   INSTALL_DIR = $HOME/caulab-pipelines
 
 Examples:
-  ./install_mac.sh
-  ./install_mac.sh --build-core
-  ./install_mac.sh --update --build-goqc --no-cache
-  ./install_mac.sh --update --build-core
-  ./install_mac.sh --build-core --platform linux/amd64
-  ./install_mac.sh --prefix /Volumes/Analysis/caulab-pipelines --build-core
+  ./install_docker_env.sh
+  ./install_docker_env.sh --build-core
+  ./install_docker_env.sh --update --build-goqc --no-cache
+  ./install_docker_env.sh --update --build-core
+  ./install_docker_env.sh --build-core --platform linux/amd64
+  ./install_docker_env.sh --prefix $HOME/caulab-pipelines --build-core
 
 Notes:
-  - Docker Desktop must already be installed and running if a build option is used.
+  - Docker must already be installed and running if a build option is used.
   - Use --platform linux/amd64 on Apple Silicon if Bioconda cannot solve linux/arm64 packages.
   - Use --no-cache when replacing a broken Docker image.
   - --build-core builds GoQC, KBracken, and Humann images.
@@ -128,6 +128,7 @@ prepare_update_target() {
     "$PREFIX/README.md" \
     "$PREFIX/INSTALL_CAULab.md" \
     "$PREFIX/install_mac.sh" \
+    "$PREFIX/install_docker_env.sh" \
     "$PREFIX/download_databases.sh" \
     "$PREFIX/caulab_usage.sh" \
     "$PREFIX/.gitignore"
@@ -151,7 +152,7 @@ copy_install_files() {
   cp -R "$SCRIPT_DIR/config" "$PREFIX/"
   cp "$SCRIPT_DIR/README.md" "$PREFIX/"
   cp "$SCRIPT_DIR/INSTALL_CAULab.md" "$PREFIX/"
-  cp "$SCRIPT_DIR/install_mac.sh" "$PREFIX/"
+  cp "$SCRIPT_DIR/install_docker_env.sh" "$PREFIX/"
   cp "$SCRIPT_DIR/download_databases.sh" "$PREFIX/"
   cp "$SCRIPT_DIR/caulab_usage.sh" "$PREFIX/"
   cp "$SCRIPT_DIR/.gitignore" "$PREFIX/"
@@ -165,7 +166,7 @@ if [ -e "$PREFIX" ] && [ "$UPDATE" -ne 1 ]; then
   echo "  source \"$PREFIX/caulab.env\""
   echo "[CAULab install] No Docker images were built because install stopped before the build step."
   echo "[CAULab install] To refresh code and build images in that install, rerun:"
-  echo "  ./install_mac.sh --update --build-core"
+  echo "  ./install_docker_env.sh --update --build-core"
   echo "[CAULab install] Or choose a new --prefix."
   exit 1
 fi
@@ -267,9 +268,9 @@ report_image_status() {
 
 if [ "$BUILD_GOQC" -eq 1 ] || [ "$BUILD_KBRACKEN" -eq 1 ] || [ "$BUILD_HUMANN" -eq 1 ]; then
   if ! docker info >/dev/null 2>&1; then
-    echo "[CAULab install][FATAL] Docker is not available. Start Docker Desktop and rerun."
-    echo "[CAULab install] After Docker Desktop is running, use:"
-    echo "  ./install_mac.sh --update --build-core"
+    echo "[CAULab install][FATAL] Docker is not available. Start the Docker service and rerun."
+    echo "[CAULab install] After Docker is running, use:"
+    echo "  ./install_docker_env.sh --update --build-core"
     exit 1
   fi
 fi

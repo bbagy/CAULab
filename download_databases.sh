@@ -7,10 +7,10 @@ Usage:
   ./download_databases.sh --db-root DB_ROOT --tools host,kraken2,humann [options]
 
 Examples:
-  ./download_databases.sh --db-root /Volumes/CAULabDB --tools host
-  ./download_databases.sh --db-root /Volumes/CAULabDB --tools kraken2 --threads 8
-  ./download_databases.sh --db-root /Volumes/CAULabDB --tools humann --threads 8
-  ./download_databases.sh --db-root /Volumes/CAULabDB --tools all --threads 8
+  ./download_databases.sh --db-root $HOME/caulab-db --tools host
+  ./download_databases.sh --db-root $HOME/caulab-db --tools kraken2 --threads 8
+  ./download_databases.sh --db-root $HOME/caulab-db --tools humann --threads 8
+  ./download_databases.sh --db-root $HOME/caulab-db --tools all --threads 8
 
 Options:
   --db-root DIR             Root directory for downloaded databases.
@@ -27,7 +27,7 @@ Options:
   -h, --help                Show this help.
 
 Notes:
-  - Docker Desktop must be installed and running.
+  - Docker must be installed and running.
   - Kraken2 standard DB and HUMAnN DBs are large; use a disk with enough free space.
   - The script writes local DB paths into PREFIX/config/lab_paths.sh when that file exists.
 EOF
@@ -142,7 +142,7 @@ docker_run_base() {
 
 require_docker() {
   if ! docker info >/dev/null 2>&1; then
-    echo "[CAULab DB][FATAL] Docker is not available. Start Docker Desktop and rerun."
+    echo "[CAULab DB][FATAL] Docker is not available. Start the Docker service and rerun."
     exit 1
   fi
 }
@@ -152,7 +152,7 @@ require_image() {
   if ! docker image inspect "$image" >/dev/null 2>&1; then
     echo "[CAULab DB][FATAL] Docker image not found: $image"
     echo "[CAULab DB] Build images first:"
-    echo "  ./install_mac.sh --update --build-core"
+    echo "  ./install_docker_env.sh --update --build-core"
     exit 1
   fi
 }

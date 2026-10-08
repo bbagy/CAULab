@@ -2,13 +2,15 @@
 
 The CAULab copy is intended to be path-neutral. Do not hard-code workstation paths inside Snakefiles. Keep lab-specific DB paths in `config/lab_paths.sh`; wrapper scripts use those values by default and still allow command-line overrides.
 
-## General Mac Install
+## Ubuntu Server Install
+
+Install Git and Docker Engine before running the installer. Confirm that `docker info` works as your current user.
 
 Install into the current user's home directory:
 
 ```bash
 cd /path/to/CAULab
-./install_mac.sh --build-core
+./install_docker_env.sh --build-core
 source "$HOME/caulab-pipelines/caulab.env"
 open "$HOME/caulab-pipelines/config/lab_paths.sh"
 ```
@@ -25,16 +27,16 @@ Update an existing install from a refreshed clone:
 ```bash
 cd /path/to/CAULab
 git pull
-./install_mac.sh --update --build-core
+./install_docker_env.sh --update --build-core
 source "$HOME/caulab-pipelines/caulab.env"
 ```
 
 `--update` refreshes installed wrapper scripts (`Go_QC.sh`, `Go_KBracken.sh`, `Go_Humannake.sh`), Snakefiles, Dockerfiles, helper scripts, and `bin/` links while preserving `config/lab_paths.sh` and `config/lab_paths.yaml`.
 
-If Docker images are missing, first start Docker Desktop, then rerun:
+If Docker images are missing, first start the Docker service, then rerun:
 
 ```bash
-./install_mac.sh --update --build-core
+./install_docker_env.sh --update --build-core
 docker image inspect goqc:caulab kbracken:caulab humann:caulab >/dev/null
 ```
 
@@ -42,7 +44,7 @@ If a container fails with `failed to launch x86-64-v3 version`, rebuild after up
 
 ```bash
 git pull
-./install_mac.sh --update --build-goqc --no-cache
+./install_docker_env.sh --update --build-goqc --no-cache
 ```
 
 GoQC no longer uses conda/micromamba, which avoids conda-forge CPU variant launch errors on older Intel Macs and amd64 emulation.
@@ -54,21 +56,21 @@ docker pull python:3.11-slim-bookworm
 docker run --rm python:3.11-slim-bookworm bash -lc "apt-get update"
 ```
 
-If those commands fail too, the problem is Docker Desktop network/DNS/proxy access rather than CAULab code.
+If those commands fail too, the problem is Docker network/DNS/proxy access rather than CAULab code.
 
 For Apple Silicon Mac, if the normal Docker build fails while solving Bioconda packages:
 
 ```bash
 cd /path/to/CAULab
-./install_mac.sh --build-core --platform linux/amd64
+./install_docker_env.sh --build-core --platform linux/amd64
 source "$HOME/caulab-pipelines/caulab.env"
 ```
 
 Install somewhere else:
 
 ```bash
-./install_mac.sh --prefix /Volumes/Analysis/caulab-pipelines --build-core
-source /Volumes/Analysis/caulab-pipelines/caulab.env
+./install_docker_env.sh --prefix $HOME/caulab-pipelines --build-core
+source $HOME/caulab-pipelines/caulab.env
 ```
 
 After install, edit:
@@ -102,9 +104,9 @@ $HOME/caulab-pipelines/
 Any install root is valid. The important rule is that data and database paths are provided at run time.
 Database paths can be provided once through `config/lab_paths.sh`.
 
-## Docker Build on Mac
+## Docker Image Builds
 
-If not using `install_mac.sh --build-core`, build the core images manually:
+If not using `install_docker_env.sh --build-core`, build the core images manually:
 
 ```bash
 cd "$CAULAB_PIPELINES/GoQC"
@@ -166,14 +168,14 @@ Go_Humannake.sh -i IN -o OUT -n /path/to/chocophlan -p /path/to/uniref -b /path/
 GoQC host DB policy:
 
 ```bash
-download_databases.sh --db-root /Volumes/CAULabDB --tools host
+download_databases.sh --db-root $HOME/caulab-db --tools host
 ```
 
 The default host Bowtie2 index is CHM13/T2T (`chm13v2.0`). To override it for one workstation:
 
 ```bash
 download_databases.sh \
-  --db-root /Volumes/CAULabDB \
+  --db-root $HOME/caulab-db \
   --tools host \
   --host-index-name GRCh38_noalt_as \
   --host-index-url https://genome-idx.s3.amazonaws.com/bt/GRCh38_noalt_as.zip
@@ -182,13 +184,13 @@ download_databases.sh \
 Kraken2 DB policy:
 
 ```bash
-download_databases.sh --db-root /Volumes/CAULabDB --tools kraken2 --threads 8
+download_databases.sh --db-root $HOME/caulab-db --tools kraken2 --threads 8
 ```
 
 This downloads the latest available prebuilt `k2_pluspfp_16gb_YYYYMMDD` database from the Kraken2 AWS index and builds the Bracken kmer file locally. To choose a different 16GB family:
 
 ```bash
-download_databases.sh --db-root /Volumes/CAULabDB --tools kraken2 --kraken2-16gb k2_standard_16gb --threads 8
+download_databases.sh --db-root $HOME/caulab-db --tools kraken2 --kraken2-16gb k2_standard_16gb --threads 8
 ```
 
 `source "$CAULAB_PIPELINES/caulab.env"` adds `$CAULAB_PIPELINES/bin` to `PATH`, so the three wrappers can be run from any working directory.
@@ -212,7 +214,7 @@ All installations now include longWGS, shortWGS, RNake, daDake2, MAGs, shared Do
 Existing GoQC, database download commands, and local DB settings are retained.
 
 ```bash
-./install_mac.sh --update --build-all
+./install_docker_env.sh --update --build-all
 source "$HOME/caulab-pipelines/caulab.env"
 ```
 
