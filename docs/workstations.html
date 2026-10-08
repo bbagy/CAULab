@@ -3,7 +3,10 @@
 systemctl is-active docker
 docker info</code></pre></div><table><thead><tr><th>결과</th><th>상태</th><th>다음 단계</th></tr></thead><tbody><tr><td><code>command -v docker</code>: 출력 없음</td><td>Docker 명령 없음</td><td>아래 Git / Docker 설치</td></tr><tr><td><code>active</code> + <code>docker info</code>에 Server 정보 출력</td><td>실행 / 접근 정상</td><td>1. 코드와 컨테이너 설치</td></tr><tr><td><code>inactive</code> / <code>failed</code></td><td>Docker 서비스 중지</td><td>아래 서비스 시작</td></tr><tr><td><code>permission denied</code></td><td>현재 사용자 권한 부족</td><td>아래 사용자 권한 설정</td></tr><tr><td><code>Unit docker.service could not be found</code></td><td>Docker Engine 서비스 없음</td><td>Docker Engine 설치 확인</td></tr></tbody></table><h3>Docker 서비스 시작</h3><div class="card"><pre><code>sudo systemctl enable --now docker
 systemctl is-active docker
-docker info</code></pre></div><h3>사용자 권한 설정</h3><div class="card"><pre><code>sudo usermod -aG docker &quot;$USER&quot;</code></pre></div><p>로그아웃 후 다시 로그인 → <code>docker info</code> 재확인<br>서비스 시작 실패: <code>sudo systemctl status docker --no-pager</code>로 오류 확인</p><details><summary>Git / Docker 미설치 서버</summary><div class="card"><pre><code>sudo apt update
+docker info</code></pre></div><h3>사용자 권한 설정</h3><p><code>docker info</code>에서 <code>permission denied</code> 발생 시</p><div class="card"><pre><code>getent group docker || sudo groupadd docker
+sudo usermod -aG docker &quot;$USER&quot;</code></pre></div><p>로그아웃 후 다시 로그인 · SSH 사용 시 연결 종료 후 재접속</p><div class="card"><pre><code>id -nG
+docker info
+docker run --rm hello-world</code></pre></div><p>확인: 그룹 목록의 <code>docker</code> · Server 정보 · <code>Hello from Docker!</code></p><p>로그아웃 후 다시 로그인 → <code>docker info</code> 재확인<br>서비스 시작 실패: <code>sudo systemctl status docker --no-pager</code>로 오류 확인</p><details><summary>Git / Docker 미설치 서버</summary><div class="card"><pre><code>sudo apt update
 sudo apt install -y git curl ca-certificates unzip
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
@@ -20,7 +23,7 @@ sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo systemctl enable --now docker
 sudo usermod -aG docker &quot;$USER&quot;</code></pre></div><p>로그아웃 후 다시 로그인 → 아래 확인 명령 실행<br>기존 Docker 설치: <a href="https://docs.docker.com/engine/install/ubuntu/">공식 설치 안내 ↗</a></p></details><h3>최종 확인</h3><div class="card"><pre><code>git --version
-docker info</code></pre></div><p>두 명령 성공 후 1번 진행 · <a href="https://docs.docker.com/engine/install/linux-postinstall/">Docker 사용자 설정 ↗</a></p></section><section id="install"><h2>1. 코드와 컨테이너 설치</h2><p><a href="environments.html">Docker / Conda 환경 목록 →</a></p><p>실행: 위에서 아래로 코드 블록별 복사 · 오류 발생 시 중단<br>최초 설치: 아래 명령 그대로 사용 · 입력 FASTQ / 균주 / DB 선택은 사용자별 지정</p><p>필수: Git · 실행 중인 Docker Engine<br>코드: <code>$HOME/CAULab</code> · 설치: <code>$HOME/caulab-pipelines</code></p><div class="card"><pre><code>git clone https://github.com/bbagy/CAULab.git &quot;$HOME/CAULab&quot;
+docker info</code></pre></div><p>두 명령 성공 후 1번 진행</p></section><section id="install"><h2>1. 코드와 컨테이너 설치</h2><p><a href="environments.html">Docker / Conda 환경 목록 →</a></p><p>실행: 위에서 아래로 코드 블록별 복사 · 오류 발생 시 중단<br>최초 설치: 아래 명령 그대로 사용 · 입력 FASTQ / 균주 / DB 선택은 사용자별 지정</p><p>필수: Git · 실행 중인 Docker Engine<br>코드: <code>$HOME/CAULab</code> · 설치: <code>$HOME/caulab-pipelines</code></p><div class="card"><pre><code>git clone https://github.com/bbagy/CAULab.git &quot;$HOME/CAULab&quot;
 cd &quot;$HOME/CAULab&quot;
 bash install_docker_env.sh --build-all
 source &quot;$HOME/caulab-pipelines/caulab.env&quot;
