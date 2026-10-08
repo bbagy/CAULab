@@ -3,6 +3,7 @@
       <span class="badge">메타유전체</span>
       <h1>Humann</h1>
       <p class="lead">샷건 메타유전체 기능 분석. HUMAnN3·MetaPhlAn4로 유전자군, 대사경로, KEGG orthology 결과를 생성합니다.</p>
+<p><a href="#databases">참조 DB 준비 ↓</a></p>
       <div class="status-banner status-tested">
         STATUS: AVAILABLE — TESTED IN CORE4 WORKSTATION
       </div>
@@ -109,4 +110,10 @@ humann_db/
         <li>Per-sample <code>.humann.done</code> markers allow safe resume after interruption.</li>
         <li><code>--run-musicc</code> enables MUSiCC correction on the regrouped KO table.</li>
       </ul>
-    <footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div></body></html>
+
+<section id="databases"><h2>참조 DB 준비</h2><table><tr><th>DB / 참조 파일</th><th>저장 위치 · 실행 옵션</th></tr><tr><td>ChocoPhlAn</td><td><code>$DB_ROOT/humann/chocophlan</code> → <code>-n</code></td></tr><tr><td>UniRef90 DIAMOND</td><td><code>$DB_ROOT/humann/uniref90_diamond</code> → <code>-p</code></td></tr><tr><td>MetaPhlAn4</td><td><code>$DB_ROOT/humann/metaphlan4</code> → <code>-b</code>, 인덱스 이름 → <code>-I</code></td></tr></table><div class="card"><pre><code>source &quot;$HOME/caulab-pipelines/caulab.env&quot;
+DB_ROOT=&quot;/path/to/DB&quot;
+bash &quot;$CAULAB_PIPELINES/download_databases.sh&quot; --db-root &quot;$DB_ROOT&quot; --tools humann --humann-uniref uniref90_diamond
+source &quot;$CAULAB_PIPELINES/config/lab_paths.sh&quot;
+find &quot;$DB_ROOT/humann/metaphlan4&quot; -maxdepth 1 -name &quot;*.pkl&quot;</code></pre></div><p>Docker 이미지 <code>humann:caulab</code>를 먼저 빌드합니다. 이 파이프라인의 UniRef90 후처리에 맞춰 UniRef90을 받습니다. 다운로드한 <code>.pkl</code> 파일명에서 확장자를 뺀 값을 <code>-I</code>에 지정하세요. 기존 예시의 인덱스 이름과 새로 받은 DB 이름이 다르면 새 이름으로 바꿉니다. 재현 분석에는 동일한 DB 버전을 사용합니다.</p><p><a href="https://github.com/biobakery/humann" target="_blank" rel="noopener noreferrer">HUMAnN DB 안내 ↗</a> · <a href="https://github.com/biobakery/MetaPhlAn/wiki/MetaPhlAn-4" target="_blank" rel="noopener noreferrer">MetaPhlAn4 DB 안내 ↗</a></p></section>
+<footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div></body></html>

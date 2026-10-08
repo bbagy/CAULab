@@ -3,6 +3,7 @@
       <span class="badge">16S/ITS</span>
       <h1>daDake2</h1>
       <p class="lead">16S·ITS 앰플리콘 분석. DADA2로 ASV를 추정하고 분류합니다. 단계별 RDS 파일을 저장해 재실행 시 사용합니다.</p>
+<p><a href="#databases">참조 DB 준비 ↓</a></p>
       <div class="status-banner status-tested">
         STATUS: AVAILABLE — TESTED IN CORE4 WORKSTATION
       </div>
@@ -156,4 +157,6 @@ Go_daDake2.sh -t standard_V3V4 -i "ProjA" -d $DB -s $smk -n</code></pre></div>
 
       <h2>결과 내려받기</h2>
       <div class="card"><pre><code>scp -r USER@HPC_HOST:/path/to/ProjA_dada2/1_out .</code></pre></div>
-    <footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div></body></html>
+
+<section id="databases"><h2>참조 DB 준비</h2><table><tr><th>DB / 참조 파일</th><th>저장 위치 · 실행 옵션</th></tr><tr><td>16S: DADA2 형식 SILVA training FASTA</td><td>압축된 <code>silva_nr*_train_set.fa.gz</code> → <code>-d</code></td></tr><tr><td>ITS: UNITE training FASTA</td><td>General FASTA · All eukaryotes → <code>-d</code></td></tr></table><p><a href="https://benjjneb.github.io/dada2/training.html" target="_blank" rel="noopener noreferrer">DADA2 공식 training DB 목록 ↗</a>에서 16S는 SILVA, ITS는 UNITE를 선택해 연결된 배포 페이지에서 받습니다. SILVA 원본 전체 서열이 아니라 DADA2용 training set을 사용합니다. UNITE는 General FASTA의 All eukaryotes 파일을 선택합니다.</p><div class="card"><pre><code>Go_daDake2.sh -i /path/to/fastq -o /path/to/output -d /path/to/silva_nr138.2_train_set.fa.gz</code></pre></div><p>위는 16S DB 지정 예시이며, ITS 분석은 기존 ITS 실행 옵션과 UNITE 파일을 사용합니다. 선택한 DB의 버전과 파일명을 분석 기록에 남깁니다. 현재 실행 스크립트는 species DB를 따로 전달하지 않으므로 <code>addSpecies()</code>용 파일은 필수가 아닙니다.</p></section>
+<footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div></body></html>
