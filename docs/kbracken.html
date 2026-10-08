@@ -1,41 +1,13 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>KBracken</title>
-  <link rel="stylesheet" href="styles.css?v=20260305-13">
-</head>
-<body class="theme-kbracken">
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="brand">CAULab</div>
-      <nav class="nav">
-        <a href="./">Home</a>
-        <a href="containers.html">Docker &amp; Apptainer</a>
-        <a href="workstations.html">CAULab Setup</a>
-        <a href="longwgs.html">longWGS</a>
-        <a href="shortwgs.html">shortWGS</a>
-        <a class="active" href="kbracken.html">KBracken</a>
-        <a href="humann.html">Humann</a>
-        <a href="mags.html">MAGs</a>
-        <a href="rnake.html">RNake</a>
-        <a href="dadake2.html">daDake2</a>
-      </nav>
-      <div class="sidebar-foot">
-        <a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">Open bbagy GitHub</a>
-      </div>
-    </aside>
-
-    <main class="main">
-      <span class="badge">Kraken2 / Bracken</span>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="CAULab 시퀀싱 분석 파이프라인: 유전체, 메타유전체, 전사체, 앰플리콘 분석 안내"><title>KBracken | CAULab</title><link rel="stylesheet" href="styles.css?v=20261008"></head><body><a class="skip-link" href="#content">본문으로 건너뛰기</a><div class="layout"><aside class="sidebar"><a class="brand" href="index.html"><span class="brand-mark">CAU</span><span>CAULab<small>시퀀싱 분석 안내</small></span></a><nav class="nav" aria-label="문서 탐색"><a href="index.html">처음으로</a><a href="workstations.html">설치와 업데이트</a><a href="containers.html">Docker / Apptainer</a><span class="nav-label">분석 파이프라인</span><a href="longwgs.html"><span>longWGS</span><small>롱리드 유전체</small></a><a href="shortwgs.html"><span>shortWGS</span><small>숏리드 유전체</small></a><a href="goqc.html"><span>GoQC</span><small>메타유전체</small></a><a class="active" aria-current="page" href="kbracken.html"><span>KBracken</span><small>메타유전체</small></a><a href="humann.html"><span>Humann</span><small>메타유전체</small></a><a href="rnake.html"><span>RNake</span><small>전사체</small></a><a href="dadake2.html"><span>daDake2</span><small>앰플리콘</small></a><a href="mags.html"><span>MAGs</span><small>메타유전체</small></a></nav><div class="sidebar-foot"><span>코드와 분석 기록을 함께</span><a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">GitHub 저장소 ↗</a></div></aside><main class="main" id="content">
+      <span class="badge">메타유전체</span>
       <h1>KBracken</h1>
-      <p>Kraken2 + Bracken profiling with merged MPA-style outputs and master logs.</p>
+      <p class="lead">Kraken2로 미생물을 분류하고 Bracken으로 분류군별 풍부도를 추정합니다. 여러 샘플의 결과를 MPA 형식의 표로 통합합니다.</p>
       <div class="status-banner status-tested">
         STATUS: AVAILABLE — TESTED IN CORE4 WORKSTATION
       </div>
 
-      <h2>Pipeline Flow</h2>
+      <h2>분석 흐름</h2>
       <div class="flow">
         <span class="node">Prefilter</span><span class="arrow">→</span>
         <span class="node">Kraken2</span><span class="arrow">→</span>
@@ -46,7 +18,7 @@
         <span class="node">fill_bracken_taxonomy</span>
       </div>
 
-      <h2>Workstation Layout</h2>
+      <h2>설치 경로</h2>
       <div class="card"><pre><code>heekuk_path/
 |-- Go_KBracken.sh
 |-- Go_KBracken.smk
@@ -58,11 +30,11 @@
 `-- docker/KBracken/
     `-- Dockerfile</code></pre></div>
 
-      <h2>Build</h2>
+      <h2>컨테이너 빌드</h2>
       <div class="card"><pre><code>cd $CAULAB_PIPELINES/KBracken
 docker build --network=host -t kbracken:caulab .</code></pre></div>
 
-      <h2>Run</h2>
+      <h2>실행 방법</h2>
       <div class="card"><pre><code>Go_KBracken.sh \
   -i /path/to/fastq_dir \
   -o KBracken_out \
@@ -71,12 +43,9 @@ docker build --network=host -t kbracken:caulab .</code></pre></div>
   -j 4 \
   -K</code></pre></div>
 
-      <h2>Input Naming</h2>
+      <h2>입력 파일 이름</h2>
       <div class="card"><pre><code>ASB_1_R1.fastq.gz / ASB_1_R2.fastq.gz -> sample ASB_1
 ASB_2_R1.fastq.gz / ASB_2_R2.fastq.gz -> sample ASB_2
 S1_1.fastq.gz and S1_2.fastq.gz stay separate single-end samples</code></pre></div>
       <p>Paired-end inference requires explicit <code>R1/R2</code> or <code>forward/reverse</code> tokens.</p>
-    </main>
-  </div>
-</body>
-</html>
+    <footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div></body></html>

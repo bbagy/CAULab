@@ -1,47 +1,18 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MAGs</title>
-  <link rel="stylesheet" href="styles.css?v=20260305-13">
-</head>
-<body class="theme-mags">
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="brand">CAULab</div>
-      <nav class="nav">
-        <a href="./">Home</a>
-        <a href="containers.html">Docker &amp; Apptainer</a>
-        <a href="workstations.html">CAULab Setup</a>
-        <a href="longwgs.html">longWGS</a>
-        <a href="shortwgs.html">shortWGS</a>
-        <a href="goqc.html">GoQC</a>
-        <a href="kbracken.html">KBracken</a>
-        <a href="humann.html">Humann</a>
-        <a class="active" href="mags.html">MAGs</a>
-        <a href="rnake.html">RNake</a>
-        <a href="dadake2.html">daDake2</a>
-      </nav>
-      <div class="sidebar-foot">
-        <a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">Open bbagy GitHub</a>
-      </div>
-    </aside>
-
-    <main class="main">
-      <span class="badge">Metagenomics</span>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="CAULab 시퀀싱 분석 파이프라인: 유전체, 메타유전체, 전사체, 앰플리콘 분석 안내"><title>MAGs | CAULab</title><link rel="stylesheet" href="styles.css?v=20261008"></head><body><a class="skip-link" href="#content">본문으로 건너뛰기</a><div class="layout"><aside class="sidebar"><a class="brand" href="index.html"><span class="brand-mark">CAU</span><span>CAULab<small>시퀀싱 분석 안내</small></span></a><nav class="nav" aria-label="문서 탐색"><a href="index.html">처음으로</a><a href="workstations.html">설치와 업데이트</a><a href="containers.html">Docker / Apptainer</a><span class="nav-label">분석 파이프라인</span><a href="longwgs.html"><span>longWGS</span><small>롱리드 유전체</small></a><a href="shortwgs.html"><span>shortWGS</span><small>숏리드 유전체</small></a><a href="goqc.html"><span>GoQC</span><small>메타유전체</small></a><a href="kbracken.html"><span>KBracken</span><small>메타유전체</small></a><a href="humann.html"><span>Humann</span><small>메타유전체</small></a><a href="rnake.html"><span>RNake</span><small>전사체</small></a><a href="dadake2.html"><span>daDake2</span><small>앰플리콘</small></a><a class="active" aria-current="page" href="mags.html"><span>MAGs</span><small>메타유전체</small></a></nav><div class="sidebar-foot"><span>코드와 분석 기록을 함께</span><a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">GitHub 저장소 ↗</a></div></aside><main class="main" id="content">
+      <span class="badge">메타유전체</span>
       <h1>MAGs</h1>
-      <p>Modular metagenome QC, assembly/binning, and annotation workflows.</p>
+      <p class="lead">메타유전체의 품질 관리, 조립·binning, 유전체 주석을 세 단계로 나누어 실행합니다. 현재 시험 중인 파이프라인입니다.</p>
       <div class="status-banner status-wip">
         STATUS: IN TESTING
       </div>
 
-      <h2>Pipeline Overview</h2>
+      <h2>분석 개요</h2>
       <div class="card image-card">
         <img class="pipeline-image" src="assets/MAGs_pipeline.png" alt="MAGs pipeline overview diagram">
       </div>
 
-      <h2>Workstation Layout</h2>
+      <h2>설치 경로</h2>
       <div class="card"><pre><code>heekuk_path/
 |-- Go_MAGs_QC.sh
 |-- Go_MAGs_QC.smk
@@ -56,13 +27,13 @@
     |-- Dockerfile.assembly
     `-- Dockerfile.annotation</code></pre></div>
 
-      <h2>Build</h2>
+      <h2>컨테이너 빌드</h2>
       <div class="card"><pre><code>cd $CAULAB_PIPELINES/MAGs
 docker build -f Dockerfile.qc -t mags-qc:1.0 .
 docker build -f Dockerfile.assembly -t mags-assembly:1.0 .
 docker build -f Dockerfile.annotation -t mags-annotation:1.0 .</code></pre></div>
 
-      <h2>Run QC</h2>
+      <h2>품질 관리 실행</h2>
       <div class="card"><pre><code>Go_MAGs_QC.sh \
   -i /path/to/input_fastqs \
   -o mags_qc_out \
@@ -71,7 +42,7 @@ docker build -f Dockerfile.annotation -t mags-annotation:1.0 .</code></pre></div
   -j 4 \
   -K</code></pre></div>
 
-      <h2>Run Assembly</h2>
+      <h2>조립 실행</h2>
       <div class="card"><pre><code>Go_MAGs_Assembly.sh \
   -i mags_qc_out/host_filtered_fastq \
   -o mags_assembly_out \
@@ -80,7 +51,7 @@ docker build -f Dockerfile.annotation -t mags-annotation:1.0 .</code></pre></div
   -j 4 \
   -K</code></pre></div>
 
-      <h2>Run Annotation</h2>
+      <h2>주석 실행</h2>
       <div class="card"><pre><code>Go_MAGs_Annotation.sh \
   -i mags_assembly_out/9_Final_MAGs \
   -o mags_annotation_out \
@@ -90,7 +61,4 @@ docker build -f Dockerfile.annotation -t mags-annotation:1.0 .</code></pre></div
   -c 24 \
   -j 4 \
   -K</code></pre></div>
-    </main>
-  </div>
-</body>
-</html>
+    <footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div></body></html>

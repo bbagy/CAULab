@@ -1,42 +1,13 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Humann</title>
-  <link rel="stylesheet" href="styles.css?v=20260305-13">
-</head>
-<body class="theme-humann">
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="brand">CAULab</div>
-      <nav class="nav">
-        <a href="./">Home</a>
-        <a href="containers.html">Docker &amp; Apptainer</a>
-        <a href="workstations.html">CAULab Setup</a>
-        <a href="longwgs.html">longWGS</a>
-        <a href="shortwgs.html">shortWGS</a>
-        <a href="goqc.html">GoQC</a>
-        <a href="kbracken.html">KBracken</a>
-        <a class="active" href="humann.html">Humann</a>
-        <a href="mags.html">MAGs</a>
-        <a href="rnake.html">RNake</a>
-        <a href="dadake2.html">daDake2</a>
-      </nav>
-      <div class="sidebar-foot">
-        <a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">Open bbagy GitHub</a>
-      </div>
-    </aside>
-
-    <main class="main">
-      <span class="badge">HUMAnN3 / MetaPhlAn4</span>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="CAULab 시퀀싱 분석 파이프라인: 유전체, 메타유전체, 전사체, 앰플리콘 분석 안내"><title>Humann | CAULab</title><link rel="stylesheet" href="styles.css?v=20261008"></head><body><a class="skip-link" href="#content">본문으로 건너뛰기</a><div class="layout"><aside class="sidebar"><a class="brand" href="index.html"><span class="brand-mark">CAU</span><span>CAULab<small>시퀀싱 분석 안내</small></span></a><nav class="nav" aria-label="문서 탐색"><a href="index.html">처음으로</a><a href="workstations.html">설치와 업데이트</a><a href="containers.html">Docker / Apptainer</a><span class="nav-label">분석 파이프라인</span><a href="longwgs.html"><span>longWGS</span><small>롱리드 유전체</small></a><a href="shortwgs.html"><span>shortWGS</span><small>숏리드 유전체</small></a><a href="goqc.html"><span>GoQC</span><small>메타유전체</small></a><a href="kbracken.html"><span>KBracken</span><small>메타유전체</small></a><a class="active" aria-current="page" href="humann.html"><span>Humann</span><small>메타유전체</small></a><a href="rnake.html"><span>RNake</span><small>전사체</small></a><a href="dadake2.html"><span>daDake2</span><small>앰플리콘</small></a><a href="mags.html"><span>MAGs</span><small>메타유전체</small></a></nav><div class="sidebar-foot"><span>코드와 분석 기록을 함께</span><a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">GitHub 저장소 ↗</a></div></aside><main class="main" id="content">
+      <span class="badge">메타유전체</span>
       <h1>Humann</h1>
-      <p>Shotgun metagenome functional profiling with HUMAnN3 + MetaPhlAn4, including merged gene-family / pathway tables, optional MUSiCC correction, and KEGG orthology regrouping.</p>
+      <p class="lead">HUMAnN3와 MetaPhlAn4로 미생물 군집의 기능을 분석합니다. 유전자군·대사경로 표를 통합하고 KEGG orthology 결과를 생성합니다.</p>
       <div class="status-banner status-tested">
         STATUS: AVAILABLE — TESTED IN CORE4 WORKSTATION
       </div>
 
-      <h2>Pipeline Flow</h2>
+      <h2>분석 흐름</h2>
       <div class="flow">
         <span class="node">Prefilter + R1/R2 merge</span><span class="arrow">→</span>
         <span class="node">HUMAnN3 per-sample</span><span class="arrow">→</span>
@@ -49,11 +20,11 @@
         <span class="node">stratified split</span>
       </div>
 
-      <h2>Build</h2>
+      <h2>컨테이너 빌드</h2>
       <div class="card"><pre><code>cd Humann
 docker build --network=host -t humann:caulab .</code></pre></div>
 
-      <h2>Run</h2>
+      <h2>실행 방법</h2>
       <div class="card"><pre><code>./Humann/Go_Humann.sh \
   -i /path/to/host_filtered_fastq \
   -o humann_run \
@@ -65,7 +36,7 @@ docker build --network=host -t humann:caulab .</code></pre></div>
   --run-musicc \
   -K</code></pre></div>
 
-      <h2>Real Example</h2>
+      <h2>실행 예시</h2>
       <div class="card"><pre><code>Go_Humann.sh \
   -i Humann/20261101_MG_HKP_nohuman \
   -o Humann/20261101_MG_HKP_humann_out \
@@ -78,7 +49,7 @@ docker build --network=host -t humann:caulab .</code></pre></div>
   --run-musicc \
   -K</code></pre></div>
 
-      <h2>Options</h2>
+      <h2>옵션</h2>
       <table>
         <tr><th>Flag</th><th>Description</th></tr>
         <tr><td><code>-i</code></td><td>Input host-filtered FASTQ directory</td></tr>
@@ -95,7 +66,7 @@ docker build --network=host -t humann:caulab .</code></pre></div>
         <tr><td><code>--skip-path-split</code></td><td>Skip stratified/unstratified split</td></tr>
       </table>
 
-      <h2>Expected Input</h2>
+      <h2>입력 구성</h2>
       <div class="card"><pre><code>Humann/
 |-- 20251101_MG_HKP_nohuman/
 |   |-- SAMPLE1_R1_nohuman.fastq.gz
@@ -109,7 +80,7 @@ humann_db/
 `-- metaphlan4/
     `-- mpa_vJan25_CHOCOPhlAnSGB_202503.*</code></pre></div>
 
-      <h2>Main Outputs</h2>
+      <h2>주요 결과</h2>
       <div class="card"><pre><code>OUT/
 |-- 1_humann3_out/
 |   |-- &lt;sample&gt;_genefamilies.tsv
@@ -131,14 +102,11 @@ humann_db/
 |-- 6_logs/
 `-- humann3_log.txt</code></pre></div>
 
-      <h2>Notes</h2>
+      <h2>참고 사항</h2>
       <ul>
         <li>Recommended MetaPhlAn input: <code>-b &lt;dir&gt;</code> + <code>-I &lt;index_basename&gt;</code>; <code>.pkl</code> shortcut auto-resolves for legacy use.</li>
         <li>Paired <code>_R1 / _R2</code> (including <code>_nohuman</code> variants) are merged per sample into <code>7_intermediate/&lt;sample&gt;.merged.fastq.gz</code> before HUMAnN runs.</li>
         <li>Per-sample <code>.humann.done</code> markers allow safe resume after interruption.</li>
         <li><code>--run-musicc</code> enables MUSiCC correction on the regrouped KO table.</li>
       </ul>
-    </main>
-  </div>
-</body>
-</html>
+    <footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div></body></html>

@@ -1,50 +1,14 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CAULab Setup</title>
-  <link rel="stylesheet" href="styles.css?v=20260305-13">
-</head>
-<body>
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="brand">CAULab</div>
-      <nav class="nav">
-        <a href="./">Home</a>
-        <a href="containers.html">Docker &amp; Apptainer</a>
-        <a class="active" href="workstations.html">CAULab Setup</a>
-        <a href="longwgs.html">longWGS</a>
-        <a href="shortwgs.html">shortWGS</a>
-        <a href="goqc.html">GoQC</a>
-        <a href="kbracken.html">KBracken</a>
-        <a href="humann.html">Humann</a>
-        <a href="mags.html">MAGs</a>
-        <a href="rnake.html">RNake</a>
-        <a href="dadake2.html">daDake2</a>
-      </nav>
-      <div class="sidebar-foot">
-        <a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">Open bbagy GitHub</a>
-      </div>
-    </aside>
-
-    <main class="main">
-      <span class="badge">Installation</span>
-      <h1>CAULab Setup</h1>
-      <p>Install the pipeline family to a stable local directory; keep data and databases on a separate large disk.</p>
-      <div class="card"><pre><code>git clone https://github.com/bbagy/CAULab.git
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="CAULab 시퀀싱 분석 파이프라인: 유전체, 메타유전체, 전사체, 앰플리콘 분석 안내"><title>설치와 업데이트 | CAULab</title><link rel="stylesheet" href="styles.css?v=20261008"></head><body><a class="skip-link" href="#content">본문으로 건너뛰기</a><div class="layout"><aside class="sidebar"><a class="brand" href="index.html"><span class="brand-mark">CAU</span><span>CAULab<small>시퀀싱 분석 안내</small></span></a><nav class="nav" aria-label="문서 탐색"><a href="index.html">처음으로</a><a class="active" aria-current="page" href="workstations.html">설치와 업데이트</a><a href="containers.html">Docker / Apptainer</a><span class="nav-label">분석 파이프라인</span><a href="longwgs.html"><span>longWGS</span><small>롱리드 유전체</small></a><a href="shortwgs.html"><span>shortWGS</span><small>숏리드 유전체</small></a><a href="goqc.html"><span>GoQC</span><small>메타유전체</small></a><a href="kbracken.html"><span>KBracken</span><small>메타유전체</small></a><a href="humann.html"><span>Humann</span><small>메타유전체</small></a><a href="rnake.html"><span>RNake</span><small>전사체</small></a><a href="dadake2.html"><span>daDake2</span><small>앰플리콘</small></a><a href="mags.html"><span>MAGs</span><small>메타유전체</small></a></nav><div class="sidebar-foot"><span>코드와 분석 기록을 함께</span><a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">GitHub 저장소 ↗</a></div></aside><main class="main" id="content"><span class="badge">시작하기</span><h1>설치와 업데이트</h1><p class="lead">코드는 일정한 설치 경로에, 데이터와 참조 DB는 충분한 공간이 있는 별도 디스크에 보관하세요.</p>
+<h2>1. 저장소 받기와 설치</h2><div class="card"><pre><code>git clone https://github.com/bbagy/CAULab.git
 cd CAULab
 ./install_mac.sh --build-core
 source "$HOME/caulab-pipelines/caulab.env"
 caulab_usage.sh</code></pre></div>
-      <p>Use <code>--build-all</code> for all container images. daDake2 uses host Snakemake, R/DADA2, and FIGARO.</p>
-      <h2>Update</h2>
-      <div class="card"><pre><code>git pull
+<p>Docker를 실행한 상태에서 설치합니다. 모든 파이프라인 코드는 기본으로 복사되며, <code>--build-core</code>는 GoQC·KBracken·Humann 이미지를 빌드합니다. 모든 컨테이너 이미지는 <code>--build-all</code>로 빌드할 수 있습니다.</p>
+<h2>2. 데이터베이스 준비</h2><div class="card"><pre><code>download_databases.sh --db-root /Volumes/CAULabDB --tools all --threads 8
+source "$HOME/caulab-pipelines/caulab.env"</code></pre></div><p>이 다운로드 명령은 숙주 필터링, Kraken2/Bracken, HUMAnN/MetaPhlAn DB를 준비합니다. 다른 파이프라인의 참조 자료는 각 도구 안내에 따라 준비하세요.</p>
+<h2>3. 기존 설치 업데이트</h2><div class="card"><pre><code>git pull --ff-only
 ./install_mac.sh --update --build-core
-source "$HOME/caulab-pipelines/caulab.env"</code></pre></div>
-      <p>Local database settings in <code>config/lab_paths.sh</code> and <code>config/lab_paths.yaml</code> are preserved.</p>
-      <p><a href="https://github.com/bbagy/CAULab/blob/main/INSTALL_CAULab.md">Full installation guide</a></p>
-    </main>
-  </div>
-</body>
-</html>
+source "$HOME/caulab-pipelines/caulab.env"</code></pre></div><p>업데이트해도 <code>config/lab_paths.sh</code>와 <code>config/lab_paths.yaml</code>의 로컬 DB 설정은 유지됩니다.</p>
+<h2>실행 환경 확인</h2><div class="card"><ul><li>설치 위치를 바꾸려면 <code>--prefix /path/to/caulab-pipelines</code>를 사용하세요.</li><li>Apple Silicon에서 amd64 이미지가 필요하면 <code>--platform linux/amd64</code>를 지정하세요.</li><li>GoQC는 Docker로 실행합니다. daDake2는 호스트의 Snakemake·R/DADA2·FIGARO 환경이 필요합니다.</li><li>처음 실행할 때는 각 도구의 dry-run 옵션으로 입력과 실행 계획을 확인하세요.</li></ul></div><p><a href="https://github.com/bbagy/CAULab/blob/main/INSTALL_CAULab.md">저장소의 전체 설치 안내 ↗</a></p><footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div></body></html>
