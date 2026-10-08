@@ -1,7 +1,7 @@
 ###############################################
 # Go_QC_V1.smk
 #
-# QC + host read depletion for CAULab shotgun input.
+# QC + host read depletion for K-Park Lab shotgun input.
 # Output names intentionally match the legacy GoQC.smk contract:
 #   filtered_fastq/<sample>_R1_filtered.fastq.gz
 #   filtered_fastq/<sample>_R2_filtered.fastq.gz

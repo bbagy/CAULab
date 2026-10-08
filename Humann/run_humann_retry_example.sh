@@ -5,7 +5,7 @@
 # 목표: Docker 기반 HuMAnN3 + MetaPhlAn 4 파이프라인 세팅
 #
 # 현재 상태:
-#   - Docker image humann:caulab 빌드 완료
+#   - Docker image humann:kpark 빌드 완료
 #       - MetaPhlAn 4.1.0 설치
 #       - Python wrapper로 metaphlan --version exit 0 보장
 #   - Snakemake workflow (Go_Humann_V1.smk) 수정 완료
@@ -40,7 +40,7 @@ set -- ${CONTAINER_ARGS[@]+"${CONTAINER_ARGS[@]}"}
 
 SCRIPT_DIR="$_CONTAINER_DIR"
 cd "${PROJECT_DIR:?Set PROJECT_DIR to your analysis directory}"
-DB_ROOT="${DB_ROOT:-$HOME/caulab-db}"
+DB_ROOT="${DB_ROOT:-$HOME/kpark-db}"
 
 inputDIR="DEAPIM30_QC/test"
 outDIR="humann3_out_test"
@@ -48,7 +48,7 @@ chocophlanDB="$DB_ROOT/humann/chocophlan"
 uniref90DB="$DB_ROOT/humann/uniref"
 metaphlanDB="$DB_ROOT/humann/metaphlan4"
 metaphlanIndex="mpa_vJun23_CHOCOPhlAnSGB_202307"
-image="humann:caulab"
+image="humann:kpark"
 
 
 # ---------------------------------------------------------------------------
@@ -124,12 +124,12 @@ tail -n 100 "humann_direct_debug/${sample}.direct.log" || true
 container_run --rm \
      -u "$(id -u):$(id -g)" \
      -v "$DB_ROOT/humann/metaphlan4":/db \
-     humann:caulab \
+     humann:kpark \
      metaphlan --install --index mpa_vJun23_CHOCOPhlAnSGB_202307 --bowtie2db /db
   container_run --rm \
     -u "$(id -u):$(id -g)" \
     -v "$DB_ROOT/humann/metaphlan4":/db \
-    humann:caulab \
+    humann:kpark \
     metaphlan --install --index mpa_vJun23_CHOCOPhlAnSGB_202307 --bowtie2db /db
 
 
@@ -137,7 +137,7 @@ container_run --rm \
  container_run --rm \
     -u "$(id -u):$(id -g)" \
     -v "$DB_ROOT/humann/metaphlan4":/db \
-    humann:caulab \
+    humann:kpark \
     bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH; which bowtie2-build; /opt/conda/envs/humann/bin/bowtie2-build --version; /opt/conda/envs/humann/bin/bowtie2-build --large-index -f /db/mpa_vJun23_CHOCOPhlAnSGB_202307.fna /db/mpa_vJun23_CHOCOPhlAnSGB_202307'
 
 
@@ -156,7 +156,7 @@ container_run --rm \
 # 1. Check image toolchain versions inside the exact container.
 #
 cat <<'EOF'
-container_run --rm humann:caulab \
+container_run --rm humann:kpark \
   bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH; \
     echo "[humann]"; humann --version; \
     echo "[bowtie2-build]"; bowtie2-build --version | head -n 1; \
@@ -170,7 +170,7 @@ cat <<'EOF'
 container_run --rm \
   -u "$(id -u):$(id -g)" \
   -v "$DB_ROOT/humann/metaphlan4":/db \
-  humann:caulab \
+  humann:kpark \
   bash -lc 'set -euo pipefail; \
     echo "[mount]"; ls -ld /db; realpath /db; \
     echo "[space]"; df -h /db; df -i /db; \
@@ -185,7 +185,7 @@ cat <<'EOF'
 container_run --rm \
   -u "$(id -u):$(id -g)" \
   -v "$DB_ROOT/humann/metaphlan4":/db \
-  humann:caulab \
+  humann:kpark \
   bash -lc 'set -euo pipefail; \
     export PATH=/opt/conda/envs/humann/bin:$PATH; \
     mkdir -p /db/tmp_bt2; \
@@ -200,14 +200,14 @@ EOF
 #    contains the matching .pkl and .bt2/.bt2l files for the selected index.
 
 
-  container_run --rm humann:caulab \
+  container_run --rm humann:kpark \
     bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH;bowtie2-build --version | head -n 1'
 
  grep -n "bowtie2" Dockerfile
-  container_run --rm humann:caulab bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH; conda list bowtie2 || micromamba list -n humann bowtie2'
+  container_run --rm humann:kpark bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH; conda list bowtie2 || micromamba list -n humann bowtie2'
 
 
-    container_run --rm humann:caulab \
+    container_run --rm humann:kpark \
     bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH; \
       echo "[which]"; which bowtie2-build; \
       echo "[ls]"; ls -l "$(which bowtie2-build)"; \
@@ -216,25 +216,25 @@ EOF
 
 
 
-  container_run --rm humann:caulab \
+  container_run --rm humann:kpark \
     bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH; \
       echo "[which]"; which bowtie2-build; \
       echo "[type]"; type -a bowtie2-build; \
       echo "[ls]"; ls -l "$(which bowtie2-build)"; \
       echo "[find]"; find / -name bowtie2-build 2>/dev/null'
 
-  container_run --rm humann:caulab \
+  container_run --rm humann:kpark \
     bash -lc '/opt/conda/envs/humann/bin/bowtie2-build --version | head -n 3'
 
 
-  container_run --rm humann:caulab \
+  container_run --rm humann:kpark \
     bash -lc 'export PATH=/opt/conda/envs/humann/bin:$PATH;export LD_LIBRARY_PATH=/opt/conda/envs/humann/lib:$LD_LIBRARY_PATH; bowtie2-build --version | head -n 3'
 
 
 # =============================================================================
 # MEMO (2026-04-16) next retry strategy
 # =============================================================================
-# Now that bowtie2-build runs correctly as 2.5.5 inside humann:caulab when:
+# Now that bowtie2-build runs correctly as 2.5.5 inside humann:kpark when:
 #   export PATH=/opt/conda/envs/humann/bin:$PATH
 #   export LD_LIBRARY_PATH=/opt/conda/envs/humann/lib:$LD_LIBRARY_PATH
 #
@@ -258,7 +258,7 @@ cat <<'EOF'
 container_run --rm \
   -u "$(id -u):$(id -g)" \
   -v "$DB_ROOT/humann/metaphlan4":/db \
-  humann:caulab \
+  humann:kpark \
   bash -lc 'set -euo pipefail; \
     export PATH=/opt/conda/envs/humann/bin:$PATH; \
     export LD_LIBRARY_PATH=/opt/conda/envs/humann/lib:$LD_LIBRARY_PATH; \
@@ -271,7 +271,7 @@ cat <<'EOF'
 container_run --rm \
   -u "$(id -u):$(id -g)" \
   -v "$DB_ROOT/humann/metaphlan4":/db \
-  humann:caulab \
+  humann:kpark \
   bash -lc 'set -euo pipefail; \
     ls -lh /db/mpa_vJun23_CHOCOPhlAnSGB_202307*'
 EOF
@@ -281,7 +281,7 @@ EOF
 # =============================================================================
 # 상황:
 #   - root (/) 621GB used / 747GB (88%)
-#   - Docker image prune 0B 회수 (<none> 이미지들이 humann:caulab과 레이어 공유)
+#   - Docker image prune 0B 회수 (<none> 이미지들이 humann:kpark과 레이어 공유)
 #   - diamond 임시파일 생성 실패 원인 조사 중
 #
 # 1. 오래된 Docker 이미지 삭제 (OrthoVenn3 + islandpath, ~11GB)

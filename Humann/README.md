@@ -46,10 +46,10 @@ flowchart LR
 
 ```bash
 cd Humann
-docker build --network=host -t humann:caulab .
+docker build --network=host -t humann:kpark .
 ```
 
-The wrapper defaults to image `humann:caulab`; override with `-m <tag>` if needed.
+The wrapper defaults to image `humann:kpark`; override with `-m <tag>` if needed.
 
 ## Docker Tool Inventory
 
@@ -64,9 +64,9 @@ Representative tools in the image:
 ## Run A Single Tool From The Image
 
 ```bash
-docker run --rm humann:caulab snakemake --version
-docker run --rm humann:caulab humann --version
-docker run --rm humann:caulab metaphlan --version
+docker run --rm humann:kpark snakemake --version
+docker run --rm humann:kpark humann --version
+docker run --rm humann:kpark metaphlan --version
 ```
 
 ## Quick Start
@@ -114,7 +114,7 @@ Go_Humannake.sh \
 | `-c` | `8` | Snakemake cores |
 | `-j` | `4` | Snakemake jobs |
 | `-t` | `4` | HUMAnN threads per sample |
-| `-m` | `humann:caulab` | Docker image tag |
+| `-m` | `humann:kpark` | Docker image tag |
 | `-x` | off | Dry-run (`--dry-run`) |
 | `-K` | off | Keep going (`--keep-going`) |
 | `--run-musicc` | off | Enable MUSiCC correction on regrouped KO table |
@@ -264,8 +264,8 @@ Skip normalization (raw HUMAnN tables only):
 
 ## Troubleshooting
 
-- `Docker image not found locally: humann:caulab`
-  - build with `docker build -t humann:caulab Humann`
+- `Docker image not found locally: humann:kpark`
+  - build with `docker build -t humann:kpark Humann`
 - MetaPhlAn DB errors mentioning `mpa_*.pkl` not found
   - pass `-b <dir>` and `-I <index_basename>`, not the `.pkl` itself (or use the legacy `.pkl` shortcut)
 - Lock-related failure in `humann.log`

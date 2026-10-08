@@ -1,6 +1,6 @@
 # GoQC
 
-Paired-end FASTQ QC and host read depletion for CAULab shotgun workflows.
+Paired-end FASTQ QC and host read depletion for K-Park Lab shotgun workflows.
 
 Outputs follow the legacy `GoQC.smk` contract:
 
@@ -21,14 +21,14 @@ Outputs follow the legacy `GoQC.smk` contract:
 ## Build
 
 ```bash
-cd "$CAULAB_PIPELINES/GoQC"
-docker build -t goqc:caulab .
+cd "$KPARK_PIPELINES/GoQC"
+docker build -t goqc:kpark .
 ```
 
 On Apple Silicon Mac, if the normal build fails while solving Bioconda packages, build and run the amd64 image:
 
 ```bash
-docker build --platform linux/amd64 -t goqc:caulab .
+docker build --platform linux/amd64 -t goqc:kpark .
 export DOCKER_PLATFORM=linux/amd64
 ```
 
@@ -39,8 +39,8 @@ Go_QC.sh \
   -i /data/projects/ProjectA/fastq \
   -o ProjectA_QC \
   -d /data/db/host/hg38/bowtie2/hg38 \
-  -s "$CAULAB_PIPELINES/GoQC" \
-  -m goqc:caulab \
+  -s "$KPARK_PIPELINES/GoQC" \
+  -m goqc:kpark \
   -K
 ```
 

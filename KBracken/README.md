@@ -42,10 +42,10 @@ flowchart LR
 
 ```bash
 cd KBracken
-docker build --network=host -t kbracken:caulab .
+docker build --network=host -t kbracken:kpark .
 ```
 
-The wrapper defaults to image `kbracken:caulab`; override with `-m <tag>` if needed.
+The wrapper defaults to image `kbracken:kpark`; override with `-m <tag>` if needed.
 
 ## Docker Tool Inventory
 
@@ -59,9 +59,9 @@ Representative tools in the image:
 ## Run A Single Tool From The Image
 
 ```bash
-docker run --rm kbracken:caulab snakemake --version
-docker run --rm kbracken:caulab kraken2 --version
-docker run --rm kbracken:caulab bracken -h
+docker run --rm kbracken:kpark snakemake --version
+docker run --rm kbracken:kpark kraken2 --version
+docker run --rm kbracken:kpark bracken -h
 ```
 
 ## Quick Start
@@ -107,7 +107,7 @@ Go_KBracken.sh \
 | `-s` | script directory | Optional Snakefile directory override |
 | `-c` | `8` | Snakemake cores |
 | `-j` | `4` | Snakemake jobs |
-| `-m` | `kbracken:caulab` | Docker image tag |
+| `-m` | `kbracken:kpark` | Docker image tag |
 | `-n` | off | Dry-run (`--dry-run`) |
 | `-K` | off | Keep going (`--keep-going`) |
 | `--kraken-only` | off | Skip Bracken step (Kraken2-only mode) |
@@ -237,8 +237,8 @@ Kraken2 only:
 
 ## Troubleshooting
 
-- `Docker image not found locally: kbracken:caulab`
-  - build with `docker build -t kbracken:caulab KBracken`
+- `Docker image not found locally: kbracken:kpark`
+  - build with `docker build -t kbracken:kpark KBracken`
 - `rule bracken` fails immediately after Kraken2 succeeds
   - usually a missing Bracken DB file for the configured `bracken_read_len`. Build it with `bracken-build`, or rerun with `--kraken-only`.
 - Empty Bracken table for a sample

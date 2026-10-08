@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="CAULab 시퀀싱 분석 파이프라인: 유전체, 메타유전체, 전사체, 앰플리콘 분석 안내"><title>Humannake | CAULab</title><link rel="stylesheet" href="styles.css?v=20261008-copy-compact"></head><body><a class="skip-link" href="#content">본문으로 건너뛰기</a><div class="layout"><aside class="sidebar"><a class="brand" href="index.html"><span class="brand-mark">CAU</span><span>CAULab<small>시퀀싱 분석 안내</small></span></a><nav class="nav" aria-label="문서 탐색"><a href="index.html">홈</a><a href="workstations.html">설치와 업데이트</a><a href="environments.html">Docker / Conda 환경</a><a href="containers.html">Docker / Apptainer</a><a href="linux-basics.html">Linux 기본</a><span class="nav-label">분석 파이프라인</span><a href="longwgs.html"><span>longWGS</span><small>롱리드 유전체</small></a><a href="shortwgs.html"><span>shortWGS</span><small>숏리드 유전체</small></a><a href="goqc.html"><span>GoQC</span><small>메타유전체</small></a><a href="kbracken.html"><span>KBracken</span><small>메타유전체</small></a><a class="active" aria-current="page" href="humann.html"><span>Humannake</span><small>메타유전체</small></a><a href="rnake.html"><span>RNake</span><small>전사체</small></a><a href="dadake2.html"><span>daDake2</span><small>16S/ITS</small></a><a href="mags.html"><span>MAGs</span><small>메타유전체</small></a></nav><div class="sidebar-foot"><span>소스 코드</span><a class="repo-link" href="https://github.com/bbagy/CAULab" target="_blank" rel="noopener noreferrer">GitHub 저장소 ↗</a></div></aside><main class="main" id="content">
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="K-Park Lab 시퀀싱 분석 파이프라인: 유전체, 메타유전체, 전사체, 앰플리콘 분석 안내"><title>Humannake | K-Park Lab</title><link rel="stylesheet" href="styles.css?v=20261008-copy-compact"></head><body><a class="skip-link" href="#content">본문으로 건너뛰기</a><div class="layout"><aside class="sidebar"><a class="brand" href="index.html"><span class="brand-mark">K-P</span><span>K-Park Lab<small>시퀀싱 분석 안내</small></span></a><nav class="nav" aria-label="문서 탐색"><a href="index.html">홈</a><a href="workstations.html">설치와 업데이트</a><a href="environments.html">Docker / Conda 환경</a><a href="containers.html">Docker / Apptainer</a><a href="linux-basics.html">Linux 기본</a><span class="nav-label">분석 파이프라인</span><a href="longwgs.html"><span>longWGS</span><small>롱리드 유전체</small></a><a href="shortwgs.html"><span>shortWGS</span><small>숏리드 유전체</small></a><a href="goqc.html"><span>GoQC</span><small>메타유전체</small></a><a href="kbracken.html"><span>KBracken</span><small>메타유전체</small></a><a class="active" aria-current="page" href="humann.html"><span>Humannake</span><small>메타유전체</small></a><a href="rnake.html"><span>RNake</span><small>전사체</small></a><a href="dadake2.html"><span>daDake2</span><small>16S/ITS</small></a><a href="mags.html"><span>MAGs</span><small>메타유전체</small></a></nav><div class="sidebar-foot"><span>소스 코드</span><a class="repo-link" href="https://github.com/bbagy/KParkLab" target="_blank" rel="noopener noreferrer">GitHub 저장소 ↗</a></div></aside><main class="main" id="content">
       <span class="badge">메타유전체</span>
       <h1>Humannake</h1>
       <p class="lead">Metagenome 기능 분석 · HUMAnN3 / MetaPhlAn4 · 유전자군 · 대사경로 · KEGG orthology</p>
@@ -21,7 +21,7 @@
         <span class="node">stratified split</span>
       </div>
 
-      <h2>실행 방법</h2><p>새 터미널 설정: <code>source "$HOME/caulab-pipelines/caulab.env"</code></p>
+      <h2>실행 방법</h2><p>새 터미널 설정: <code>source "$HOME/kpark-pipelines/kpark.env"</code></p>
       <div class="card"><pre><code>Go_Humannake.sh \
   -i /path/to/host_filtered_fastq \
   -o humann_run \
@@ -37,11 +37,11 @@
       <div class="card"><pre><code>Go_Humannake.sh \
   -i Humann/20261001_MG_HKP_nohuman \
   -o Humann/20261001_MG_HKP_humann_out \
-  -n "$HOME/caulab-db/humann/chocophlan" \
-  -p "$HOME/caulab-db/humann/uniref90_diamond" \
-  -b "$HOME/caulab-db/humann/metaphlan4" \
+  -n "$HOME/kpark-db/humann/chocophlan" \
+  -p "$HOME/kpark-db/humann/uniref90_diamond" \
+  -b "$HOME/kpark-db/humann/metaphlan4" \
   -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
-  -s "$CAULAB_PIPELINES/Humann" \
+  -s "$KPARK_PIPELINES/Humann" \
   -c 8 -j 4 -t 4 \
   --run-musicc \
   -K</code></pre></div>
@@ -70,7 +70,7 @@
 |   `-- SAMPLE1_R2_nohuman.fastq.gz
 `-- 20260901_MG_HKP_humann_out/
 
-$HOME/caulab-db/humann/
+$HOME/kpark-db/humann/
 |-- chocophlan/
 |-- uniref90_diamond/
 `-- metaphlan4/
@@ -107,4 +107,4 @@ $HOME/caulab-db/humann/
       </ul>
 
 
-<footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div><script src="assets/copy-code.js?v=compact" defer></script></body></html>
+<footer class="page-footer"><span>K-Park Lab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div><script src="assets/copy-code.js?v=compact" defer></script></body></html>

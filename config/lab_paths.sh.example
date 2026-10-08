@@ -1,24 +1,24 @@
 #!/usr/bin/env bash
 # Copy to lab_paths.sh on each workstation and edit the host paths.
-# This file is sourced by caulab.env.
+# This file is sourced by kpark.env.
 
 # GoQC host-filtering Bowtie2 index prefix.
 # Example files should look like:
-#   ${CAULAB_HOST_BT2_PREFIX}.1.bt2
-#   ${CAULAB_HOST_BT2_PREFIX}.2.bt2
-export CAULAB_HOST_BT2_PREFIX="/data/db/host/bowtie2/chm13v2.0/chm13v2.0"
+#   ${KPARK_HOST_BT2_PREFIX}.1.bt2
+#   ${KPARK_HOST_BT2_PREFIX}.2.bt2
+export KPARK_HOST_BT2_PREFIX="/data/db/host/bowtie2/chm13v2.0/chm13v2.0"
 
 # Kraken2/Bracken database directory.
 # Expected files include hash.k2d, opts.k2d, taxo.k2d, and Bracken kmer files.
-export CAULAB_KRAKEN2_DB="/data/db/kraken2/k2_pluspfp_16gb_latest"
+export KPARK_KRAKEN2_DB="/data/db/kraken2/k2_pluspfp_16gb_latest"
 
 # HUMAnN database directories.
-export CAULAB_HUMANN_CHOCOPHLAN="/data/db/humann/chocophlan"
-export CAULAB_HUMANN_UNIREF="/data/db/humann/uniref"
-export CAULAB_HUMANN_METAPHLAN="/data/db/humann/metaphlan4"
-export CAULAB_METAPHLAN_INDEX="mpa_vJun23_CHOCOPhlAnSGB_202307"
+export KPARK_HUMANN_CHOCOPHLAN="/data/db/humann/chocophlan"
+export KPARK_HUMANN_UNIREF="/data/db/humann/uniref"
+export KPARK_HUMANN_METAPHLAN="/data/db/humann/metaphlan4"
+export KPARK_METAPHLAN_INDEX="mpa_vJun23_CHOCOPhlAnSGB_202307"
 
 # Docker images built by install_docker_env.sh --build-core.
-export CAULAB_GOQC_IMAGE="goqc:caulab"
-export CAULAB_KBRACKEN_IMAGE="kbracken:caulab"
-export CAULAB_HUMANN_IMAGE="humann:caulab"
+export KPARK_GOQC_IMAGE="goqc:kpark"
+export KPARK_KBRACKEN_IMAGE="kbracken:kpark"
+export KPARK_HUMANN_IMAGE="humann:kpark"

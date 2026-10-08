@@ -1,30 +1,30 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PIPELINES="${CAULAB_PIPELINES:-$(cd "$(dirname "$0")" && pwd -P)}"
+PIPELINES="${KPARK_PIPELINES:-$(cd "$(dirname "$0")" && pwd -P)}"
 
 cat <<EOF
-CAULab pipeline tools
+K-Park Lab pipeline tools
 =================
 
 Pipeline root:
   $PIPELINES
 
 Set this once per shell session after install:
-  source "$PIPELINES/caulab.env"
+  source "$PIPELINES/kpark.env"
 
 Edit local paths here:
   "$PIPELINES/config/lab_paths.sh"
 
 Database variables loaded from lab_paths.sh:
-  CAULAB_HOST_BT2_PREFIX
-  CAULAB_KRAKEN2_DB
-  CAULAB_HUMANN_CHOCOPHLAN
-  CAULAB_HUMANN_UNIREF
-  CAULAB_HUMANN_METAPHLAN
-  CAULAB_METAPHLAN_INDEX
+  KPARK_HOST_BT2_PREFIX
+  KPARK_KRAKEN2_DB
+  KPARK_HUMANN_CHOCOPHLAN
+  KPARK_HUMANN_UNIREF
+  KPARK_HUMANN_METAPHLAN
+  KPARK_METAPHLAN_INDEX
 
-Commands on PATH after sourcing caulab.env:
+Commands on PATH after sourcing kpark.env:
   Go_QC.sh
   Go_KBracken.sh
   Go_Humannake.sh
@@ -37,18 +37,18 @@ Commands on PATH after sourcing caulab.env:
   Go_MAGs_Annotation.sh
   Go_container_image.sh
   download_databases.sh
-  caulab_usage.sh
+  kpark_usage.sh
 
 Docker images:
-  goqc:caulab
-  kbracken:caulab
-  humann:caulab
+  goqc:kpark
+  kbracken:kpark
+  humann:kpark
 
 Check whether images exist locally:
-  docker image inspect goqc:caulab kbracken:caulab humann:caulab >/dev/null
+  docker image inspect goqc:kpark kbracken:kpark humann:kpark >/dev/null
 
-List CAULab images:
-  docker images --format '{{.Repository}}:{{.Tag}}' | grep -E '^(goqc|kbracken|humann):caulab$'
+List K-Park Lab images:
+  docker images --format '{{.Repository}}:{{.Tag}}' | grep -E '^(goqc|kbracken|humann):kpark$'
 
 Build all three images during install:
   ./install_docker_env.sh --build-core
@@ -66,9 +66,9 @@ Apple Silicon fallback:
   ./install_docker_env.sh --build-core --platform linux/amd64
 
 Download reference databases:
-  download_databases.sh --db-root $HOME/caulab-db --tools host --threads 8
-  download_databases.sh --db-root $HOME/caulab-db --tools kraken2 --threads 8
-  download_databases.sh --db-root $HOME/caulab-db --tools humann --threads 8
+  download_databases.sh --db-root $HOME/kpark-db --tools host --threads 8
+  download_databases.sh --db-root $HOME/kpark-db --tools kraken2 --threads 8
+  download_databases.sh --db-root $HOME/kpark-db --tools humann --threads 8
 
 Defaults:
   host    = CHM13/T2T Bowtie2 index
@@ -76,10 +76,10 @@ Defaults:
   humann  = ChocoPhlAn full + UniRef90 Diamond + MetaPhlAn DB
 
 Download all reference databases:
-  download_databases.sh --db-root $HOME/caulab-db --tools all --threads 8
+  download_databases.sh --db-root $HOME/kpark-db --tools all --threads 8
 
 After download, reload paths:
-  source "$PIPELINES/caulab.env"
+  source "$PIPELINES/kpark.env"
 
 
 1. GoQC: raw FASTQ -> QC + host-filtered FASTQ

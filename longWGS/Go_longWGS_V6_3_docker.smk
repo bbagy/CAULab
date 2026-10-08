@@ -26,9 +26,9 @@
 # Example run:
 # dir="test"
 # output_dir="3_assembled_test"
-# DB="$HOME/caulab-db/longWGS"
+# DB="$HOME/kpark-db/longWGS"
 #
-# snakemake --snakefile $HOME/caulab-pipelines/longWGS/Go_longWGS.smk \
+# snakemake --snakefile $HOME/kpark-pipelines/longWGS/Go_longWGS.smk \
 #   --config Fastq_DIRS="$dir" output="$output_dir" database="$DB" threads=4 \
 #   --cores 8 --rerun-incomplete --keep-going
 #############################################

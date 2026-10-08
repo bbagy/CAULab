@@ -32,7 +32,7 @@ DB=""
 SNAKEDIR=""
 CORES=8
 JOBS=4
-IMAGE="${CAULAB_KBRACKEN_IMAGE:-kbracken:caulab}"
+IMAGE="${KPARK_KBRACKEN_IMAGE:-kbracken:kpark}"
 DRYRUN=0
 KEEP_GOING=0
 RUN_BRACKEN=1
@@ -90,7 +90,7 @@ done
 
 [ -z "$FASTQ_DIR" ] && usage
 [ -z "$OUTPUT_DIR" ] && usage
-DB="${DB:-${CAULAB_KRAKEN2_DB:-}}"
+DB="${DB:-${KPARK_KRAKEN2_DB:-}}"
 [ -z "$DB" ] && usage
 
 FASTQ_DIR_ABS="$(abs_path "$FASTQ_DIR")" || { echo "[KBracken] FASTQ_DIR not found: $FASTQ_DIR"; exit 1; }

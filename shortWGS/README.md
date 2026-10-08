@@ -32,7 +32,7 @@ flowchart LR
 - Paired FASTQ files
 - WGS DB root (`WGS_DB2` style)
 - Kraken2 DB
-- Report templates: bundled in `shortWGS/scripts/`; pass `-r "$HOME/caulab-pipelines/shortWGS"` for the legacy wrapper mount.
+- Report templates: bundled in `shortWGS/scripts/`; pass `-r "$HOME/kpark-pipelines/shortWGS"` for the legacy wrapper mount.
 
 ## Build
 

@@ -18,7 +18,7 @@ from pathlib import Path
 # ---------- Config ----------
 FASTQ_DIR  = config["fastq_dir"]
 OUTPUT_DIR = config["output_dir"]
-DB_DIR     = config["wgs_db"]             # e.g., $HOME/caulab-db/shortWGS
+DB_DIR     = config["wgs_db"]             # e.g., $HOME/kpark-db/shortWGS
 KRAKEN_DB  = config["kraken_db"]          # e.g., /media/.../kraken2DB/k2_pluspfp_...
 KRAKEN_DB_HOST = str(config.get("kraken_db_host", KRAKEN_DB)).strip()
 KRAKEN_DB_NAME = str(config.get("kraken_db_name", os.path.basename(KRAKEN_DB_HOST.rstrip("/")))).strip()

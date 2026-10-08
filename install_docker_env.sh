@@ -7,7 +7,7 @@ Usage:
   ./install_docker_env.sh [--prefix INSTALL_DIR] [--update] [--build-core|--build-all] [--no-cache] [--platform linux/amd64]
 
 Defaults:
-  INSTALL_DIR = $HOME/caulab-pipelines
+  INSTALL_DIR = $HOME/kpark-pipelines
 
 Examples:
   ./install_docker_env.sh
@@ -15,7 +15,7 @@ Examples:
   ./install_docker_env.sh --update --build-goqc --no-cache
   ./install_docker_env.sh --update --build-core
   ./install_docker_env.sh --build-core --platform linux/amd64
-  ./install_docker_env.sh --prefix $HOME/caulab-pipelines --build-core
+  ./install_docker_env.sh --prefix $HOME/kpark-pipelines --build-core
 
 Notes:
   - Docker must already be installed and running if a build option is used.
@@ -29,7 +29,7 @@ EOF
   exit "${1:-1}"
 }
 
-PREFIX="$HOME/caulab-pipelines"
+PREFIX="$HOME/kpark-pipelines"
 BUILD_GOQC=0
 BUILD_KBRACKEN=0
 BUILD_HUMANN=0
@@ -103,11 +103,11 @@ prepare_update_target() {
   local keep_yaml=""
   local keep_shell=""
   if [ -f "$PREFIX/config/lab_paths.yaml" ]; then
-    keep_yaml="$(mktemp "${TMPDIR:-/tmp}/caulab_lab_paths_yaml.XXXXXX")"
+    keep_yaml="$(mktemp "${TMPDIR:-/tmp}/kpark_lab_paths_yaml.XXXXXX")"
     cp "$PREFIX/config/lab_paths.yaml" "$keep_yaml"
   fi
   if [ -f "$PREFIX/config/lab_paths.sh" ]; then
-    keep_shell="$(mktemp "${TMPDIR:-/tmp}/caulab_lab_paths_sh.XXXXXX")"
+    keep_shell="$(mktemp "${TMPDIR:-/tmp}/kpark_lab_paths_sh.XXXXXX")"
     cp "$PREFIX/config/lab_paths.sh" "$keep_shell"
   fi
 
@@ -127,10 +127,12 @@ prepare_update_target() {
     "$PREFIX/config" \
     "$PREFIX/README.md" \
     "$PREFIX/INSTALL_CAULab.md" \
+    "$PREFIX/INSTALL_KParkLab.md" \
     "$PREFIX/install_mac.sh" \
     "$PREFIX/install_docker_env.sh" \
     "$PREFIX/download_databases.sh" \
     "$PREFIX/caulab_usage.sh" \
+    "$PREFIX/kpark_usage.sh" \
     "$PREFIX/.gitignore"
 
   mkdir -p "$PREFIX/config"
@@ -139,7 +141,7 @@ prepare_update_target() {
     rm -f "$keep_yaml"
   fi
   if [ -n "$keep_shell" ]; then
-    cp "$keep_shell" "$PREFIX/config/lab_paths.sh"
+    sed 's/CAULAB_/KPARK_/g' "$keep_shell" > "$PREFIX/config/lab_paths.sh"
     rm -f "$keep_shell"
   fi
 }
@@ -151,23 +153,23 @@ copy_install_files() {
   done
   cp -R "$SCRIPT_DIR/config" "$PREFIX/"
   cp "$SCRIPT_DIR/README.md" "$PREFIX/"
-  cp "$SCRIPT_DIR/INSTALL_CAULab.md" "$PREFIX/"
+  cp "$SCRIPT_DIR/INSTALL_KParkLab.md" "$PREFIX/"
   cp "$SCRIPT_DIR/install_docker_env.sh" "$PREFIX/"
   cp "$SCRIPT_DIR/download_databases.sh" "$PREFIX/"
-  cp "$SCRIPT_DIR/caulab_usage.sh" "$PREFIX/"
+  cp "$SCRIPT_DIR/kpark_usage.sh" "$PREFIX/"
   cp "$SCRIPT_DIR/.gitignore" "$PREFIX/"
 }
 
 mkdir -p "$PREFIX_PARENT"
 
 if [ -e "$PREFIX" ] && [ "$UPDATE" -ne 1 ]; then
-  echo "[CAULab install][FATAL] install dir already exists: $PREFIX"
-  echo "[CAULab install] Existing install can be used with:"
-  echo "  source \"$PREFIX/caulab.env\""
-  echo "[CAULab install] No Docker images were built because install stopped before the build step."
-  echo "[CAULab install] To refresh code and build images in that install, rerun:"
+  echo "[K-Park Lab install][FATAL] install dir already exists: $PREFIX"
+  echo "[K-Park Lab install] Existing install can be used with:"
+  echo "  source \"$PREFIX/kpark.env\""
+  echo "[K-Park Lab install] No Docker images were built because install stopped before the build step."
+  echo "[K-Park Lab install] To refresh code and build images in that install, rerun:"
   echo "  ./install_docker_env.sh --update --build-core"
-  echo "[CAULab install] Or choose a new --prefix."
+  echo "[K-Park Lab install] Or choose a new --prefix."
   exit 1
 fi
 
@@ -189,17 +191,17 @@ for launcher in longWGS/Go_longWGS.sh shortWGS/Go_shortWGS.sh RNake/Go_Rnake.sh 
   ln -sf "../$launcher" "$PREFIX/bin/$(basename "$launcher")"
 done
 ln -sf "../download_databases.sh" "$PREFIX/bin/download_databases.sh"
-ln -sf "../caulab_usage.sh" "$PREFIX/bin/caulab_usage.sh"
+ln -sf "../kpark_usage.sh" "$PREFIX/bin/kpark_usage.sh"
 
-cat > "$PREFIX/caulab.env" <<EOF
-export CAULAB_PIPELINES="$PREFIX"
+cat > "$PREFIX/kpark.env" <<EOF
+export KPARK_PIPELINES="$PREFIX"
 export PATH="$PREFIX/bin:\$PATH"
 if [ -f "$PREFIX/config/lab_paths.sh" ]; then
   . "$PREFIX/config/lab_paths.sh"
 fi
 EOF
 if [ -n "$PLATFORM" ]; then
-  cat >> "$PREFIX/caulab.env" <<EOF
+  cat >> "$PREFIX/kpark.env" <<EOF
 export DOCKER_PLATFORM="$PLATFORM"
 EOF
 fi
@@ -208,7 +210,7 @@ build_image() {
   local image="$1"
   local context="$2"
   local dockerfile="${3:-$context/Dockerfile}"
-  echo "[CAULab install] Building $image from $context"
+  echo "[K-Park Lab install] Building $image from $context"
   if [ "$NO_CACHE" -eq 1 ] && [ -n "$PLATFORM" ]; then
     if ! docker build -f "$dockerfile" --progress=plain --no-cache --platform "$PLATFORM" -t "$image" "$context"; then
       report_build_failure "$image" "$context" "$dockerfile"
@@ -232,15 +234,15 @@ report_build_failure() {
   local image="$1"
   local context="$2"
   local dockerfile="${3:-$context/Dockerfile}"
-  echo "[CAULab install][FATAL] Docker build failed: $image"
-  echo "[CAULab install] Re-run this command to see the full plain build log:"
+  echo "[K-Park Lab install][FATAL] Docker build failed: $image"
+  echo "[K-Park Lab install] Re-run this command to see the full plain build log:"
   if [ -n "$PLATFORM" ]; then
     echo "  docker build -f \"$dockerfile\" --progress=plain --no-cache --platform \"$PLATFORM\" -t \"$image\" \"$context\""
   else
     echo "  docker build -f \"$dockerfile\" --progress=plain --no-cache -t \"$image\" \"$context\""
   fi
-  if [ "$image" = "goqc:caulab" ]; then
-    echo "[CAULab install] If the failure is at apt-get, test Docker apt directly:"
+  if [ "$image" = "goqc:kpark" ]; then
+    echo "[K-Park Lab install] If the failure is at apt-get, test Docker apt directly:"
     echo "  docker run --rm python:3.11-slim-bookworm bash -lc 'apt-get update && apt-get install -y --no-install-recommends fastp bowtie2 samtools pigz'"
   fi
   exit 1
@@ -249,7 +251,7 @@ report_build_failure() {
 check_image_runtime() {
   local image="$1"
   local runtime_check='(command -v python >/dev/null 2>&1 && python --version || python3 --version) && snakemake --version >/dev/null'
-  echo "[CAULab install] Runtime check: $image"
+  echo "[K-Park Lab install] Runtime check: $image"
   if [ -n "$PLATFORM" ]; then
     docker run --rm --platform "$PLATFORM" "$image" bash -lc "$runtime_check"
   else
@@ -260,38 +262,38 @@ check_image_runtime() {
 report_image_status() {
   local image="$1"
   if docker image inspect "$image" >/dev/null 2>&1; then
-    echo "[CAULab install] Docker image ready: $image"
+    echo "[K-Park Lab install] Docker image ready: $image"
   else
-    echo "[CAULab install][WARN] Docker image missing: $image"
+    echo "[K-Park Lab install][WARN] Docker image missing: $image"
   fi
 }
 
 if [ "$BUILD_GOQC" -eq 1 ] || [ "$BUILD_KBRACKEN" -eq 1 ] || [ "$BUILD_HUMANN" -eq 1 ]; then
   if ! docker info >/dev/null 2>&1; then
-    echo "[CAULab install][FATAL] Docker is not available. Start the Docker service and rerun."
-    echo "[CAULab install] After Docker is running, use:"
+    echo "[K-Park Lab install][FATAL] Docker is not available. Start the Docker service and rerun."
+    echo "[K-Park Lab install] After Docker is running, use:"
     echo "  ./install_docker_env.sh --update --build-core"
     exit 1
   fi
 fi
 if [ "$BUILD_GOQC" -eq 1 ]; then
-  build_image "goqc:caulab" "$PREFIX/GoQC"
-  check_image_runtime "goqc:caulab"
+  build_image "goqc:kpark" "$PREFIX/GoQC"
+  check_image_runtime "goqc:kpark"
 fi
 if [ "$BUILD_KBRACKEN" -eq 1 ]; then
-  build_image "kbracken:caulab" "$PREFIX/KBracken"
-  check_image_runtime "kbracken:caulab"
+  build_image "kbracken:kpark" "$PREFIX/KBracken"
+  check_image_runtime "kbracken:kpark"
 fi
 if [ "$BUILD_HUMANN" -eq 1 ]; then
-  build_image "humann:caulab" "$PREFIX/Humann"
-  check_image_runtime "humann:caulab"
+  build_image "humann:kpark" "$PREFIX/Humann"
+  check_image_runtime "humann:kpark"
 fi
 
 if [ "$BUILD_GOQC" -eq 1 ] || [ "$BUILD_KBRACKEN" -eq 1 ] || [ "$BUILD_HUMANN" -eq 1 ]; then
-  echo "[CAULab install] Docker image status:"
-  report_image_status "goqc:caulab"
-  report_image_status "kbracken:caulab"
-  report_image_status "humann:caulab"
+  echo "[K-Park Lab install] Docker image status:"
+  report_image_status "goqc:kpark"
+  report_image_status "kbracken:kpark"
+  report_image_status "humann:kpark"
 fi
 
 if [ "$BUILD_ALL" -eq 1 ]; then
@@ -304,28 +306,28 @@ if [ "$BUILD_ALL" -eq 1 ]; then
 fi
 
 cat <<EOF
-[CAULab install] Installed/updated to:
+[K-Park Lab install] Installed/updated to:
   $PREFIX
 
-[CAULab install] Next:
-  source "$PREFIX/caulab.env"
+[K-Park Lab install] Next:
+  source "$PREFIX/kpark.env"
   edit "$PREFIX/config/lab_paths.sh"
-  caulab_usage.sh
+  kpark_usage.sh
 
-[CAULab install] GoQC example:
+[K-Park Lab install] GoQC example:
   Go_QC.sh \\
     -i /path/to/raw_fastq \\
     -o /path/to/output/ProjectA_QC \\
     -d /path/to/host_bowtie2_index_prefix \\
-    -m goqc:caulab \\
+    -m goqc:kpark \\
     -K
 
-[CAULab install] Core images:
-  goqc:caulab
-  kbracken:caulab
-  humann:caulab
+[K-Park Lab install] Core images:
+  goqc:kpark
+  kbracken:kpark
+  humann:kpark
 
-[CAULab install] Commands added to PATH:
+[K-Park Lab install] Commands added to PATH:
   Go_QC.sh
   Go_KBracken.sh
   Go_Humannake.sh
@@ -338,9 +340,9 @@ cat <<EOF
   Go_MAGs_Annotation.sh
   Go_container_image.sh
   download_databases.sh
-  caulab_usage.sh
+  kpark_usage.sh
 
-[CAULab install] Updated wrapper scripts:
+[K-Park Lab install] Updated wrapper scripts:
   $PREFIX/GoQC/Go_QC.sh
   $PREFIX/KBracken/Go_KBracken.sh
   $PREFIX/Humann/Go_Humannake.sh

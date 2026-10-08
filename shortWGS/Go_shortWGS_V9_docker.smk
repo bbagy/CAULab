@@ -18,7 +18,7 @@ from pathlib import Path
 # ---------- Config ----------
 FASTQ_DIR  = config["fastq_dir"]
 OUTPUT_DIR = config["output_dir"]
-DB_DIR     = config["wgs_db"]             # e.g., $HOME/caulab-db/shortWGS
+DB_DIR     = config["wgs_db"]             # e.g., $HOME/kpark-db/shortWGS
 KRAKEN_DB  = config["kraken_db"]          # e.g., /media/.../kraken2DB/k2_pluspfp_...
 
 # DB: WGS_DB2 내부 고정 경로

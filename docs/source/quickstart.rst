@@ -24,5 +24,5 @@ Example (shortWGS)
 
    cd shortWGS
    docker build --network=host -t shortwgs .
-   ./Go_shortWGS.sh -i /path/fastq -o out -d /path/WGS_DB2 -k /path/kraken -r "$HOME/caulab-pipelines/shortWGS" -n
-   ./Go_shortWGS.sh -i /path/fastq -o out -d /path/WGS_DB2 -k /path/kraken -r "$HOME/caulab-pipelines/shortWGS" -K
+   ./Go_shortWGS.sh -i /path/fastq -o out -d /path/WGS_DB2 -k /path/kraken -r "$HOME/kpark-pipelines/shortWGS" -n
+   ./Go_shortWGS.sh -i /path/fastq -o out -d /path/WGS_DB2 -k /path/kraken -r "$HOME/kpark-pipelines/shortWGS" -K

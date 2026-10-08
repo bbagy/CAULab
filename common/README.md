@@ -29,8 +29,8 @@ workstation image list before exporting; the images themselves are not in Git.
 | shortWGS | `shortwgs` (implicit `latest` tag) |
 | longWGS | `longwgs` (implicit `latest` tag) |
 | RNake | `rnake:1.0` |
-| KBracken | `kbracken:caulab` |
-| Humann | `humann:caulab` |
+| KBracken | `kbracken:kpark` |
+| Humann | `humann:kpark` |
 | MAGs QC | `mags-qc:1.0` |
 | MAGs Assembly | `mags-assembly:1.0` |
 | MAGs Annotation | `mags-annotation:1.0` |
@@ -76,8 +76,8 @@ Prepare the code on HPC as well. For a first-time setup:
 
 ```bash
 # Run on HPC.
-git clone https://github.com/bbagy/CAULab.git
-cd CAULab
+git clone https://github.com/bbagy/KParkLab.git
+cd K-Park Lab
 ```
 
 For an existing checkout, check for local changes and update with
@@ -92,7 +92,7 @@ your cluster permits it.
 
 ```bash
 module load apptainer  # Site-specific; omit if Apptainer is already available.
-cd ~/CAULab
+cd ~/KParkLab
 bash common/Go_container_image.sh build \
   "$HOME/containers/shortwgs.docker.tar" \
   "$HOME/containers/shortwgs.sif"
@@ -121,11 +121,11 @@ apptainer exec --cleanenv "$HOME/containers/shortwgs.sif" snakemake --version
 apptainer exec --cleanenv "$HOME/containers/shortwgs.sif" fastp --version
 
 # Replace input/DB paths with real HPC paths and start with a dry-run.
-bash ~/CAULab/shortWGS/Go_shortWGS.sh \
+bash ~/KParkLab/shortWGS/Go_shortWGS.sh \
   --container apptainer \
   --container-image "$HOME/containers/shortwgs.sif" \
   -i /shared/fastq -o shortwgs_out \
-  -d /shared/db/wgs -k /shared/db/kraken2 -r "$HOME/CAULab/shortWGS" \
+  -d /shared/db/wgs -k /shared/db/kraken2 -r "$HOME/KParkLab/shortWGS" \
   -c 8 -n
 ```
 

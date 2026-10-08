@@ -29,7 +29,7 @@
 # fastq_dir="mags_qc_out/host_filtered_fastq"
 # output_dir="mags_assembly_out"
 #
-# snakemake --snakefile $HOME/caulab-pipelines/MAGs/workflow/Go_MAGs_Assembly_V1.smk \
+# snakemake --snakefile $HOME/kpark-pipelines/MAGs/workflow/Go_MAGs_Assembly_V1.smk \
 #   --config fastq_dir="$fastq_dir" output_dir="$output_dir" \
 #   megahit_threads=24 megahit_memory=128000 binning_tools="concoct,metabat2,maxbin2" \
 #   --cores 24 --jobs 4 --latency-wait 60 --rerun-incomplete --keep-going

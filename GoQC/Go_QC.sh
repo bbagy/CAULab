@@ -3,7 +3,7 @@ set -euo pipefail
 
 usage(){
   echo "Usage: $0 -i FASTQ_DIR -o OUTPUT_DIR [-d HOST_BT2_INDEX_PREFIX] [-s SNAKEDIR] [-c CORES] [-j JOBS] [-m IMAGE] [-n] [-K]"
-  echo "       If -d is omitted, CAULAB_HOST_BT2_PREFIX from config/lab_paths.sh is used."
+  echo "       If -d is omitted, KPARK_HOST_BT2_PREFIX from config/lab_paths.sh is used."
   exit 1
 }
 
@@ -73,7 +73,7 @@ HOST_DB=""
 SNAKEDIR=""
 CORES=8
 JOBS=4
-IMAGE="${CAULAB_GOQC_IMAGE:-goqc:caulab}"
+IMAGE="${KPARK_GOQC_IMAGE:-goqc:kpark}"
 DOCKER_PLATFORM="${DOCKER_PLATFORM:-}"
 DRYRUN=0
 KEEP_GOING=0
@@ -128,7 +128,7 @@ done
 [ -z "$FASTQ_DIR" ] && usage
 [ -z "$OUTPUT_DIR" ] && usage
 if [ -z "$HOST_DB" ]; then
-  HOST_DB="${CAULAB_HOST_BT2_PREFIX:-}"
+  HOST_DB="${KPARK_HOST_BT2_PREFIX:-}"
 fi
 [ -z "$HOST_DB" ] && usage
 
@@ -166,7 +166,7 @@ fi
 if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
   echo "[GoQC][FATAL] Docker image not found locally: $IMAGE"
   echo "[GoQC] Build example:"
-  echo "  cd \"$SCRIPT_DIR\" && docker build -t goqc:caulab ."
+  echo "  cd \"$SCRIPT_DIR\" && docker build -t goqc:kpark ."
   exit 1
 fi
 
