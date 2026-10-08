@@ -72,7 +72,7 @@ Local database settings belong in `config/lab_paths.sh`; databases and analysis 
 - [Container guide](common/README.md)
 - `caulab_usage.sh` lists installed commands and core examples.
 
-문서 포털은 한글 소개와 CAULab 전용 디자인으로 구성되어 있습니다. [문서 소스](docs/index.html)를 참고하세요. GitHub Pages 배포는 저장소 요금제와 공개 설정을 확인한 뒤 별도로 설정해야 합니다.
+Repository documentation is maintained in English. The [web documentation portal](docs/index.html) provides Korean introductions and guides with a CAULab-specific design. GitHub Pages deployment requires a supported repository plan and visibility setting; the public site is not yet available.
 
 ## Maintainer
 
