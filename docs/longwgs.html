@@ -55,8 +55,8 @@ Go_longWGS.sh -i IN -o OUT -d DB -M permissive -K</code></pre></div>
 
       <h2>실행 예시</h2>
       <div class="card"><pre><code>Go_longWGS.sh \
-  -i longWGS/20261101_ONT_HKP \
-  -o longWGS/20261101_ONT_HKP_out \
+  -i longWGS/20261001_ONT_HKP \
+  -o longWGS/20261001_ONT_HKP_out \
   -d /media/uhlemann/core4/DB/longWGS_DB \
   -s "$CAULAB_PIPELINES/longWGS" \
   -M strict \
@@ -65,12 +65,12 @@ Go_longWGS.sh -i IN -o OUT -d DB -M permissive -K</code></pre></div>
 
       <h2>옵션</h2>
       <table>
-        <tr><th>Flag</th><th>Description</th></tr>
-        <tr><td><code>-n</code></td><td>Dry-run</td></tr>
-        <tr><td><code>-K</code></td><td>Keep-going</td></tr>
-        <tr><td><code>-M strict|permissive</code></td><td>Failure handling mode</td></tr>
-        <tr><td><code>-p 0|1</code></td><td>Porechop off/on</td></tr>
-        <tr><td><code>-s</code></td><td>Custom snakefile directory</td></tr>
+        <tr><th>옵션</th><th>설명</th></tr>
+        <tr><td><code>-n</code></td><td>실행 계획 확인</td></tr>
+        <tr><td><code>-K</code></td><td>오류 발생 시 나머지 샘플 계속 실행</td></tr>
+        <tr><td><code>-M strict|permissive</code></td><td>실패 처리 방식</td></tr>
+        <tr><td><code>-p 0|1</code></td><td>Porechop 미사용 / 사용</td></tr>
+        <tr><td><code>-s</code></td><td>사용자 지정 Snakefile 폴더</td></tr>
       </table>
 
       <h2>입력 구성</h2>
@@ -94,10 +94,10 @@ longWGS_DB/
 
       <h2>주요 결과</h2>
       <div class="card"><pre><code>longWGS/
-|-- 20251101_ONT_HKP/
-|-- 20251101_ONT_HKP_out/
-|-- 20261101_ONT_HKP/
-`-- 20261101_ONT_HKP_out/
+|-- 20260901_ONT_HKP/
+|-- 20260901_ONT_HKP_out/
+|-- 20261001_ONT_HKP/
+`-- 20261001_ONT_HKP_out/
     |-- 1_QC/
     |-- 2_quast/
     |-- 3_autocycler/

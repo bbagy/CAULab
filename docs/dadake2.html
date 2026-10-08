@@ -12,12 +12,12 @@
       <div class="card">
         <table>
           <thead>
-            <tr><th>Type flag</th><th>Region</th><th>Primer trim</th><th>Host removal</th></tr>
+            <tr><th>분석 유형</th><th>영역</th><th>프라이머 제거</th><th>Off-target 제거</th></tr>
           </thead>
           <tbody>
-            <tr><td><code>standard_V3V4</code></td><td>16S V3–V4</td><td>trimLeft only</td><td>Yes (NA phylum, Chloroplast, Mito)</td></tr>
-            <tr><td><code>zymo_V1V2</code></td><td>16S V1–V2 (Zymo)</td><td>trimLeft only</td><td>Yes</td></tr>
-            <tr><td><code>illumina_ITS</code></td><td>ITS (Fungi)</td><td>cutadapt</td><td>No</td></tr>
+            <tr><td><code>standard_V3V4</code></td><td>16S V3–V4</td><td>trimLeft만 사용</td><td>적용 (NA phylum · Chloroplast · Mitochondria)</td></tr>
+            <tr><td><code>zymo_V1V2</code></td><td>16S V1–V2 (Zymo)</td><td>trimLeft만 사용</td><td>적용</td></tr>
+            <tr><td><code>illumina_ITS</code></td><td>ITS (진균)</td><td>cutadapt</td><td>미적용</td></tr>
           </tbody>
         </table>
       </div>
@@ -39,7 +39,7 @@
       <h2>단계별 체크포인트</h2>
       <div class="card">
         <table>
-          <thead><tr><th>Step</th><th>Checkpoint file</th></tr></thead>
+          <thead><tr><th>단계</th><th>체크포인트 파일</th></tr></thead>
           <tbody>
             <tr><td>filterAndTrim</td><td><code>2_rds/filter_stats.rds</code></td></tr>
             <tr><td>learnErrors</td><td><code>2_rds/errF.rds</code> &amp; <code>errR.rds</code></td></tr>
@@ -50,7 +50,7 @@
         </table>
       </div>
 
-      <h2>실행 방법</h2>
+      <h2>실행 방법</h2><p>UNITE: <a href="https://benjjneb.github.io/dada2/training.html">General FASTA · All eukaryotes 다운로드 ↗</a><br>예시 경로: 받은 파일을 <code>$HOME/caulab-db/dadake2/unite_general.fasta</code>로 저장 · 배포 버전 / 날짜 기록<br>DB 형식: FASTA 또는 gzip 압축 FASTA</p>
       <div class="card"><pre><code># 16S V3V4 — multiple projects
 DB="/media/uhlemann/core4/DB/DADA2/Bacteria/silva_nr99_v138.1_wSpecies_train_set.fa.gz"
 dirs="ProjA,ProjB,ProjC"
@@ -62,7 +62,7 @@ Go_daDake2.sh -t standard_V3V4 -i $dirs -d $DB -s $smk -c 8 -K</code></pre></div
 Go_daDake2.sh -t zymo_V1V2 -i "ProjA,ProjB" -d $DB -s $smk -c 8 -K</code></pre></div>
 
       <div class="card"><pre><code># ITS
-DB_ITS="/media/uhlemann/core4/DB/DADA2/Fungi/sh_general_release_dynamic_29.11.2022.fasta"
+DB_ITS="$HOME/caulab-db/dadake2/unite_general.fasta"
 Go_daDake2.sh -t illumina_ITS -i "ProjA,ProjB" -d $DB_ITS -s $smk -c 8 -K</code></pre></div>
 
       <div class="card"><pre><code># dry-run
@@ -71,16 +71,16 @@ Go_daDake2.sh -t standard_V3V4 -i "ProjA" -d $DB -s $smk -n</code></pre></div>
       <h2>옵션</h2>
       <div class="card">
         <table>
-          <thead><tr><th>Flag</th><th>Default</th><th>Description</th></tr></thead>
+          <thead><tr><th>옵션</th><th>기본값</th><th>설명</th></tr></thead>
           <tbody>
             <tr><td><code>-t</code></td><td>—</td><td><code>standard_V3V4</code> | <code>zymo_V1V2</code> | <code>illumina_ITS</code></td></tr>
-            <tr><td><code>-i</code></td><td>—</td><td>Comma-separated project directories (no spaces)</td></tr>
-            <tr><td><code>-d</code></td><td>—</td><td>Taxonomy DB path (SILVA or UNITE .fa.gz)</td></tr>
-            <tr><td><code>-s</code></td><td>script dir</td><td>Directory containing Go_daDake2.smk (use when running via symlink)</td></tr>
-            <tr><td><code>-c</code></td><td>4</td><td>Snakemake cores</td></tr>
-            <tr><td><code>-m</code></td><td>10000</td><td>Min FASTQ size in bytes (smaller → failed.csv)</td></tr>
-            <tr><td><code>-n</code></td><td>off</td><td>Dry-run</td></tr>
-            <tr><td><code>-K</code></td><td>off</td><td>Keep going on sample failure</td></tr>
+            <tr><td><code>-i</code></td><td>—</td><td>프로젝트 폴더 목록 · 쉼표 구분 · 공백 제외</td></tr>
+            <tr><td><code>-d</code></td><td>—</td><td>분류 DB 경로 · SILVA / UNITE FASTA (.fa / .fasta / .fa.gz / .fasta.gz)</td></tr>
+            <tr><td><code>-s</code></td><td>실행 스크립트 폴더</td><td>Go_daDake2.smk 위치 · 심볼릭 링크 실행 시 지정</td></tr>
+            <tr><td><code>-c</code></td><td>4</td><td>Snakemake CPU 수</td></tr>
+            <tr><td><code>-m</code></td><td>10000</td><td>FASTQ 최소 크기 (bytes) · 미만 샘플: failed.csv</td></tr>
+            <tr><td><code>-n</code></td><td>미사용</td><td>실행 계획 확인</td></tr>
+            <tr><td><code>-K</code></td><td>미사용</td><td>샘플 실패 시 나머지 샘플 계속 실행</td></tr>
           </tbody>
         </table>
       </div>
@@ -117,7 +117,7 @@ Go_daDake2.sh -t standard_V3V4 -i "ProjA" -d $DB -s $smk -n</code></pre></div>
           <li>파일 날짜: 실행 시점 <code>yymmdd</code> · 날짜별 출력 분리</li>
           <li><code>-m</code> 미만 샘플: <code>failed.csv</code> 기록</li>
           <li>필터 후 0 reads: <code>failed.csv</code> 기록 · 후속 단계 제외</li>
-          <li>16S 전용 제거: NA phylum · Chloroplast · Mitochondria</li>
+          <li>16S Off-target 제거: NA phylum · Chloroplast · Mitochondria</li>
           <li><code>addSpecies()</code>: 미사용 · species DB 불필요</li>
           <li>16S 매핑 템플릿: <code>3_map/</code></li>
           <li>계통수 환경: <code>qiime2</code></li>
@@ -128,13 +128,13 @@ Go_daDake2.sh -t standard_V3V4 -i "ProjA" -d $DB -s $smk -n</code></pre></div>
       <h2>문제 해결</h2>
       <div class="card">
         <table>
-          <thead><tr><th>Error</th><th>Fix</th></tr></thead>
+          <thead><tr><th>오류</th><th>조치</th></tr></thead>
           <tbody>
-            <tr><td>Snakefile not found (symlink)</td><td>Add <code>-s $CAULAB_PIPELINES/daDake2</code></td></tr>
-            <tr><td>All samples in failed.csv</td><td>Check FASTQ sizes with <code>ls -lh</code>; lower <code>-m</code> if needed</td></tr>
-            <tr><td>learnErrors takes very long</td><td>Expected for large projects (reads up to 1M reads per strand)</td></tr>
-            <tr><td>qiime2 tree fails — conda not found</td><td>Ensure shell sources conda.sh in <code>~/.bashrc</code></td></tr>
-            <tr><td>ITS: many reads lost at cutadapt</td><td>Verify primer sequences; check <code>logs/cutadapt.log</code></td></tr>
+            <tr><td>Snakefile 없음 (심볼릭 링크)</td><td><code>-s "$HOME/caulab-pipelines/daDake2"</code> 지정</td></tr>
+            <tr><td>모든 샘플이 failed.csv에 기록</td><td><code>ls -lh</code>로 FASTQ 크기 확인 · 필요 시 <code>-m</code> 조정</td></tr>
+            <tr><td>learnErrors 처리 지연</td><td>대규모 입력의 오류 학습 시간 확인</td></tr>
+            <tr><td>계통수 실패 · conda 명령 없음</td><td><code>source "$HOME/miniforge3/etc/profile.d/conda.sh"</code> 실행</td></tr>
+            <tr><td>ITS cutadapt 후 리드 수 감소</td><td>프라이머 서열 · <code>logs/cutadapt.log</code> 확인</td></tr>
           </tbody>
         </table>
       </div>

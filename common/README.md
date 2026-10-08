@@ -125,7 +125,7 @@ bash ~/CAULab/shortWGS/Go_shortWGS.sh \
   --container apptainer \
   --container-image "$HOME/containers/shortwgs.sif" \
   -i /shared/fastq -o shortwgs_out \
-  -d /shared/db/wgs -k /shared/db/kraken2 -r /shared/GoWGS \
+  -d /shared/db/wgs -k /shared/db/kraken2 -r "$HOME/CAULab/shortWGS" \
   -c 8 -n
 ```
 

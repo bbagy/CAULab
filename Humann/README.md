@@ -40,7 +40,7 @@ flowchart LR
 - HUMAnN3 reference DBs:
   - `chocophlan/` nucleotide DB
   - `uniref/` protein DB
-- MetaPhlAn4 DB directory + index basename (e.g. `mpa_vJan25_CHOCOPhlAnSGB_202503`)
+- MetaPhlAn4 DB directory + index basename (e.g. `mpa_vJun23_CHOCOPhlAnSGB_202307`)
 
 ## Build
 
@@ -78,7 +78,7 @@ docker run --rm humann:caulab metaphlan --version
   -n /media/uhlemann/core4/DB/humann_db/humann3/chocophlan \
   -p /media/uhlemann/core4/DB/humann_db/humann3/uniref \
   -b /media/uhlemann/core4/DB/humann_db/metaphlan4 \
-  -I mpa_vJan25_CHOCOPhlAnSGB_202503 \
+  -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
   -c 8 -j 4 -t 4 \
   --run-musicc \
   -K
@@ -93,7 +93,7 @@ Go_Humannake.sh \
   -n /media/uhlemann/core4/DB/humann_db/humann3/chocophlan \
   -p /media/uhlemann/core4/DB/humann_db/humann3/uniref \
   -b /media/uhlemann/core4/DB/humann_db/metaphlan4 \
-  -I mpa_vJan25_CHOCOPhlAnSGB_202503 \
+  -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
   -s /home/uhlemann/heekuk_path \
   -c 8 -j 4 -t 4 \
   --run-musicc \
@@ -195,7 +195,7 @@ output_dir="humann_run"
 chocophlan="/media/uhlemann/core4/DB/humann_db/humann3/chocophlan"
 uniref="/media/uhlemann/core4/DB/humann_db/humann3/uniref"
 metaphlan_db="/media/uhlemann/core4/DB/humann_db/metaphlan4"
-metaphlan_index="mpa_vJan25_CHOCOPhlAnSGB_202503"
+metaphlan_index="mpa_vJun23_CHOCOPhlAnSGB_202307"
 
 snakemake --snakefile /home/uhlemann/heekuk_path/Go_Humann.smk \
   --config \
@@ -220,7 +220,7 @@ snakemake --snakefile /home/uhlemann/heekuk_path/Go_Humann.smk \
   nucleotide_db=/path/to/chocophlan \
   protein_db=/path/to/uniref \
   metaphlan_db=/path/to/metaphlan_db \
-  metaphlan_index=mpa_vJan25_CHOCOPhlAnSGB_202503 \
+  metaphlan_index=mpa_vJun23_CHOCOPhlAnSGB_202307 \
   run_musicc=false \
   humann_threads=4 \
   run_gene_norm=true \
@@ -285,3 +285,9 @@ Shell launchers accept `--container docker|apptainer` (default: `docker`).
 For HPC use `--container apptainer --container-image /path/to/pipeline.sif`
 with the existing analysis options. See [shared runtime instructions](../README.md#docker--apptainer-selection)
 for SIF preparation and deployment of `common/container.sh`.
+
+## Database compatibility
+
+HUMAnN 3.9 / MetaPhlAn 4.1.0: `mpa_vJun23_CHOCOPhlAnSGB_202307`.
+The downloader pins this index. Existing installations retain local settings; rerun the downloader or update the index explicitly.
+Reference: [HUMAnN 3.9 release](https://forum.biobakery.org/t/announcing-humann-3-9/6674).

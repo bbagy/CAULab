@@ -46,7 +46,7 @@ outDIR="humann3_out_test"
 chocophlanDB="/media/uhlemann/core4/DB/humann_db/humann3/chocophlan"
 uniref90DB="/media/uhlemann/core4/DB/humann_db/humann3/uniref"
 metaphlanDB="/media/uhlemann/core4/DB/humann_db/metaphlan4"
-metaphlanIndex="mpa_vJan25_CHOCOPhlAnSGB_202503"
+metaphlanIndex="mpa_vJun23_CHOCOPhlAnSGB_202307"
 image="humann:caulab"
 
 

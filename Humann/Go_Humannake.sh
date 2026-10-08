@@ -12,8 +12,8 @@ set -- ${CONTAINER_ARGS[@]+"${CONTAINER_ARGS[@]}"}
 
 usage(){
   echo "Usage: $0 [--container docker|apptainer] [--container-image IMAGE_OR_SIF] -i FASTQ_DIR -o OUTPUT_DIR -n NUCLEOTIDE_DB -p PROTEIN_DB [-b METAPHLAN_DB] [-I METAPHLAN_INDEX] [-s SNAKEDIR] [-c CORES] [-j JOBS] [-t THREADS] [-m IMAGE] [-x] [-K] [--run-musicc] [--skip-gene-norm] [--skip-path-split] [--skip-pathcoverage]"
-  echo "  Recommended MetaPhlAn input: -b /path/to/metaphlan_db_dir -I mpa_vJan25_CHOCOPhlAnSGB_202503"
-  echo "  Backward-compatible shortcut: -b /path/to/mpa_vJan25_CHOCOPhlAnSGB_202503.pkl"
+  echo "  Recommended MetaPhlAn input: -b /path/to/metaphlan_db_dir -I mpa_vJun23_CHOCOPhlAnSGB_202307"
+  echo "  Backward-compatible shortcut: -b /path/to/mpa_vJun23_CHOCOPhlAnSGB_202307.pkl"
   exit 1
 }
 

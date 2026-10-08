@@ -32,7 +32,7 @@ flowchart LR
 - Paired FASTQ files
 - WGS DB root (`WGS_DB2` style)
 - Kraken2 DB
-- GoWGS host directory mounted by wrapper (`-r`) for the Rmd template path
+- Report templates: bundled in `shortWGS/scripts/`; pass `-r "$HOME/caulab-pipelines/shortWGS"` for the legacy wrapper mount.
 
 ## Build
 
@@ -88,7 +88,7 @@ docker run --rm shortwgs micromamba run -n tetyper python /usr/local/bin/TETyper
   -o /path/to/output \
   -d /path/to/WGS_DB2 \
   -k /path/to/kraken2_db \
-  -r /path/to/GoWGS \
+  -r "$HOME/caulab-pipelines/shortWGS" \
   -c 8 \
   -K
 ```
@@ -101,7 +101,7 @@ docker run --rm shortwgs micromamba run -n tetyper python /usr/local/bin/TETyper
 | `-o` | - | Output directory |
 | `-d` | - | WGS DB root (`WGS_DB2`) |
 | `-k` | - | Kraken2 DB directory |
-| `-r` | - | Host GoWGS directory |
+| `-r` | - | Installed `shortWGS` directory (legacy report mount) |
 | `-s` | script directory | Optional Snakefile directory override |
 | `-c` | `8` | Snakemake cores |
 | `-m` | `shortwgs` | Docker image name |
@@ -189,19 +189,19 @@ Prefilter artifacts (sibling of input FASTQ dir):
 Dry-run:
 
 ```bash
-./shortWGS/Go_shortWGS.sh -i IN -o OUT -d DB -k KRAKEN -r GOWGS -n
+./shortWGS/Go_shortWGS.sh -i IN -o OUT -d DB -k KRAKEN -r "$HOME/caulab-pipelines/shortWGS" -n
 ```
 
 Production run:
 
 ```bash
-./shortWGS/Go_shortWGS.sh -i IN -o OUT -d DB -k KRAKEN -r GOWGS -K
+./shortWGS/Go_shortWGS.sh -i IN -o OUT -d DB -k KRAKEN -r "$HOME/caulab-pipelines/shortWGS" -K
 ```
 
 Use custom image tag:
 
 ```bash
-./shortWGS/Go_shortWGS.sh -i IN -o OUT -d DB -k KRAKEN -r GOWGS -m shortwgs
+./shortWGS/Go_shortWGS.sh -i IN -o OUT -d DB -k KRAKEN -r "$HOME/caulab-pipelines/shortWGS" -m shortwgs
 ```
 
 ## Troubleshooting

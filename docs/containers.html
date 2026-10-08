@@ -10,7 +10,7 @@ rsync -avP container-images/shortwgs.docker.tar \
   USER@HPC_HOST:~/containers/
 
 # 아래 명령은 HPC에서 실행합니다.
-git clone https://github.com/bbagy/CAULab.git</code></pre></div><p><code>USER@HPC_HOST</code>: 본인 HPC 로그인 주소로 변경<br>별도 준비: FASTQ · 참조 DB · GoWGS 자료</p>
+git clone https://github.com/bbagy/CAULab.git</code></pre></div><p><code>USER@HPC_HOST</code>: 본인 HPC 로그인 주소로 변경<br>별도 준비: FASTQ · 참조 DB · 보고서 템플릿: CAULab/shortWGS/scripts에 포함</p>
 <h2>4. SIF 파일로 변환</h2><div class="card"><pre><code>module load apptainer  # 환경에 따라 생략하거나 모듈 이름을 바꾸세요.
 cd ~/CAULab
 bash common/Go_container_image.sh build \
@@ -21,6 +21,6 @@ bash ~/CAULab/shortWGS/Go_shortWGS.sh \
   --container apptainer \
   --container-image "$HOME/containers/shortwgs.sif" \
   -i /shared/fastq -o shortwgs_out \
-  -d /shared/db/wgs -k /shared/db/kraken2 -r /shared/GoWGS \
+  -d /shared/db/wgs -k /shared/db/kraken2 -r "$HOME/CAULab/shortWGS" \
   -c 8 -n</code></pre></div><p>입력 / 출력 / DB: 실제 경로로 변경<br>dry-run 성공 → <code>-n</code> 제거 후 실행<br>CPU / 메모리: 할당 자원 기준 · Slurm 제출 별도</p>
 <h2>기록 항목</h2><div class="card"><ul><li>Git 커밋 · Docker 이미지 ID · SIF 체크섬</li><li>이미지 / TAR / SIF: 코드 저장소 밖에 보관</li><li>실행 스크립트 복사 시 <code>common/container.sh</code> 포함</li></ul></div><p><a href="https://github.com/bbagy/CAULab/blob/main/common/README.md">이미지 목록과 전송 방법 ↗</a></p><footer class="page-footer"><span>CAULab · 시퀀싱 분석 파이프라인</span><span>Maintainer · Heekuk Park</span></footer></main></div><script src="assets/copy-code.js?v=compact" defer></script></body></html>

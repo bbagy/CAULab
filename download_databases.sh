@@ -21,7 +21,7 @@ Options:
   --host-index-name NAME    Host Bowtie2 index basename. Default: chm13v2.0.
   --host-index-url URL      Host Bowtie2 index zip URL.
   --humann-uniref NAME      HUMAnN protein DB: uniref90_diamond or uniref50_diamond. Default: uniref90_diamond.
-  --metaphlan-index NAME    Optional MetaPhlAn index name. If omitted, MetaPhlAn chooses its default.
+  --metaphlan-index NAME    MetaPhlAn index name. Default: mpa_vJun23_CHOCOPhlAnSGB_202307.
   --prefix INSTALL_DIR      CAULab install root to update lab_paths.sh. Default: $CAULAB_PIPELINES or $HOME/caulab-pipelines.
   --platform PLATFORM       Docker platform, e.g. linux/amd64.
   -h, --help                Show this help.
@@ -42,7 +42,7 @@ KRAKEN2_16GB="k2_pluspfp_16gb"
 HOST_INDEX_NAME="chm13v2.0"
 HOST_INDEX_URL="https://genome-idx.s3.amazonaws.com/bt/chm13v2.0.zip"
 HUMANN_UNIREF="uniref90_diamond"
-METAPHLAN_INDEX=""
+METAPHLAN_INDEX="mpa_vJun23_CHOCOPhlAnSGB_202307"
 PREFIX="${CAULAB_PIPELINES:-$HOME/caulab-pipelines}"
 PLATFORM="${DOCKER_PLATFORM:-}"
 
