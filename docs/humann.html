@@ -27,10 +27,10 @@
   -o humann_run \
   -n /path/to/chocophlan \
   -p /path/to/uniref \
+  -u /path/to/utility_mapping \
   -b /path/to/metaphlan_db \
   -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
   -c 8 -j 4 -t 4 \
-  --run-musicc \
   -K</code></pre></div>
 
       <h2>실행 예시</h2>
@@ -39,11 +39,11 @@
   -o Humann/20261001_MG_HKP_humann_out \
   -n "$HOME/kpark-db/humann/chocophlan" \
   -p "$HOME/kpark-db/humann/uniref90_diamond" \
+  -u "$HOME/kpark-db/humann/utility_mapping" \
   -b "$HOME/kpark-db/humann/metaphlan4" \
   -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
   -s "$KPARK_PIPELINES/Humann" \
   -c 8 -j 4 -t 4 \
-  --run-musicc \
   -K</code></pre></div>
 
       <h2>옵션</h2>

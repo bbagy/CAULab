@@ -77,10 +77,10 @@ docker run --rm humann:kpark metaphlan --version
   -o humann_run \
   -n "$HOME/kpark-db/humann/chocophlan" \
   -p "$HOME/kpark-db/humann/uniref90_diamond" \
+  -u "$HOME/kpark-db/humann/utility_mapping" \
   -b "$HOME/kpark-db/humann/metaphlan4" \
   -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
   -c 8 -j 4 -t 4 \
-  --run-musicc \
   -K
 ```
 
@@ -92,11 +92,11 @@ Go_Humannake.sh \
   -o 2_humann_out \
   -n "$HOME/kpark-db/humann/chocophlan" \
   -p "$HOME/kpark-db/humann/uniref90_diamond" \
+  -u "$HOME/kpark-db/humann/utility_mapping" \
   -b "$HOME/kpark-db/humann/metaphlan4" \
   -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
   -s "$HOME/kpark-pipelines/Humann" \
   -c 8 -j 4 -t 4 \
-  --run-musicc \
   -K
 ```
 

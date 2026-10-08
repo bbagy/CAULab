@@ -105,7 +105,7 @@ Go_daDake2.sh -t standard_V3V4 -i "ProjA,ProjB" -A \
 | Parameter | `standard_V3V4` | `zymo_V1V2` | `illumina_ITS` |
 |---|---|---|---|
 | trimLeft F/R | 20 / 21 | 20 / 17 | — |
-| truncLen F/R | 240 / 240 | 230 / 170 | 240 / 200 |
+| truncLen F/R | 240 / 240 | 230 / 170 | 0 / 0 (no fixed-length truncation) |
 | Primer trimming | — | — | cutadapt |
 | Host removal | No | No | No |
 | Chimera minFold | 1 | 1 | default |
