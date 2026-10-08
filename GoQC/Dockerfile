@@ -1,7 +1,7 @@
 FROM python:3.11-slim-bookworm
 
 LABEL author="Heekuk Park"
-LABEL project="K-Park Lab-GoQC"
+LABEL project="K-park Lab-GoQC"
 
 ENV DEBIAN_FRONTEND=noninteractive
 

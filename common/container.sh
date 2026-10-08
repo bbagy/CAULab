@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared runtime selection for the K-Park Lab launchers (Bash 3 compatible).
+# Shared runtime selection for the K-park Lab launchers (Bash 3 compatible).
 CONTAINER_RUNTIME=docker
 CONTAINER_IMAGE=""
 CONTAINER_ARGS=()

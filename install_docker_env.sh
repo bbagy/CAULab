@@ -163,13 +163,13 @@ copy_install_files() {
 mkdir -p "$PREFIX_PARENT"
 
 if [ -e "$PREFIX" ] && [ "$UPDATE" -ne 1 ]; then
-  echo "[K-Park Lab install][FATAL] install dir already exists: $PREFIX"
-  echo "[K-Park Lab install] Existing install can be used with:"
+  echo "[K-park Lab install][FATAL] install dir already exists: $PREFIX"
+  echo "[K-park Lab install] Existing install can be used with:"
   echo "  source \"$PREFIX/kpark.env\""
-  echo "[K-Park Lab install] No Docker images were built because install stopped before the build step."
-  echo "[K-Park Lab install] To refresh code and build images in that install, rerun:"
+  echo "[K-park Lab install] No Docker images were built because install stopped before the build step."
+  echo "[K-park Lab install] To refresh code and build images in that install, rerun:"
   echo "  ./install_docker_env.sh --update --build-core"
-  echo "[K-Park Lab install] Or choose a new --prefix."
+  echo "[K-park Lab install] Or choose a new --prefix."
   exit 1
 fi
 
@@ -210,7 +210,7 @@ build_image() {
   local image="$1"
   local context="$2"
   local dockerfile="${3:-$context/Dockerfile}"
-  echo "[K-Park Lab install] Building $image from $context"
+  echo "[K-park Lab install] Building $image from $context"
   if [ "$NO_CACHE" -eq 1 ] && [ -n "$PLATFORM" ]; then
     if ! docker build -f "$dockerfile" --progress=plain --no-cache --platform "$PLATFORM" -t "$image" "$context"; then
       report_build_failure "$image" "$context" "$dockerfile"
@@ -234,15 +234,15 @@ report_build_failure() {
   local image="$1"
   local context="$2"
   local dockerfile="${3:-$context/Dockerfile}"
-  echo "[K-Park Lab install][FATAL] Docker build failed: $image"
-  echo "[K-Park Lab install] Re-run this command to see the full plain build log:"
+  echo "[K-park Lab install][FATAL] Docker build failed: $image"
+  echo "[K-park Lab install] Re-run this command to see the full plain build log:"
   if [ -n "$PLATFORM" ]; then
     echo "  docker build -f \"$dockerfile\" --progress=plain --no-cache --platform \"$PLATFORM\" -t \"$image\" \"$context\""
   else
     echo "  docker build -f \"$dockerfile\" --progress=plain --no-cache -t \"$image\" \"$context\""
   fi
   if [ "$image" = "goqc:kpark" ]; then
-    echo "[K-Park Lab install] If the failure is at apt-get, test Docker apt directly:"
+    echo "[K-park Lab install] If the failure is at apt-get, test Docker apt directly:"
     echo "  docker run --rm python:3.11-slim-bookworm bash -lc 'apt-get update && apt-get install -y --no-install-recommends fastp bowtie2 samtools pigz'"
   fi
   exit 1
@@ -251,7 +251,7 @@ report_build_failure() {
 check_image_runtime() {
   local image="$1"
   local runtime_check='(command -v python >/dev/null 2>&1 && python --version || python3 --version) && snakemake --version >/dev/null'
-  echo "[K-Park Lab install] Runtime check: $image"
+  echo "[K-park Lab install] Runtime check: $image"
   if [ -n "$PLATFORM" ]; then
     docker run --rm --platform "$PLATFORM" "$image" bash -lc "$runtime_check"
   else
@@ -262,16 +262,16 @@ check_image_runtime() {
 report_image_status() {
   local image="$1"
   if docker image inspect "$image" >/dev/null 2>&1; then
-    echo "[K-Park Lab install] Docker image ready: $image"
+    echo "[K-park Lab install] Docker image ready: $image"
   else
-    echo "[K-Park Lab install][WARN] Docker image missing: $image"
+    echo "[K-park Lab install][WARN] Docker image missing: $image"
   fi
 }
 
 if [ "$BUILD_GOQC" -eq 1 ] || [ "$BUILD_KBRACKEN" -eq 1 ] || [ "$BUILD_HUMANN" -eq 1 ]; then
   if ! docker info >/dev/null 2>&1; then
-    echo "[K-Park Lab install][FATAL] Docker is not available. Start the Docker service and rerun."
-    echo "[K-Park Lab install] After Docker is running, use:"
+    echo "[K-park Lab install][FATAL] Docker is not available. Start the Docker service and rerun."
+    echo "[K-park Lab install] After Docker is running, use:"
     echo "  ./install_docker_env.sh --update --build-core"
     exit 1
   fi
@@ -290,7 +290,7 @@ if [ "$BUILD_HUMANN" -eq 1 ]; then
 fi
 
 if [ "$BUILD_GOQC" -eq 1 ] || [ "$BUILD_KBRACKEN" -eq 1 ] || [ "$BUILD_HUMANN" -eq 1 ]; then
-  echo "[K-Park Lab install] Docker image status:"
+  echo "[K-park Lab install] Docker image status:"
   report_image_status "goqc:kpark"
   report_image_status "kbracken:kpark"
   report_image_status "humann:kpark"
@@ -306,15 +306,15 @@ if [ "$BUILD_ALL" -eq 1 ]; then
 fi
 
 cat <<EOF
-[K-Park Lab install] Installed/updated to:
+[K-park Lab install] Installed/updated to:
   $PREFIX
 
-[K-Park Lab install] Next:
+[K-park Lab install] Next:
   source "$PREFIX/kpark.env"
   edit "$PREFIX/config/lab_paths.sh"
   kpark_usage.sh
 
-[K-Park Lab install] GoQC example:
+[K-park Lab install] GoQC example:
   Go_QC.sh \\
     -i /path/to/raw_fastq \\
     -o /path/to/output/ProjectA_QC \\
@@ -322,12 +322,12 @@ cat <<EOF
     -m goqc:kpark \\
     -K
 
-[K-Park Lab install] Core images:
+[K-park Lab install] Core images:
   goqc:kpark
   kbracken:kpark
   humann:kpark
 
-[K-Park Lab install] Commands added to PATH:
+[K-park Lab install] Commands added to PATH:
   Go_QC.sh
   Go_KBracken.sh
   Go_Humannake.sh
@@ -342,7 +342,7 @@ cat <<EOF
   download_databases.sh
   kpark_usage.sh
 
-[K-Park Lab install] Updated wrapper scripts:
+[K-park Lab install] Updated wrapper scripts:
   $PREFIX/GoQC/Go_QC.sh
   $PREFIX/KBracken/Go_KBracken.sh
   $PREFIX/Humann/Go_Humannake.sh

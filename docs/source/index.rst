@@ -1,7 +1,7 @@
-K-Park Lab Pipeline Documentation
+K-park Lab Pipeline Documentation
 =================================
 
-Containerized sequencing workflows maintained in the K-Park Lab.
+Containerized sequencing workflows maintained in the K-park Lab.
 
 .. toctree::
    :maxdepth: 2

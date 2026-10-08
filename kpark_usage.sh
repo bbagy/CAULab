@@ -4,7 +4,7 @@ set -euo pipefail
 PIPELINES="${KPARK_PIPELINES:-$(cd "$(dirname "$0")" && pwd -P)}"
 
 cat <<EOF
-K-Park Lab pipeline tools
+K-park Lab pipeline tools
 =================
 
 Pipeline root:
@@ -47,7 +47,7 @@ Docker images:
 Check whether images exist locally:
   docker image inspect goqc:kpark kbracken:kpark humann:kpark >/dev/null
 
-List K-Park Lab images:
+List K-park Lab images:
   docker images --format '{{.Repository}}:{{.Tag}}' | grep -E '^(goqc|kbracken|humann):kpark$'
 
 Build all three images during install:

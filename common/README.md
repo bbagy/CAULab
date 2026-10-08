@@ -77,7 +77,7 @@ Prepare the code on HPC as well. For a first-time setup:
 ```bash
 # Run on HPC.
 git clone https://github.com/bbagy/KParkLab.git
-cd K-Park Lab
+cd K-park Lab
 ```
 
 For an existing checkout, check for local changes and update with

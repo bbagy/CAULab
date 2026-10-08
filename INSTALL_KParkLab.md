@@ -1,6 +1,6 @@
-# K-Park Lab Installation Notes
+# K-park Lab Installation Notes
 
-The K-Park Lab copy is intended to be path-neutral. Do not hard-code workstation paths inside Snakefiles. Keep lab-specific DB paths in `config/lab_paths.sh`; wrapper scripts use those values by default and still allow command-line overrides.
+The K-park Lab copy is intended to be path-neutral. Do not hard-code workstation paths inside Snakefiles. Keep lab-specific DB paths in `config/lab_paths.sh`; wrapper scripts use those values by default and still allow command-line overrides.
 
 ## Ubuntu Server Install
 
@@ -40,7 +40,7 @@ If Docker images are missing, first start the Docker service, then rerun:
 docker image inspect goqc:kpark kbracken:kpark humann:kpark >/dev/null
 ```
 
-If a container fails with `failed to launch x86-64-v3 version`, rebuild after updating K-Park Lab:
+If a container fails with `failed to launch x86-64-v3 version`, rebuild after updating K-park Lab:
 
 ```bash
 git pull
@@ -56,7 +56,7 @@ docker pull python:3.11-slim-bookworm
 docker run --rm python:3.11-slim-bookworm bash -lc "apt-get update"
 ```
 
-If those commands fail too, the problem is Docker network/DNS/proxy access rather than K-Park Lab code.
+If those commands fail too, the problem is Docker network/DNS/proxy access rather than K-park Lab code.
 
 For Apple Silicon Mac, if the normal Docker build fails while solving Bioconda packages:
 

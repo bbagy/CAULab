@@ -1,4 +1,4 @@
-# K-Park Lab Pipelines
+# K-park Lab Pipelines
 
 Snakemake pipelines for Illumina and ONT data.
 Bacterial Genome, Metagenome, RNA-seq, and 16S/ITS analysis.
@@ -102,7 +102,7 @@ Heekuk Park
 
 ## Updating an existing CAULab installation
 
-The project is now K-Park Lab. GitHub repository redirects preserve old clone URLs.
+The project is now K-park Lab. GitHub repository redirects preserve old clone URLs.
 To keep existing database paths and the installation directory:
 
 ```bash

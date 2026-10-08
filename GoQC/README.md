@@ -1,6 +1,6 @@
 # GoQC
 
-Paired-end FASTQ QC and host read depletion for K-Park Lab shotgun workflows.
+Paired-end FASTQ QC and host read depletion for K-park Lab shotgun workflows.
 
 Outputs follow the legacy `GoQC.smk` contract:
 
