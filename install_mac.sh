@@ -183,7 +183,7 @@ fi
 mkdir -p "$PREFIX/bin"
 ln -sf "../GoQC/Go_QC.sh" "$PREFIX/bin/Go_QC.sh"
 ln -sf "../KBracken/Go_KBracken.sh" "$PREFIX/bin/Go_KBracken.sh"
-ln -sf "../Humann/Go_Humann.sh" "$PREFIX/bin/Go_Humann.sh"
+ln -sf "../Humann/Go_Humannake.sh" "$PREFIX/bin/Go_Humannake.sh"
 for launcher in longWGS/Go_longWGS.sh shortWGS/Go_shortWGS.sh RNake/Go_Rnake.sh daDake2/Go_daDake2.sh MAGs/Go_MAGs_QC.sh MAGs/Go_MAGs_Assembly.sh MAGs/Go_MAGs_Annotation.sh common/Go_container_image.sh; do
   ln -sf "../$launcher" "$PREFIX/bin/$(basename "$launcher")"
 done
@@ -327,7 +327,7 @@ cat <<EOF
 [CAULab install] Commands added to PATH:
   Go_QC.sh
   Go_KBracken.sh
-  Go_Humann.sh
+  Go_Humannake.sh
   Go_longWGS.sh
   Go_shortWGS.sh
   Go_Rnake.sh
@@ -342,5 +342,5 @@ cat <<EOF
 [CAULab install] Updated wrapper scripts:
   $PREFIX/GoQC/Go_QC.sh
   $PREFIX/KBracken/Go_KBracken.sh
-  $PREFIX/Humann/Go_Humann.sh
+  $PREFIX/Humann/Go_Humannake.sh
 EOF

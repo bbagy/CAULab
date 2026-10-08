@@ -70,7 +70,7 @@ def _validate_runtime():
     if missing_bins:
         msg.append("Missing executables in PATH: " + ", ".join(missing_bins))
     msg.append(
-        "If you are using the Docker workflow, launch through Go_Humann.sh so host paths are mounted "
+        "If you are using the Docker workflow, launch through Go_Humannake.sh so host paths are mounted "
         "to /fastq and /db inside the container. If you are running Snakemake directly, pass real host "
         "paths with --config nucleotide_db=/path/to/chocophlan protein_db=/path/to/uniref "
         "[metaphlan_db=/path/to/metaphlan_db]."

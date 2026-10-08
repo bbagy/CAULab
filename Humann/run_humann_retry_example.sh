@@ -10,7 +10,7 @@
 #       - Python wrapper로 metaphlan --version exit 0 보장
 #   - Snakemake workflow (Go_Humann_V1.smk) 수정 완료
 #       - --db_dir → --bowtie2db 수정
-#       - Go_Humann.sh: site-packages 이중 마운트 제거
+#       - Go_Humannake.sh: site-packages 이중 마운트 제거
 #
 # R1 R2 따로 해도 나중에 합칠수 있음.
 
@@ -51,12 +51,12 @@ image="humann:caulab"
 
 
 # ---------------------------------------------------------------------------
-# Example: full Go_Humann.sh run
+# Example: full Go_Humannake.sh run
 # 아래 형식으로 test 입력을 wrapper로 실행 가능
 # ---------------------------------------------------------------------------
 
 cat <<'EOF'
-Go_Humann.sh --container "$CONTAINER_RUNTIME" ${CONTAINER_IMAGE:+--container-image "$CONTAINER_IMAGE"} \
+Go_Humannake.sh --container "$CONTAINER_RUNTIME" ${CONTAINER_IMAGE:+--container-image "$CONTAINER_IMAGE"} \
    -i DEAPIM30_QC/test \
    -o humann3_out_test \
    -n /media/uhlemann/core4/DB/humann_db/humann3/chocophlan \
@@ -71,7 +71,7 @@ EOF
 
 # 실제 실행이 필요하면 아래 블록을 사용
 #
-# Go_Humann.sh --container "$CONTAINER_RUNTIME" ${CONTAINER_IMAGE:+--container-image "$CONTAINER_IMAGE"} \
+# Go_Humannake.sh --container "$CONTAINER_RUNTIME" ${CONTAINER_IMAGE:+--container-image "$CONTAINER_IMAGE"} \
 #   -i "$inputDIR" \
 #   -o "$outDIR" \
 #   -n "$chocophlanDB" \
@@ -85,7 +85,7 @@ EOF
 
 # ---------------------------------------------------------------------------
 # Direct docker run for one sample
-# Snakemake/Go_Humann.sh를 거치지 않고 humann만 바로 실행해서 에러 확인
+# Snakemake/Go_Humannake.sh를 거치지 않고 humann만 바로 실행해서 에러 확인
 # ---------------------------------------------------------------------------
 
 sample="DPM10002_S202"
@@ -147,7 +147,7 @@ container_run --rm \
 # This workflow expects MetaPhlAn DB as:
 #   --bowtie2db /db/metaphlan --index <basename>
 # i.e. an already prepared DB directory, not a rebuild from .fna during the
-# normal Go_Humann.sh path.
+# normal Go_Humannake.sh path.
 #
 # The bowtie2-build failure seen on /db/mpa_vJun23_CHOCOPhlAnSGB_202307.fna
 # should be diagnosed separately from the main HUMAnN wrapper.
@@ -242,7 +242,7 @@ EOF
 #   - previous manual rebuild attempts were started mainly because bowtie2
 #     version/runtime was broken inside the container
 #   - that runtime issue is now fixed
-#   - main Go_Humann.sh workflow expects a prepared MetaPhlAn DB directory
+#   - main Go_Humannake.sh workflow expects a prepared MetaPhlAn DB directory
 #     plus index basename anyway
 #
 # Recommended order:

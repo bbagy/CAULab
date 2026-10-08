@@ -27,7 +27,7 @@ Database variables loaded from lab_paths.sh:
 Commands on PATH after sourcing caulab.env:
   Go_QC.sh
   Go_KBracken.sh
-  Go_Humann.sh
+  Go_Humannake.sh
   Go_longWGS.sh
   Go_shortWGS.sh
   Go_Rnake.sh
@@ -119,7 +119,7 @@ Kraken2-only mode:
 3. Humann: host-filtered FASTQ -> HUMAnN3 functional profiles
 -------------------------------------------------------------
 
-Go_Humann.sh \\
+Go_Humannake.sh \\
   -i /path/to/ProjectA_QC/host_filtered_fastq \\
   -o /path/to/output/ProjectA_humann \\
   -c 8 \\
@@ -128,7 +128,7 @@ Go_Humann.sh \\
   -K
 
 Explicit DB override:
-  Go_Humann.sh -i IN -o OUT -n /path/to/chocophlan -p /path/to/uniref -b /path/to/metaphlan4 -I mpa_index -K
+  Go_Humannake.sh -i IN -o OUT -n /path/to/chocophlan -p /path/to/uniref -b /path/to/metaphlan4 -I mpa_index -K
 
 
 Typical order
@@ -153,7 +153,7 @@ KBracken:
   -> "$PIPELINES/KBracken/Go_KBracken_V1.smk" otherwise
 
 Humann:
-  "$PIPELINES/Humann/Go_Humann.sh"
+  "$PIPELINES/Humann/Go_Humannake.sh"
   -> "$PIPELINES/Humann/Go_Humann.smk" if present
   -> "$PIPELINES/Humann/Go_Humann_V1.smk" otherwise
 EOF

@@ -29,7 +29,7 @@ git pull
 source "$HOME/caulab-pipelines/caulab.env"
 ```
 
-`--update` refreshes installed wrapper scripts (`Go_QC.sh`, `Go_KBracken.sh`, `Go_Humann.sh`), Snakefiles, Dockerfiles, helper scripts, and `bin/` links while preserving `config/lab_paths.sh` and `config/lab_paths.yaml`.
+`--update` refreshes installed wrapper scripts (`Go_QC.sh`, `Go_KBracken.sh`, `Go_Humannake.sh`), Snakefiles, Dockerfiles, helper scripts, and `bin/` links while preserving `config/lab_paths.sh` and `config/lab_paths.yaml`.
 
 If Docker images are missing, first start Docker Desktop, then rerun:
 
@@ -90,7 +90,7 @@ $HOME/caulab-pipelines/
   bin/
     Go_QC.sh
     Go_KBracken.sh
-    Go_Humann.sh
+    Go_Humannake.sh
     caulab_usage.sh
   GoQC/
   KBracken/
@@ -144,7 +144,7 @@ Go_QC.sh \
   -o ProjectA_QC \
   -K
 
-Go_Humann.sh \
+Go_Humannake.sh \
   -i ProjectA_QC/host_filtered_fastq \
   -o ProjectA_humann \
   -K
@@ -160,7 +160,7 @@ To override the configured DB paths for one run:
 ```bash
 Go_QC.sh -i IN -o OUT -d /path/to/host_bowtie2_index_prefix -K
 Go_KBracken.sh -i IN -o OUT -d /path/to/kraken2_db -K
-Go_Humann.sh -i IN -o OUT -n /path/to/chocophlan -p /path/to/uniref -b /path/to/metaphlan4 -I mpa_index -K
+Go_Humannake.sh -i IN -o OUT -n /path/to/chocophlan -p /path/to/uniref -b /path/to/metaphlan4 -I mpa_index -K
 ```
 
 GoQC host DB policy:
@@ -195,7 +195,7 @@ download_databases.sh --db-root /Volumes/CAULabDB --tools kraken2 --kraken2-16gb
 
 `GoQC/Go_QC.sh` follows the same structure as `KBracken/Go_KBracken.sh`: the wrapper lives next to its Dockerfile and versioned Snakefile, and it resolves `Go_QC.smk` first, then `Go_QC_V1.smk`.
 
-`Humann/Go_Humann.sh` follows the same structure: the wrapper lives next to `Dockerfile` and `Go_Humann_V1.smk`, and it resolves `Go_Humann.smk` first, then `Go_Humann_V1.smk`.
+`Humann/Go_Humannake.sh` follows the same structure: the wrapper lives next to `Dockerfile` and `Go_Humann_V1.smk`, and it resolves `Go_Humann.smk` first, then `Go_Humann_V1.smk`.
 
 ## Path Rules
 
