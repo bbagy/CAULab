@@ -14,7 +14,7 @@ Examples:
 
 Options:
   --db-root DIR             Root directory for downloaded databases.
-  --tools LIST              Comma-separated: host,kraken2,humann,all.
+  --tools LIST              Comma-separated: host,kraken2,humann,humann-utility,all.
   --threads N               Threads for Kraken2/Bracken build. Default: 8.
   --bracken-read-len N      Bracken read length. Default: 100.
   --kraken2-16gb NAME       Prebuilt Kraken2 16GB DB family. Default: k2_pluspfp_16gb.
@@ -131,6 +131,7 @@ KRAKEN2_DIR="$DB_ROOT/kraken2/${KRAKEN2_16GB}_latest"
 HUMANN_CHOCO="$DB_ROOT/humann/chocophlan"
 HUMANN_UNIREF_DIR="$DB_ROOT/humann/${HUMANN_UNIREF}"
 HUMANN_METAPHLAN="$DB_ROOT/humann/metaphlan4"
+HUMANN_UTILITY="$DB_ROOT/humann/utility_mapping"
 
 docker_run_base() {
   if [ -n "$PLATFORM" ]; then
@@ -207,6 +208,9 @@ update_lab_paths() {
       set_or_append_export "$lab_paths" KPARK_METAPHLAN_INDEX "$METAPHLAN_INDEX"
     fi
   fi
+  if has_tool humann || has_tool humann-utility; then
+    set_or_append_export "$lab_paths" KPARK_HUMANN_UTILITY "$HUMANN_UTILITY"
+  fi
   echo "[K-park Lab DB] Updated local DB paths:"
   echo "  $lab_paths"
 }
@@ -280,9 +284,20 @@ download_kraken2() {
   fi
 }
 
+download_humann_utility() {
+  require_image "${KPARK_HUMANN_IMAGE:-humann:kpark}"
+  mkdir -p "$HUMANN_UTILITY"
+  echo "[K-park Lab DB] Downloading HUMAnN utility mapping (UniRef90 -> KO) to $HUMANN_UTILITY"
+  docker_run_base \
+    -v "$HUMANN_UTILITY":/db/utility \
+    "${KPARK_HUMANN_IMAGE:-humann:kpark}" \
+    humann_databases --download utility_mapping full /db/utility
+
+}
+
 download_humann() {
   require_image "${KPARK_HUMANN_IMAGE:-humann:kpark}"
-  mkdir -p "$HUMANN_CHOCO" "$HUMANN_UNIREF_DIR" "$HUMANN_METAPHLAN"
+  mkdir -p "$HUMANN_CHOCO" "$HUMANN_UNIREF_DIR" "$HUMANN_METAPHLAN" "$HUMANN_UTILITY"
 
   echo "[K-park Lab DB] Downloading HUMAnN ChocoPhlAn DB to $HUMANN_CHOCO"
   docker_run_base \
@@ -295,6 +310,8 @@ download_humann() {
     -v "$HUMANN_UNIREF_DIR":/db/uniref \
     "${KPARK_HUMANN_IMAGE:-humann:kpark}" \
     humann_databases --download uniref "$HUMANN_UNIREF" /db/uniref
+
+  download_humann_utility
 
   echo "[K-park Lab DB] Installing MetaPhlAn DB to $HUMANN_METAPHLAN"
   if [ -n "$METAPHLAN_INDEX" ]; then
@@ -321,6 +338,8 @@ if has_tool kraken2; then
 fi
 if has_tool humann; then
   download_humann
+elif has_tool humann-utility; then
+  download_humann_utility
 fi
 
 update_lab_paths

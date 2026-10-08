@@ -22,6 +22,7 @@ Database variables loaded from lab_paths.sh:
   KPARK_HUMANN_CHOCOPHLAN
   KPARK_HUMANN_UNIREF
   KPARK_HUMANN_METAPHLAN
+  KPARK_HUMANN_UTILITY
   KPARK_METAPHLAN_INDEX
 
 Commands on PATH after sourcing kpark.env:

@@ -26,7 +26,7 @@ flowchart LR
   C --> D[MetaPhlAn4 bug list extraction]
   C --> E[merge_genefamilies / pathabundance / pathcoverage]
   E --> F[Gene-family normalization CPM]
-  F --> G[Regroup to UniRef90_rxn]
+  F --> G[Regroup to KO]
   G --> H[Optional MUSiCC correction]
   H --> I[Rename to KEGG orthology]
   I --> J[Stratified / unstratified split]
@@ -75,9 +75,9 @@ docker run --rm humann:kpark metaphlan --version
 ./Humann/Go_Humannake.sh \
   -i /path/to/host_filtered_fastq \
   -o humann_run \
-  -n /media/uhlemann/core4/DB/humann_db/humann3/chocophlan \
-  -p /media/uhlemann/core4/DB/humann_db/humann3/uniref \
-  -b /media/uhlemann/core4/DB/humann_db/metaphlan4 \
+  -n "$HOME/kpark-db/humann/chocophlan" \
+  -p "$HOME/kpark-db/humann/uniref90_diamond" \
+  -b "$HOME/kpark-db/humann/metaphlan4" \
   -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
   -c 8 -j 4 -t 4 \
   --run-musicc \
@@ -90,11 +90,11 @@ Real example:
 Go_Humannake.sh \
   -i 1_host_filtered \
   -o 2_humann_out \
-  -n /media/uhlemann/core4/DB/humann_db/humann3/chocophlan \
-  -p /media/uhlemann/core4/DB/humann_db/humann3/uniref \
-  -b /media/uhlemann/core4/DB/humann_db/metaphlan4 \
+  -n "$HOME/kpark-db/humann/chocophlan" \
+  -p "$HOME/kpark-db/humann/uniref90_diamond" \
+  -b "$HOME/kpark-db/humann/metaphlan4" \
   -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
-  -s /home/uhlemann/heekuk_path \
+  -s "$HOME/kpark-pipelines/Humann" \
   -c 8 -j 4 -t 4 \
   --run-musicc \
   -K
@@ -110,6 +110,7 @@ Go_Humannake.sh \
 | `-p` | - | HUMAnN3 protein DB (`uniref`) |
 | `-b` | - | MetaPhlAn4 DB directory (or `.pkl` for legacy shortcut) |
 | `-I` / `--metaphlan-index` | - | MetaPhlAn4 index basename (without `.pkl`) |
+| `-u` | `KPARK_HUMANN_UTILITY` | Utility mapping DB directory for UniRef90/50 → KO |
 | `-s` | script directory | Optional Snakefile directory override |
 | `-c` | `8` | Snakemake cores |
 | `-j` | `4` | Snakemake jobs |
@@ -163,12 +164,12 @@ OUT/
     <sample>_metaphlan_bugs_list.tsv
   4_kegg-orthology/
     merged_genefamilies_cpm.txt
-    merged_genefamilies_uniref90_rxn_cpm.txt
-    merged_genefamilies_uniref90_rxn_musicc.txt
-    merged_genefamilies_uniref90_rxn_kegg-orthology_cpm.txt
+    merged_genefamilies_uniref90_ko_cpm.txt
+    merged_genefamilies_uniref90_ko_musicc.txt
+    merged_genefamilies_uniref90_ko_kegg-orthology_cpm.txt
     stratified_out/
-      merged_genefamilies_uniref90_rxn_kegg-orthology_cpm_unstratified.txt
-      merged_genefamilies_uniref90_rxn_kegg-orthology_cpm_unstratified_filtered.txt
+      merged_genefamilies_uniref90_ko_kegg-orthology_cpm_unstratified.txt
+      merged_genefamilies_uniref90_ko_kegg-orthology_cpm_unstratified_filtered.txt
   5_pathabundance_stratified_out/
     merged_pathabundance_unstratified.txt
   6_logs/
@@ -184,7 +185,7 @@ Key files:
 - `2_humann3_final_out/merged_genefamilies.txt`
 - `2_humann3_final_out/merged_pathabundance.txt`
 - `3_MetaPhlAn_bug_list/<sample>_metaphlan_bugs_list.tsv`
-- `4_kegg-orthology/merged_genefamilies_uniref90_rxn_kegg-orthology_cpm.txt`
+- `4_kegg-orthology/merged_genefamilies_uniref90_ko_kegg-orthology_cpm.txt`
 - `humann3_log.txt`
 
 ## Direct Snakemake Run (no wrapper)
@@ -192,12 +193,12 @@ Key files:
 ```bash
 fastq_dir="host_filtered_fastq"
 output_dir="humann_run"
-chocophlan="/media/uhlemann/core4/DB/humann_db/humann3/chocophlan"
-uniref="/media/uhlemann/core4/DB/humann_db/humann3/uniref"
-metaphlan_db="/media/uhlemann/core4/DB/humann_db/metaphlan4"
+chocophlan=""$HOME/kpark-db/humann/chocophlan""
+uniref=""$HOME/kpark-db/humann/uniref90_diamond""
+metaphlan_db=""$HOME/kpark-db/humann/metaphlan4""
 metaphlan_index="mpa_vJun23_CHOCOPhlAnSGB_202307"
 
-snakemake --snakefile /home/uhlemann/heekuk_path/Go_Humann.smk \
+snakemake --snakefile "$HOME/kpark-pipelines/Humann"/Go_Humann.smk \
   --config \
   fastq_dir="$fastq_dir" \
   output_dir="$output_dir" \
@@ -291,3 +292,5 @@ for SIF preparation and deployment of `common/container.sh`.
 HUMAnN 3.9 / MetaPhlAn 4.1.0: `mpa_vJun23_CHOCOPhlAnSGB_202307`.
 The downloader pins this index. Existing installations retain local settings; rerun the downloader or update the index explicitly.
 Reference: [HUMAnN 3.9 release](https://forum.biobakery.org/t/announcing-humann-3-9/6674).
+
+KO tables require `utility_mapping/full`. Existing installs can download only this DB with `download_databases.sh --db-root "$HOME/kpark-db" --tools humann-utility`. Source `config/lab_paths.sh` again. UniRef50 uses `uniref50_ko` output names. With `--run-musicc`, only community-level KO rows are corrected, and renamed output filenames use `musicc` instead of `cpm`.

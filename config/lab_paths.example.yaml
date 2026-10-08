@@ -9,6 +9,7 @@ databases:
   humann_chocophlan: /data/db/humann/chocophlan
   humann_uniref: /data/db/humann/uniref
   humann_metaphlan: /data/db/humann/metaphlan4
+  humann_utility_mapping: /data/db/humann/utility_mapping
 
 docker_images:
   goqc: goqc:kpark

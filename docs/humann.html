@@ -15,7 +15,7 @@
         <span class="node">MetaPhlAn4 bug list</span><span class="arrow">→</span>
         <span class="node">join_tables</span><span class="arrow">→</span>
         <span class="node">renorm CPM</span><span class="arrow">→</span>
-        <span class="node">regroup UniRef90_rxn</span><span class="arrow">→</span>
+        <span class="node">regroup KO</span><span class="arrow">→</span>
         <span class="node">MUSiCC (opt)</span><span class="arrow">→</span>
         <span class="node">rename KEGG-orthology</span><span class="arrow">→</span>
         <span class="node">stratified split</span>
@@ -51,7 +51,7 @@
         <tr><th>옵션</th><th>설명</th></tr>
         <tr><td><code>-i</code></td><td>숙주 제거 FASTQ 입력 폴더</td></tr>
         <tr><td><code>-o</code></td><td>출력 폴더</td></tr>
-        <tr><td><code>-n</code></td><td>HUMAnN3 핵산 DB (<code>chocophlan</code>)</td></tr>
+        <tr><td><code>-u</code></td><td>KO 매핑 DB 폴더 · 기본값: <code>KPARK_HUMANN_UTILITY</code></td></tr><tr><td><code>-n</code></td><td>HUMAnN3 핵산 DB (<code>chocophlan</code>)</td></tr>
         <tr><td><code>-p</code></td><td>HUMAnN3 단백질 DB (<code>uniref</code>)</td></tr>
         <tr><td><code>-b</code></td><td>MetaPhlAn4 DB 폴더 또는 <code>.pkl</code></td></tr>
         <tr><td><code>-I</code></td><td>MetaPhlAn4 인덱스 이름</td></tr>
@@ -76,7 +76,7 @@ $HOME/kpark-db/humann/
 `-- metaphlan4/
     `-- mpa_vJun23_CHOCOPhlAnSGB_202307.*</code></pre></div>
 
-      <h2>주요 결과</h2>
+      <p>KO 매핑: UniRef90 / UniRef50 DB에 맞춰 자동 선택<br>MUSiCC: 전체 KO 행만 보정 · 보정 결과 파일명의 <code>cpm</code> → <code>musicc</code></p><h2>주요 결과</h2>
       <div class="card"><pre><code>OUT/
 |-- 1_humann3_out/
 |   |-- &lt;sample&gt;_genefamilies.tsv
@@ -90,9 +90,9 @@ $HOME/kpark-db/humann/
 |   `-- &lt;sample&gt;_metaphlan_bugs_list.tsv
 |-- 4_kegg-orthology/
 |   |-- merged_genefamilies_cpm.txt
-|   |-- merged_genefamilies_uniref90_rxn_cpm.txt
-|   |-- merged_genefamilies_uniref90_rxn_musicc.txt
-|   `-- merged_genefamilies_uniref90_rxn_kegg-orthology_cpm.txt
+|   |-- merged_genefamilies_uniref90_ko_cpm.txt
+|   |-- merged_genefamilies_uniref90_ko_musicc.txt
+|   `-- merged_genefamilies_uniref90_ko_kegg-orthology_cpm.txt
 |-- 5_pathabundance_stratified_out/
 |   `-- merged_pathabundance_unstratified.txt
 |-- 6_logs/

@@ -25,6 +25,11 @@ NUCLEOTIDE_DB = config["nucleotide_db"]
 PROTEIN_DB = config["protein_db"]
 METAPHLAN_DB = config.get("metaphlan_db", "")
 METAPHLAN_INDEX = config.get("metaphlan_index", "")
+UTILITY_DB = config.get("utility_mapping_db", "")
+# KO mapping must match the protein DB (UniRef90 or UniRef50).
+UNIREF = "uniref50" if glob.glob(os.path.join(PROTEIN_DB, "*uniref50*")) else "uniref90"
+KO_TAG = f"{UNIREF}_ko"
+KO_MAP = os.path.join(UTILITY_DB, f"map_ko_{UNIREF}.txt.gz") if UTILITY_DB else ""
 THREADS_PER_SAMPLE = int(config.get("humann_threads", config.get("threads", 4)))
 MEMORY_USE = config.get("memory_use", "minimum")
 KEEP_LOGS = int(config.get("keep_logs", 1))
@@ -32,6 +37,7 @@ RUN_GENE_NORM = str(config.get("run_gene_norm", "true")).lower() in ["1", "true"
 RUN_PATH_SPLIT = str(config.get("run_path_split", "true")).lower() in ["1", "true", "yes", "y"]
 RUN_PATHCOVERAGE_MERGE = str(config.get("run_pathcoverage_merge", "true")).lower() in ["1", "true", "yes", "y"]
 RUN_MUSICC = str(config.get("run_musicc", "false")).lower() in ["1", "true", "yes", "y"]
+KO_UNITS = "musicc" if RUN_MUSICC else "cpm"
 
 RUN_DIR = f"{OUTPUT_DIR}/1_humann3_out"
 FINAL_DIR = f"{OUTPUT_DIR}/2_humann3_final_out"
@@ -58,6 +64,12 @@ def _validate_runtime():
 
     if METAPHLAN_DB and not os.path.exists(METAPHLAN_DB):
         missing_paths.append(f"metaphlan_db={METAPHLAN_DB}")
+
+    if RUN_GENE_NORM and not (KO_MAP and os.path.exists(KO_MAP)):
+        missing_paths.append(
+            f"utility_mapping_db={UTILITY_DB} (map_ko_{UNIREF}.txt.gz needed for KO tables; "
+            "download with 'humann_databases --download utility_mapping full DIR' or skip with --skip-gene-norm)"
+        )
 
     missing_bins = [exe for exe in ["humann", "metaphlan"] if shutil.which(exe) is None]
 
@@ -161,11 +173,11 @@ if RUN_PATHCOVERAGE_MERGE:
 if RUN_GENE_NORM:
     ALL_TARGETS.extend([
         f"{KO_DIR}/merged_genefamilies_cpm.txt",
-        f"{KO_DIR}/merged_genefamilies_uniref90_rxn_cpm.txt",
-        f"{KO_DIR}/merged_genefamilies_uniref90_rxn_musicc.txt" if RUN_MUSICC else f"{KO_DIR}/.musicc.skip",
-        f"{KO_DIR}/merged_genefamilies_uniref90_rxn_kegg-orthology_cpm.txt",
-        f"{KO_STRAT_DIR}/merged_genefamilies_uniref90_rxn_kegg-orthology_cpm_unstratified.txt",
-        f"{KO_STRAT_DIR}/merged_genefamilies_uniref90_rxn_kegg-orthology_cpm_unstratified_filtered.txt",
+        f"{KO_DIR}/merged_genefamilies_{KO_TAG}_cpm.txt",
+        f"{KO_DIR}/merged_genefamilies_{KO_TAG}_musicc.txt" if RUN_MUSICC else f"{KO_DIR}/.musicc.skip",
+        f"{KO_DIR}/merged_genefamilies_{KO_TAG}_kegg-orthology_{KO_UNITS}.txt",
+        f"{KO_STRAT_DIR}/merged_genefamilies_{KO_TAG}_kegg-orthology_{KO_UNITS}_unstratified.txt",
+        f"{KO_STRAT_DIR}/merged_genefamilies_{KO_TAG}_kegg-orthology_{KO_UNITS}_unstratified_filtered.txt",
     ])
 
 if RUN_PATH_SPLIT:
@@ -347,13 +359,14 @@ rule gene_family_normalization:
         merged=f"{FINAL_DIR}/merged_genefamilies.txt"
     output:
         cpm=f"{KO_DIR}/merged_genefamilies_cpm.txt",
-        regroup=f"{KO_DIR}/merged_genefamilies_uniref90_rxn_cpm.txt",
-        musicc=f"{KO_DIR}/merged_genefamilies_uniref90_rxn_musicc.txt" if RUN_MUSICC else f"{KO_DIR}/.musicc.skip",
-        renamed=f"{KO_DIR}/merged_genefamilies_uniref90_rxn_kegg-orthology_cpm.txt",
-        unstrat=f"{KO_STRAT_DIR}/merged_genefamilies_uniref90_rxn_kegg-orthology_cpm_unstratified.txt",
-        filtered=f"{KO_STRAT_DIR}/merged_genefamilies_uniref90_rxn_kegg-orthology_cpm_unstratified_filtered.txt"
+        regroup=f"{KO_DIR}/merged_genefamilies_{KO_TAG}_cpm.txt",
+        musicc=f"{KO_DIR}/merged_genefamilies_{KO_TAG}_musicc.txt" if RUN_MUSICC else f"{KO_DIR}/.musicc.skip",
+        renamed=f"{KO_DIR}/merged_genefamilies_{KO_TAG}_kegg-orthology_{KO_UNITS}.txt",
+        unstrat=f"{KO_STRAT_DIR}/merged_genefamilies_{KO_TAG}_kegg-orthology_{KO_UNITS}_unstratified.txt",
+        filtered=f"{KO_STRAT_DIR}/merged_genefamilies_{KO_TAG}_kegg-orthology_{KO_UNITS}_unstratified_filtered.txt"
     params:
-        run_musicc=RUN_MUSICC
+        run_musicc=RUN_MUSICC,
+        ko_map=KO_MAP
     log:
         f"{LOG_DIR}/gene_family_normalization.log"
     shell:
@@ -369,14 +382,19 @@ rule gene_family_normalization:
         humann_regroup_table \
             --input {output.cpm:q} \
             --output {output.regroup:q} \
-            --groups uniref90_rxn \
+            --custom {params.ko_map:q} \
             >> {log:q} 2>&1
 
         if [ "{params.run_musicc}" = "True" ]; then
-            run_musicc.py {output.regroup:q} \
+            # MUSiCC corrects community-level KO abundances: unstratified K rows only
+            musicc_in={output.musicc:q}.input.tmp
+            head -n 1 {output.regroup:q} > "$musicc_in"
+            grep -E "^K[0-9]{{5}}[[:space:]]" {output.regroup:q} >> "$musicc_in"
+            run_musicc.py "$musicc_in" \
                 -n -c use_generic -v \
                 -o {output.musicc:q} \
                 >> {log:q} 2>&1
+            rm -f "$musicc_in"
             rename_input={output.musicc:q}
         else
             : > {output.musicc:q}
@@ -395,7 +413,7 @@ rule gene_family_normalization:
             >> {log:q} 2>&1
 
         head -n 1 {output.unstrat:q} > {output.filtered:q}
-        grep ":" {output.unstrat:q} >> {output.filtered:q} || true
+        grep -E "^K[0-9]{{5}}(:|[[:space:]])" {output.unstrat:q} >> {output.filtered:q} || true
         """
 
 

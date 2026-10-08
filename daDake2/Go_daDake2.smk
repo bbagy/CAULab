@@ -83,7 +83,9 @@ _PARAMS = {
                           filt_sfx_r1="_R1_filt.fastq.gz", filt_sfx_r2="_R2_filt.fastq.gz",
                           remove_host=False,
                           primer_len_f=20, primer_len_r=17, amplicon_len=300),
-    "illumina_ITS":  dict(trimleft_f=0,  trimleft_r=0,  trunclen_f=240, trunclen_r=200,
+    # ITS length varies widely: fixed truncLen drops reads shorter than it (short-ITS
+    # taxa). 0 = no truncation, per the DADA2 ITS workflow; minLen=50 still applies.
+    "illumina_ITS":  dict(trimleft_f=0,  trimleft_r=0,  trunclen_f=0, trunclen_r=0,
                           primer_f="GCATCGATGAAGAACGCAG", primer_r="TCCTCCGCTTATTGATATGC",
                           filt_subdir="4_DADA2_filtered",
                           filt_sfx_r1="_1_filt.fastq.gz", filt_sfx_r2="_2_filt.fastq.gz",

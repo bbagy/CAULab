@@ -11,7 +11,7 @@ set -- ${CONTAINER_ARGS[@]+"${CONTAINER_ARGS[@]}"}
 
 
 usage(){
-  echo "Usage: $0 [--container docker|apptainer] [--container-image IMAGE_OR_SIF] -i READ_DIR -o PROJECT -g GENOME -a GFF [-s SNAKEDIR] [-c CORES] [-m IMAGE] [-n] [-K] [-P 0|1]"
+  echo "Usage: $0 [--container docker|apptainer] [--container-image IMAGE_OR_SIF] -i READ_DIR -o PROJECT -g GENOME -a GFF [-S no|yes|reverse] [-s SNAKEDIR] [-c CORES] [-m IMAGE] [-n] [-K] [-P 0|1]"
   exit 1
 }
 
@@ -90,6 +90,7 @@ prefilter_rnaseq_fastqs(){
 }
 
 READ_DIR=""; PROJECT=""; GENOME=""; GFF=""; SNAKEDIR=""
+STRANDED="no"
 CORES=8
 IMAGE="rnake:1.0"
 DRYRUN=0
@@ -98,12 +99,13 @@ SHOW_PROGRESS=1
 PROGRESS_INTERVAL=60
 PROGRESS_PID=""
 
-while getopts "i:o:g:a:s:c:m:nKP:" opt; do
+while getopts "i:o:g:a:S:s:c:m:nKP:" opt; do
   case $opt in
     i) READ_DIR="$OPTARG" ;;
     o) PROJECT="$OPTARG" ;;
     g) GENOME="$OPTARG" ;;
     a) GFF="$OPTARG" ;;
+    S) STRANDED="$OPTARG" ;;
     s) SNAKEDIR="$OPTARG" ;;
     c) CORES="$OPTARG" ;;
     m) IMAGE="$OPTARG" ;;
@@ -118,6 +120,7 @@ done
 [ -z "$PROJECT" ] && usage
 [ -z "$GENOME" ] && usage
 [ -z "$GFF" ] && usage
+case "$STRANDED" in no|yes|reverse) ;; *) echo "[Go_Rnake] -S must be no, yes or reverse: $STRANDED"; exit 1 ;; esac
 
 READ_DIR_ABS="$(abs_path "$READ_DIR")" || { echo "[Go_Rnake] READ_DIR not found: $READ_DIR"; exit 1; }
 GENOME_ABS="$(abs_path "$GENOME")" || { echo "[Go_Rnake] GENOME not found: $GENOME"; exit 1; }
@@ -238,6 +241,7 @@ BASE_ARGS=(
   read_dir=/reads
   genome=/refs/genome.fna
   gff=/refs/annotation.gff
+  stranded="$STRANDED"
 )
 
 if [ "$DRYRUN" -eq 1 ]; then

@@ -174,7 +174,7 @@ container_run --rm \
   bash -lc 'set -euo pipefail; \
     echo "[mount]"; ls -ld /db; realpath /db; \
     echo "[space]"; df -h /db; df -i /db; \
-    echo "[write test]"; touch /db/.codex_write_test && ls -lh /db/.codex_write_test && rm /db/.codex_write_test; \
+    echo "[write test]"; touch /db/.humann_write_test && ls -lh /db/.humann_write_test && rm /db/.humann_write_test; \
     echo "[db files]"; ls -lh /db | sed -n "1,20p"'
 EOF
 #

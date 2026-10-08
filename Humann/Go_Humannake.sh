@@ -11,9 +11,10 @@ set -- ${CONTAINER_ARGS[@]+"${CONTAINER_ARGS[@]}"}
 
 
 usage(){
-  echo "Usage: $0 [--container docker|apptainer] [--container-image IMAGE_OR_SIF] -i FASTQ_DIR -o OUTPUT_DIR -n NUCLEOTIDE_DB -p PROTEIN_DB [-b METAPHLAN_DB] [-I METAPHLAN_INDEX] [-s SNAKEDIR] [-c CORES] [-j JOBS] [-t THREADS] [-m IMAGE] [-x] [-K] [--run-musicc] [--skip-gene-norm] [--skip-path-split] [--skip-pathcoverage]"
+  echo "Usage: $0 [--container docker|apptainer] [--container-image IMAGE_OR_SIF] -i FASTQ_DIR -o OUTPUT_DIR -n NUCLEOTIDE_DB -p PROTEIN_DB [-b METAPHLAN_DB] [-I METAPHLAN_INDEX] [-u UTILITY_MAPPING_DB] [-s SNAKEDIR] [-c CORES] [-j JOBS] [-t THREADS] [-m IMAGE] [-x] [-K] [--run-musicc] [--skip-gene-norm] [--skip-path-split] [--skip-pathcoverage]"
   echo "  Recommended MetaPhlAn input: -b /path/to/metaphlan_db_dir -I mpa_vJun23_CHOCOPhlAnSGB_202307"
   echo "  Backward-compatible shortcut: -b /path/to/mpa_vJun23_CHOCOPhlAnSGB_202307.pkl"
+  echo "  KO tables need -u: HUMAnN utility_mapping folder containing map_ko_uniref90/50.txt.gz"
   exit 1
 }
 
@@ -34,6 +35,7 @@ NUCLEOTIDE_DB=""
 PROTEIN_DB=""
 METAPHLAN_DB=""
 METAPHLAN_INDEX=""
+UTILITY_DB=""
 SNAKEDIR=""
 CORES=8
 JOBS=4
@@ -70,6 +72,10 @@ while [ "$#" -gt 0 ]; do
       ;;
     -I|--metaphlan-index)
       METAPHLAN_INDEX="${2:-}"
+      shift 2
+      ;;
+    -u)
+      UTILITY_DB="${2:-}"
       shift 2
       ;;
     -s)
@@ -131,6 +137,7 @@ NUCLEOTIDE_DB="${NUCLEOTIDE_DB:-${KPARK_HUMANN_CHOCOPHLAN:-}}"
 PROTEIN_DB="${PROTEIN_DB:-${KPARK_HUMANN_UNIREF:-}}"
 METAPHLAN_DB="${METAPHLAN_DB:-${KPARK_HUMANN_METAPHLAN:-}}"
 METAPHLAN_INDEX="${METAPHLAN_INDEX:-${KPARK_METAPHLAN_INDEX:-}}"
+UTILITY_DB="${UTILITY_DB:-${KPARK_HUMANN_UTILITY:-}}"
 [ -z "$NUCLEOTIDE_DB" ] && usage
 [ -z "$PROTEIN_DB" ] && usage
 
@@ -157,7 +164,7 @@ fi
 container_require_image "$IMAGE" || exit 1
 
 WORKDIR="$(pwd)"
-CONTAINER_HOME="/work/.codex_home_humann"
+CONTAINER_HOME="/work/.humann_home"
 
 CONTAINER_RUN_ARGS=(
   container_run --rm
@@ -192,11 +199,26 @@ if [ -n "$METAPHLAN_DB" ]; then
   CONTAINER_RUN_ARGS+=(-e METAPHLAN_DB_DIR=/db/metaphlan)
 fi
 
+if [ "$RUN_GENE_NORM" -eq 1 ]; then
+  UTILITY_DB_ABS="$(abs_path "${UTILITY_DB:-.missing}")" || UTILITY_DB_ABS=""
+  # humann_databases extracts into DIR/utility_mapping; accept either level.
+  if [ -n "$UTILITY_DB_ABS" ] && ! compgen -G "$UTILITY_DB_ABS/map_ko_uniref*.txt.gz" >/dev/null && compgen -G "$UTILITY_DB_ABS/utility_mapping/map_ko_uniref*.txt.gz" >/dev/null; then
+    UTILITY_DB_ABS="$UTILITY_DB_ABS/utility_mapping"
+  fi
+  if [ -z "$UTILITY_DB_ABS" ] || ! compgen -G "$UTILITY_DB_ABS/map_ko_uniref*.txt.gz" >/dev/null; then
+    echo "[Humann][FATAL] KO tables need map_ko_uniref90/50.txt.gz (HUMAnN utility_mapping full): ${UTILITY_DB:-not set}"
+    echo "  Download: download_databases.sh --db-root \"$HOME/kpark-db\" --tools humann-utility  (or set -u / KPARK_HUMANN_UTILITY)"
+    echo "  Skip KO tables: --skip-gene-norm"
+    exit 1
+  fi
+  CONTAINER_RUN_ARGS+=(-v "$UTILITY_DB_ABS":/db/utility:ro)
+fi
+
 run(){
   "${CONTAINER_RUN_ARGS[@]}" "$IMAGE" "$@"
 }
 
-mkdir -p "$WORKDIR/.codex_home_humann/.cache"
+mkdir -p "$WORKDIR/.humann_home/.cache"
 
 BASE_ARGS=(
   snakemake
@@ -208,6 +230,7 @@ BASE_ARGS=(
   protein_db=/db/protein
   metaphlan_db="${METAPHLAN_DB:+/db/metaphlan}"
   metaphlan_index="$METAPHLAN_INDEX"
+  utility_mapping_db="${UTILITY_DB_ABS:+/db/utility}"
   humann_threads="$THREADS"
   run_musicc="$RUN_MUSICC"
   run_gene_norm="$RUN_GENE_NORM"

@@ -9,6 +9,10 @@ import re
 # Global variables
 master_dir = config["project"] + "_RNAseq_output"
 READ_DIR = config["read_dir"]
+# htseq-count strandedness: no | yes | reverse (most dUTP/Illumina stranded kits = reverse)
+STRANDED = config.get("stranded", "no")
+if STRANDED not in ("no", "yes", "reverse"):
+    raise ValueError("stranded must be no, yes or reverse")
 
 
 # === 완전 유연한 R1/R2/SAMPLES 탐색 ===
@@ -159,23 +163,29 @@ rule trim_reads:
         trimmed_r2_unpaired = f"{master_dir}/1_trim/{{sample}}.R2.unpaired.output.fastq.gz"
     log:
         f"{master_dir}/1_trim/{{sample}}.trimmomatic.log"
+    threads: 8
     shell:
         '''
         echo "Trimming {wildcards.sample} ..."
 
+        # Illumina TruSeq adapters bundled with the bioconda trimmomatic package
+        adapter_dir="$(dirname "$(readlink -f "$(command -v trimmomatic)")")/adapters"
+
         if [ "{params.is_paired}" = "True" ]; then
             echo "Detected paired-end"
-            trimmomatic PE -threads 10 -phred33 \
+            trimmomatic PE -threads {threads} -phred33 \
               {input.r1} {input.r2} \
               {output.trimmed_r1_paired} {output.trimmed_r1_unpaired} \
               {output.trimmed_r2_paired} {output.trimmed_r2_unpaired} \
+              ILLUMINACLIP:"$adapter_dir/TruSeq3-PE-2.fa":2:30:10:2:True \
               LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:36 2> {log}
 
         else
             echo "Detected single-end"
-            trimmomatic SE -threads 10 -phred33 \
+            trimmomatic SE -threads {threads} -phred33 \
               {input.r1} \
               {output.trimmed_r1_paired} \
+              ILLUMINACLIP:"$adapter_dir/TruSeq3-SE.fa":2:30:10 \
               LEADING:3 TRAILING:3 SLIDINGWINDOW:4:20 MINLEN:36 2> {log}
 
             # dummy outputs
@@ -189,9 +199,10 @@ rule index_genome:
         touch(f"{master_dir}/2_bowtie2_index/index_build.done")
     params:
         genome=config["genome"]
+    threads: 8
     shell:
         '''
-        bowtie2-build --threads 6 -f {params.genome} {master_dir}/2_bowtie2_index/index
+        bowtie2-build --threads {threads} -f {params.genome} {master_dir}/2_bowtie2_index/index
         touch {output}  # Create a dummy file after bowtie2-build is done.
         '''
 
@@ -204,18 +215,19 @@ rule map_reads:
         is_paired=lambda wc: len(get_r2(wc)) > 0
     output:
         f"{master_dir}/3_bowtie2_files/{{sample}}.aligned.sam"
+    threads: 8
     shell:
         '''
         echo "Mapping {wildcards.sample} ..."
 
         if [ "{params.is_paired}" = "True" ]; then
             echo "Detected paired-end"
-            bowtie2 --no-unal -p 12 -x {master_dir}/2_bowtie2_index/index \
+            bowtie2 --no-unal -p {threads} -x {master_dir}/2_bowtie2_index/index \
               -1 {input.r1} -2 {input.r2} \
               -S {output} 2>{master_dir}/3_bowtie2_files/{wildcards.sample}.log
         else
             echo "Detected single-end"
-            bowtie2 --no-unal -p 12 -x {master_dir}/2_bowtie2_index/index \
+            bowtie2 --no-unal -p {threads} -x {master_dir}/2_bowtie2_index/index \
               -U {input.r1} \
               -S {output} 2>{master_dir}/3_bowtie2_files/{wildcards.sample}.log
         fi
@@ -240,6 +252,7 @@ rule count_htseq:
     params:
         reference=config["gff"],
         feature_type=lambda wildcards: detect_feature_type(config["gff"]),
+        stranded=STRANDED,
         idattr=lambda wildcards: detect_best_idattr(
             config["gff"],
             detect_feature_type(config["gff"])
@@ -249,7 +262,7 @@ rule count_htseq:
         echo "Processing {wildcards.sample} ..."
         echo "Using feature_type={params.feature_type}, idattr={params.idattr}"
 
-        htseq-count --order=name --stranded=no \
+        htseq-count --order=name --stranded={params.stranded} \
           --type={params.feature_type} \
           --idattr={params.idattr} -a 8 \
           -o {master_dir}/4_htseq-count/{wildcards.sample}.htseq.sam \

@@ -198,3 +198,7 @@ Shell launchers accept `--container docker|apptainer` (default: `docker`).
 For HPC use `--container apptainer --container-image /path/to/pipeline.sif`
 with the existing analysis options. See [shared runtime instructions](../README.md#docker--apptainer-selection)
 for SIF preparation and deployment of `common/container.sh`.
+
+## Library strandedness
+
+`-S no|yes|reverse` sets HTSeq strandedness (default: `no`). Select the value from the library preparation protocol; dUTP stranded libraries typically use `reverse`. TruSeq adapters are removed with Trimmomatic. Trimming, indexing, and mapping request 8 threads, capped by Snakemake cores.
