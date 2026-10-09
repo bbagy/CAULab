@@ -24,12 +24,12 @@ Check that `/data` is a mounted data filesystem before creating directories. On 
 ```bash
 findmnt --mountpoint /data
 df -h / /data
-sudo mkdir -p /data/kpark-db /data/conda /data/projects /data/downloads /data/logs /data/containers
-sudo chown "$USER:$(id -gn)" /data/kpark-db /data/conda /data/projects /data/downloads /data/logs /data/containers
+sudo mkdir -p /data/KParkLab /data/kpark-pipelines /data/miniforge3 /data/kpark-db /data/conda /data/projects /data/downloads /data/logs /data/containers
+sudo chown "$USER:$(id -gn)" /data/KParkLab /data/kpark-pipelines /data/miniforge3 /data/kpark-db /data/conda /data/projects /data/downloads /data/logs /data/containers
 test -w /data/kpark-db
 ```
 
-For cloning, installation, and Miniforge, have the administrator grant the user permission to create `/data/KParkLab`, `/data/kpark-pipelines`, and `/data/miniforge3`. Keep these targets absent for a first installation; installers create them.
+Keep `/data` and Docker/containerd storage owned by root; grant ownership only to the application directories above. The source directory must be empty for the first `git clone`. Because the pipeline and Miniforge directories are pre-created, use `--update` for pipeline installation and `-u` for Miniforge. Existing application installations should belong to the intended user; do not recursively change shared directory ownership.
 
 ### Docker storage: configure before building
 
@@ -68,7 +68,7 @@ Expected Docker root: `/data/docker`. For containerd, inspect the effective serv
 
 ### Conda storage: configure before creating environments
 
-Install Miniforge with `-p /data/miniforge3`. Put the following in `~/.bashrc` once (replace any older Conda initialization that points to the old installation):
+Install Miniforge with `-b -u -p /data/miniforge3` (the target directory was pre-created above). Put the following in `~/.bashrc` once (replace any older Conda initialization that points to the old installation):
 
 ```bash
 export CONDA_ENVS_PATH=/data/conda/envs
@@ -96,7 +96,7 @@ Install onto the mounted data disk after configuring Docker storage above:
 
 ```bash
 cd /data/KParkLab
-./install_docker_env.sh --prefix /data/kpark-pipelines --build-core
+./install_docker_env.sh --prefix /data/kpark-pipelines --update --build-core
 source "/data/kpark-pipelines/kpark.env"
 nano "/data/kpark-pipelines/config/lab_paths.sh"
 ```
@@ -148,7 +148,7 @@ For Apple Silicon Mac, if the normal Docker build fails while solving Bioconda p
 
 ```bash
 cd /data/KParkLab
-./install_docker_env.sh --prefix /data/kpark-pipelines --build-core --platform linux/amd64
+./install_docker_env.sh --prefix /data/kpark-pipelines --update --build-core --platform linux/amd64
 source "/data/kpark-pipelines/kpark.env"
 ```
 
@@ -159,7 +159,7 @@ Replace `/data` with a mounted directory writable by your user. Source code, ins
 ```bash
 git clone https://github.com/bbagy/KParkLab.git /data/KParkLab
 cd /data/KParkLab
-bash install_docker_env.sh --prefix /data/kpark-pipelines --build-all
+bash install_docker_env.sh --prefix /data/kpark-pipelines --update --build-all
 source /data/kpark-pipelines/kpark.env
 download_databases.sh --prefix /data/kpark-pipelines --db-root /data/kpark-db --tools all --threads 8
 source /data/kpark-pipelines/kpark.env
@@ -224,7 +224,7 @@ Database paths can be provided once through `config/lab_paths.sh`.
 
 ## Docker Image Builds
 
-If not using `install_docker_env.sh --prefix /data/kpark-pipelines --build-core`, build the core images manually:
+If not using `install_docker_env.sh --prefix /data/kpark-pipelines --update --build-core`, build the core images manually:
 
 ```bash
 cd "$KPARK_PIPELINES/GoQC"

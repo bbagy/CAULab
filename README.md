@@ -27,7 +27,7 @@ Requirements: Git and a running Docker Engine. Default platform: Ubuntu server. 
 ```bash
 git clone https://github.com/bbagy/KParkLab.git "/data/KParkLab"
 cd "/data/KParkLab"
-bash install_docker_env.sh --prefix /data/kpark-pipelines --build-all
+bash install_docker_env.sh --prefix /data/kpark-pipelines --update --build-all
 source "/data/kpark-pipelines/kpark.env"
 kpark_usage.sh
 ```
