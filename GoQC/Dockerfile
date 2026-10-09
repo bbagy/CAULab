@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
       bash \
+      build-essential \
       bowtie2 \
       ca-certificates \
       coreutils \
