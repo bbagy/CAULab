@@ -16,9 +16,12 @@ Examples:
   ./install_docker_env.sh --update --build-core
   ./install_docker_env.sh --build-core --platform linux/amd64
   ./install_docker_env.sh --prefix $HOME/kpark-pipelines --build-core
+  ./install_docker_env.sh --prefix /data/kpark-pipelines --build-all
 
 Notes:
   - Docker must already be installed and running if a build option is used.
+  - --prefix selects the pipeline directory, not Docker image storage or host Conda environments.
+  - DB storage is selected separately with download_databases.sh --db-root.
   - Use --platform linux/amd64 on Apple Silicon if Bioconda cannot solve linux/arm64 packages.
   - Use --no-cache when replacing a broken Docker image.
   - --build-core builds GoQC, KBracken, and Humannake images.
@@ -162,6 +165,7 @@ copy_install_files() {
 }
 
 mkdir -p "$PREFIX_PARENT"
+PREFIX="$(cd "$PREFIX_PARENT" && pwd -P)/$(basename "$PREFIX")"
 
 if [ -e "$PREFIX" ] && [ "$UPDATE" -ne 1 ]; then
   echo "[K-park Lab install][FATAL] install dir already exists: $PREFIX"
@@ -169,7 +173,7 @@ if [ -e "$PREFIX" ] && [ "$UPDATE" -ne 1 ]; then
   echo "  source \"$PREFIX/kpark.env\""
   echo "[K-park Lab install] No Docker images were built because install stopped before the build step."
   echo "[K-park Lab install] To refresh code and build images in that install, rerun:"
-  echo "  ./install_docker_env.sh --update --build-core"
+  echo "  ./install_docker_env.sh --prefix \"$PREFIX\" --update --build-core"
   echo "[K-park Lab install] Or choose a new --prefix."
   exit 1
 fi

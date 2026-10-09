@@ -48,6 +48,22 @@ New terminal:
 source "$HOME/kpark-pipelines/kpark.env"
 ```
 
+## Install on another disk
+
+Use a mounted directory with write permission, replacing `/data` with your disk's mount point:
+
+```bash
+git clone https://github.com/bbagy/KParkLab.git /data/KParkLab
+cd /data/KParkLab
+bash install_docker_env.sh --prefix /data/kpark-pipelines --build-all
+source /data/kpark-pipelines/kpark.env
+download_databases.sh --prefix /data/kpark-pipelines --db-root /data/kpark-db --tools all --threads 8
+source /data/kpark-pipelines/kpark.env
+```
+
+In each new terminal, source `/data/kpark-pipelines/kpark.env`. For updates, run the installer with the same `--prefix` and `--update`.
+
+`--prefix` controls pipeline files; `--db-root` controls reference DBs. Docker image storage and daDake2's host Conda environments are configured separately. See [installation notes](INSTALL_KParkLab.md#install-on-another-disk).
 ## Update
 
 ```bash

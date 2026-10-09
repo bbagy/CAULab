@@ -66,12 +66,44 @@ cd /path/to/KParkLab
 source "$HOME/kpark-pipelines/kpark.env"
 ```
 
-Install somewhere else:
+## Install on another disk
+
+Replace `/data` with a mounted directory writable by your user. Source code, installed pipelines, DBs, and analysis outputs can live on the same disk or separate disks.
 
 ```bash
-./install_docker_env.sh --prefix $HOME/kpark-pipelines --build-core
-source $HOME/kpark-pipelines/kpark.env
+git clone https://github.com/bbagy/KParkLab.git /data/KParkLab
+cd /data/KParkLab
+bash install_docker_env.sh --prefix /data/kpark-pipelines --build-all
+source /data/kpark-pipelines/kpark.env
+download_databases.sh --prefix /data/kpark-pipelines --db-root /data/kpark-db --tools all --threads 8
+source /data/kpark-pipelines/kpark.env
 ```
+
+New terminals: `source /data/kpark-pipelines/kpark.env`. Analysis output locations are selected with each pipeline's output option.
+
+Update this installation using the same prefix:
+
+```bash
+cd /data/KParkLab
+git pull --ff-only
+bash install_docker_env.sh --prefix /data/kpark-pipelines --update --build-all
+source /data/kpark-pipelines/kpark.env
+```
+
+### Docker image storage
+
+`--prefix` does not relocate Docker images, containers, or volumes. Before building images, configure Docker storage on the data disk using the [Docker daemon storage guide](https://docs.docker.com/engine/daemon/#daemon-data-directory). With the containerd image store, its data directory must also be configured separately; Docker's `data-root` alone does not move it. Docker Desktop users should configure the disk image location in Docker Desktop settings.
+
+### daDake2 host environments
+
+Install Miniforge on the data disk by using `/data/miniforge3` for the installer's `-p` option, then source `/data/miniforge3/etc/profile.d/conda.sh`. To keep named environments and package caches on that disk, set these before creating the daDake2, QIIME 2, or FIGARO environments:
+
+```bash
+export CONDA_ENVS_PATH=/data/conda/envs
+export CONDA_PKGS_DIRS=/data/conda/pkgs
+```
+
+Keep these exports in your shell startup configuration for subsequent terminals. Preserve the environment names used by the pipelines (`kpark-dadake2`, `qiime2`, `figaro_env`). FIGARO source code is stored next to the installed daDake2 Snakefile.
 
 After install, edit:
 
