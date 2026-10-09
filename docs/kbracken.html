@@ -19,11 +19,13 @@
         <span class="node">fill_bracken_taxonomy</span>
       </div>
 
-      <h2>실행 방법</h2>
+      <h2>실행 방법</h2><p>분석 데이터와 결과는 <code>/data/projects</code>에 저장합니다. 예제 실행 전 프로젝트 폴더를 준비하세요.</p><div class="card"><pre><code>source /data/kpark-pipelines/kpark.env
+mkdir -p /data/projects/ProjectA
+cd /data/projects/ProjectA</code></pre></div>
       <div class="card"><pre><code>Go_KBracken.sh \
-  -i /path/to/fastq_dir \
+  -i /data/projects/ProjectA/fastq \
   -o KBracken_out \
-  -d /path/to/kraken2_db \
+  -d /data/kpark-db/kraken2/k2_pluspfp_16gb_latest \
   -c 8 \
   -j 4 \
   -K</code></pre></div>

@@ -14,7 +14,7 @@ Modular metagenome QC, assembly/binning, and annotation workflows.
 Entrypoints
 -----------
 
-``Go_MAGs_QC.sh``, ``Go_MAGs_Assembly.sh``, and ``Go_MAGs_Annotation.sh`` on workstations after ``Go_toWorkstation.sh MAGs``.
+``Go_MAGs_QC.sh``, ``Go_MAGs_Assembly.sh``, and ``Go_MAGs_Annotation.sh`` after installation with ``--prefix /data/kpark-pipelines``.
 
 Workstation layout
 ------------------

@@ -1,5 +1,15 @@
 # RNake
 
+Examples use `/data` as the mounted data disk. Before running analysis commands:
+
+```bash
+source /data/kpark-pipelines/kpark.env
+mkdir -p /data/projects/ProjectA
+cd /data/projects/ProjectA
+```
+
+For DB, Docker, and Conda storage setup, see [installation notes](../INSTALL_KParkLab.md#data-disk-setup).
+
 ![RNA-seq](https://img.shields.io/badge/Data-RNA--seq-8e44ad)
 ![Workflow](https://img.shields.io/badge/Workflow-Snakemake-039be5)
 ![Container](https://img.shields.io/badge/Runtime-Docker-0db7ed)
@@ -65,10 +75,10 @@ docker run --rm rnake:1.0 htseq-count -h
 
 ```bash
 ./RNake/Go_Rnake.sh \
-  -i /path/to/fastq \
+  -i /data/projects/ProjectA/fastq \
   -o rnake_project \
-  -g /path/to/genome.fna \
-  -a /path/to/annotation.gff \
+  -g /data/kpark-db/rnake/ecoli.fna \
+  -a /data/kpark-db/rnake/ecoli.gff \
   -c 8 \
   -K
 ```
@@ -79,9 +89,9 @@ Real example:
 Go_Rnake.sh \
   -i RNake/20261101_RNA_HKP \
   -o RNake/20261101_RNA_HKP_out \
-  -g /media/uhlemann/Core3_V2/REF/ecoli.fna \
-  -a /media/uhlemann/Core3_V2/REF/ecoli.gff \
-  -s /home/uhlemann/heekuk_path \
+  -g /data/kpark-db/rnake/ecoli.fna \
+  -a /data/kpark-db/rnake/ecoli.gff \
+  -s /data/kpark-pipelines/RNake \
   -c 8 \
   -K
 ```

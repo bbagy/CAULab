@@ -1,5 +1,15 @@
 # shortWGS
 
+Examples use `/data` as the mounted data disk. Before running analysis commands:
+
+```bash
+source /data/kpark-pipelines/kpark.env
+mkdir -p /data/projects/ProjectA
+cd /data/projects/ProjectA
+```
+
+For DB, Docker, and Conda storage setup, see [installation notes](../INSTALL_KParkLab.md#data-disk-setup).
+
 ![Illumina](https://img.shields.io/badge/Reads-Illumina-1f77b4)
 ![Workflow](https://img.shields.io/badge/Workflow-Snakemake-039be5)
 ![Container](https://img.shields.io/badge/Runtime-Docker-0db7ed)
@@ -32,7 +42,7 @@ flowchart LR
 - Paired FASTQ files
 - WGS DB root (`WGS_DB2` style)
 - Kraken2 DB
-- Report templates: bundled in `shortWGS/scripts/`; pass `-r "$HOME/kpark-pipelines/shortWGS"` for the legacy wrapper mount.
+- Report templates: bundled in `shortWGS/scripts/`; pass `-r "/data/kpark-pipelines/shortWGS"` for the legacy wrapper mount.
 
 ## Build
 
@@ -84,10 +94,10 @@ docker run --rm shortwgs micromamba run -n tetyper python /usr/local/bin/TETyper
 
 ```bash
 ./shortWGS/Go_shortWGS.sh \
-  -i /path/to/fastq \
-  -o /path/to/output \
-  -d /path/to/WGS_DB2 \
-  -k /path/to/kraken2_db \
+  -i /data/projects/ProjectA/fastq \
+  -o /data/projects/ProjectA/output \
+  -d /data/kpark-db/shortWGS \
+  -k /data/kpark-db/kraken2/k2_pluspfp_16gb_latest \
   -c 8 \
   -K
 ```

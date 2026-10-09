@@ -1,5 +1,15 @@
 # KBracken
 
+Examples use `/data` as the mounted data disk. Before running analysis commands:
+
+```bash
+source /data/kpark-pipelines/kpark.env
+mkdir -p /data/projects/ProjectA
+cd /data/projects/ProjectA
+```
+
+For DB, Docker, and Conda storage setup, see [installation notes](../INSTALL_KParkLab.md#data-disk-setup).
+
 ![Profiler](https://img.shields.io/badge/Profiler-Kraken2%20%2B%20Bracken-c0392b)
 ![Workflow](https://img.shields.io/badge/Workflow-Snakemake-039be5)
 ![Container](https://img.shields.io/badge/Runtime-Docker-0db7ed)
@@ -68,9 +78,9 @@ docker run --rm kbracken:kpark bracken -h
 
 ```bash
 ./KBracken/Go_KBracken.sh \
-  -i /path/to/input_fastqs \
+  -i /data/projects/ProjectA/fastq \
   -o output \
-  -d /media/uhlemann/core4/DB/kraken2DB/k2_pluspfp_16gb_20241228 \
+  -d /data/kpark-db/kraken2/k2_pluspfp_16gb_latest \
   -c 8 -j 4 \
   -K
 ```
@@ -79,9 +89,9 @@ Kraken2 only (skip Bracken):
 
 ```bash
 ./KBracken/Go_KBracken.sh \
-  -i /path/to/input_fastqs \
+  -i /data/projects/ProjectA/fastq \
   -o output \
-  -d /media/uhlemann/core4/DB/kraken2DB/k2_pluspfp_16gb_20241228 \
+  -d /data/kpark-db/kraken2/k2_pluspfp_16gb_latest \
   --kraken-only
 ```
 
@@ -91,8 +101,8 @@ Real example:
 Go_KBracken.sh \
   -i 1_fastq \
   -o 2_kbracken_out \
-  -d /media/uhlemann/core4/DB/kraken2DB/k2_pluspfp_16gb_20241228 \
-  -s /home/uhlemann/heekuk_path \
+  -d /data/kpark-db/kraken2/k2_pluspfp_16gb_latest \
+  -s /data/kpark-pipelines/KBracken \
   -c 8 -j 4 \
   -K
 ```
@@ -114,19 +124,14 @@ Go_KBracken.sh \
 
 ## Workstation Layout
 
-After `Go_toWorkstation.sh KBracken`, files are placed as:
+After installation with `--prefix /data/kpark-pipelines`:
 
 ```text
-/home/uhlemann*/heekuk_path/
+/data/kpark-pipelines/KBracken/
+  Dockerfile
   Go_KBracken.sh
-  Go_KBracken.smk
+  Go_KBracken_V1.smk
   scripts/
-    bracken_to_mpa.py
-    fill_bracken_taxonomy.py
-    kraken_masterlog.py
-    merge_mpa_tables.py
-  docker/KBracken/
-    Dockerfile
 ```
 
 ## Input Layout
@@ -182,9 +187,9 @@ Key files:
 ```bash
 fastq_dir="input_fastqs"
 output_dir="output"
-DB="/media/uhlemann/core4/DB/kraken2DB/k2_pluspfp_16gb_20241228"
+DB="/data/kpark-db/kraken2/k2_pluspfp_16gb_latest"
 
-snakemake --snakefile /home/uhlemann/heekuk_path/Go_KBracken.smk \
+snakemake --snakefile /data/kpark-pipelines/KBracken/Go_KBracken_V1.smk \
   --config fastq_dir="$fastq_dir" output_dir="$output_dir" db="$DB" \
   --cores 8 --jobs 4 \
   --latency-wait 60 --rerun-incomplete
@@ -196,7 +201,7 @@ snakemake --snakefile /home/uhlemann/heekuk_path/Go_KBracken.smk \
 --config \
   fastq_dir=input_fastqs \
   output_dir=output \
-  db=/path/to/kraken2_db \
+  db=/data/kpark-db/kraken2/k2_pluspfp_16gb_latest \
   run_bracken=true \
   kraken_threads=4 \
   bracken_read_len=100 \

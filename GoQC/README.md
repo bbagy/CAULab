@@ -1,5 +1,15 @@
 # GoQC
 
+Examples use `/data` as the mounted data disk. Before running analysis commands:
+
+```bash
+source /data/kpark-pipelines/kpark.env
+mkdir -p /data/projects/ProjectA
+cd /data/projects/ProjectA
+```
+
+For DB, Docker, and Conda storage setup, see [installation notes](../INSTALL_KParkLab.md#data-disk-setup).
+
 Paired-end FASTQ QC and host read depletion for K-park Lab shotgun workflows.
 
 Outputs follow the legacy `GoQC.smk` contract:

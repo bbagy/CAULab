@@ -2,7 +2,7 @@
 
 Keep Dockerfiles, workflows, and execution/conversion scripts in Git. Store
 Docker images, exported archives, and Apptainer SIF files separately on the
-workstation or HPC. Replace `USER@HPC_HOST` below with your HPC login address.
+workstation or HPC. Workstation examples use `/data`; on HPC replace it with the institution-approved project/scratch filesystem, including image archives, SIFs, caches, and temporary build storage. Replace `USER@HPC_HOST` below with your HPC login address.
 
 ## 1. Locate the existing Docker images
 
@@ -37,11 +37,11 @@ workstation image list before exporting; the images themselves are not in Git.
 
 ## 2. Export a Docker image
 
-On the workstation, change to the repository root and run:
+On the workstation, change to `/data/KParkLab` and run:
 
 ```bash
 bash common/Go_container_image.sh export shortwgs \
-  container-images/shortwgs.docker.tar
+  /data/containers/shortwgs.docker.tar
 ```
 
 The script creates the output directory and saves the archive plus an
@@ -52,8 +52,8 @@ change the image name and output filename.
 Equivalent manual commands:
 
 ```bash
-mkdir -p container-images
-docker save --output container-images/shortwgs.docker.tar shortwgs
+mkdir -p /data/containers
+docker save --output /data/containers/shortwgs.docker.tar shortwgs
 ```
 
 Use `docker save`, not `docker export`: the latter exports a container's
@@ -66,18 +66,18 @@ Run on the workstation. `rsync -avP` displays progress and retains partial
 files so an interrupted transfer can be retried.
 
 ```bash
-ssh USER@HPC_HOST 'mkdir -p ~/containers'
-rsync -avP container-images/shortwgs.docker.tar \
-  container-images/shortwgs.docker.tar.image.txt \
-  USER@HPC_HOST:~/containers/
+ssh USER@HPC_HOST 'mkdir -p /data/containers'
+rsync -avP /data/containers/shortwgs.docker.tar \
+  /data/containers/shortwgs.docker.tar.image.txt \
+  USER@HPC_HOST:/data/containers/
 ```
 
 Prepare the code on HPC as well. For a first-time setup:
 
 ```bash
 # Run on HPC.
-git clone https://github.com/bbagy/KParkLab.git
-cd K-park Lab
+git clone https://github.com/bbagy/KParkLab.git /data/KParkLab
+cd /data/KParkLab
 ```
 
 For an existing checkout, check for local changes and update with
@@ -92,17 +92,17 @@ your cluster permits it.
 
 ```bash
 module load apptainer  # Site-specific; omit if Apptainer is already available.
-cd ~/KParkLab
+cd /data/KParkLab
 bash common/Go_container_image.sh build \
-  "$HOME/containers/shortwgs.docker.tar" \
-  "$HOME/containers/shortwgs.sif"
+  "/data/containers/shortwgs.docker.tar" \
+  "/data/containers/shortwgs.sif"
 ```
 
 Equivalent manual command:
 
 ```bash
-apptainer build "$HOME/containers/shortwgs.sif" \
-  "docker-archive:$HOME/containers/shortwgs.docker.tar"
+apptainer build "/data/containers/shortwgs.sif" \
+  "docker-archive:/data/containers/shortwgs.docker.tar"
 ```
 
 **Use `docker-archive:` followed by a file path, not `docker-archive://`.**
@@ -117,15 +117,15 @@ not needed for Apptainer conversion on HPC.
 ## 5. Check the tools and run the pipeline
 
 ```bash
-apptainer exec --cleanenv "$HOME/containers/shortwgs.sif" snakemake --version
-apptainer exec --cleanenv "$HOME/containers/shortwgs.sif" fastp --version
+apptainer exec --cleanenv "/data/containers/shortwgs.sif" snakemake --version
+apptainer exec --cleanenv "/data/containers/shortwgs.sif" fastp --version
 
 # Replace input/DB paths with real HPC paths and start with a dry-run.
-bash ~/KParkLab/shortWGS/Go_shortWGS.sh \
+bash /data/KParkLab/shortWGS/Go_shortWGS.sh \
   --container apptainer \
-  --container-image "$HOME/containers/shortwgs.sif" \
-  -i /shared/fastq -o shortwgs_out \
-  -d /shared/db/wgs -k /shared/db/kraken2 -r "$HOME/KParkLab/shortWGS" \
+  --container-image "/data/containers/shortwgs.sif" \
+  -i /shared/fastq -o /data/projects/ProjectA/shortwgs_out \
+  -d /shared/db/wgs -k /shared/db/kraken2 -r "/data/KParkLab/shortWGS" \
   -c 8 -n
 ```
 

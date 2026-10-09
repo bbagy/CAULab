@@ -1,5 +1,15 @@
 # daDake2
 
+Examples use `/data` as the mounted data disk. Before running analysis commands:
+
+```bash
+source /data/kpark-pipelines/kpark.env
+mkdir -p /data/projects/ProjectA
+cd /data/projects/ProjectA
+```
+
+For DB, Docker, and Conda storage setup, see [installation notes](../INSTALL_KParkLab.md#data-disk-setup).
+
 ![Amplicon](https://img.shields.io/badge/Reads-Illumina%20Amplicon-1f77b4)
 ![Workflow](https://img.shields.io/badge/Workflow-Snakemake-039be5)
 ![Runtime](https://img.shields.io/badge/Runtime-Native%20R%20%2B%20qiime2-43a047)
@@ -56,7 +66,7 @@ No Docker required.
 Go_daDake2.sh \
   -t standard_V3V4 \
   -i "ProjA,ProjB,ProjC" \
-  -d /path/to/silva_nr99_v138.1_wSpecies_train_set.fa.gz \
+  -d /data/kpark-db/dadake2/silva_nr99_v138.1_wSpecies_train_set.fa.gz \
   -c 8 \
   -K
 
@@ -64,7 +74,7 @@ Go_daDake2.sh \
 Go_daDake2.sh \
   -t illumina_ITS \
   -i "ProjA,ProjB" \
-  -d /path/to/sh_general_release_dynamic_29.11.2022.fasta \
+  -d /data/kpark-db/dadake2/sh_general_release_dynamic_29.11.2022.fasta \
   -c 8 \
   -K
 ```
@@ -97,7 +107,7 @@ The fixed `trimLeft`/`truncLen` values in the table below are good defaults, but
 
 ```bash
 Go_daDake2.sh -t standard_V3V4 -i "ProjA,ProjB" -A \
-  -d /path/to/silva_nr99_v138.1_wSpecies_train_set.fa.gz -c 8 -K
+  -d /data/kpark-db/dadake2/silva_nr99_v138.1_wSpecies_train_set.fa.gz -c 8 -K
 ```
 
 ## Type-specific Parameters
@@ -194,27 +204,20 @@ Each pipeline step writes an intermediate RDS before the next step begins. If a 
 
 ## Workstation Layout
 
-After `Go_toWorkstation.sh daDake2`, files are placed as:
+After installation with `--prefix /data/kpark-pipelines`:
 
 ```text
-/home/uhlemann*/heekuk_path/
-  Go_daDake2.sh          ← symlink → heekuk_path/daDake2/Go_daDake2.sh
-  daDake2/
-    Go_daDake2.sh
-    Go_daDake2.smk
-    scripts/
-      01_filter_trim.R
-      02_learn_errors.R
-      03_denoise_merge.R
-      04_taxonomy.R
-      05_export.R
+/data/kpark-pipelines/daDake2/
+  Go_daDake2.sh
+  Go_daDake2.smk
+  scripts/
 ```
 
 When running via symlink, the wrapper resolves the real path automatically. If it fails, use `-s` to specify the pipeline directory or a specific `.smk` file:
 
 ```bash
-Go_daDake2.sh -t standard_V3V4 -i "ProjA" -d /path/to/silva.fa.gz \
-  -s /home/uhlemann/heekuk_path/daDake2 -c 8 -K
+Go_daDake2.sh -t standard_V3V4 -i "ProjA" -d /data/kpark-db/dadake2/silva.fa.gz \
+  -s /data/kpark-pipelines/daDake2 -c 8 -K
 ```
 
 ## Common Runs
@@ -223,7 +226,7 @@ Dry-run (show execution plan):
 
 ```bash
 Go_daDake2.sh -t standard_V3V4 -i "ProjA" \
-  -d /media/uhlemann/core4/DB/DADA2/Bacteria/silva_nr99_v138.1_wSpecies_train_set.fa.gz \
+  -d /data/kpark-db/dadake2/silva_nr99_v138.1_wSpecies_train_set.fa.gz \
   -n
 ```
 
@@ -233,7 +236,7 @@ Production (16S V3V4, multiple projects):
 Go_daDake2.sh \
   -t standard_V3V4 \
   -i "ProjA,ProjB,ProjC" \
-  -d /media/uhlemann/core4/DB/DADA2/Bacteria/silva_nr99_v138.1_wSpecies_train_set.fa.gz \
+  -d /data/kpark-db/dadake2/silva_nr99_v138.1_wSpecies_train_set.fa.gz \
   -c 8 \
   -K
 ```
@@ -244,7 +247,7 @@ Production (Zymo V1V2):
 Go_daDake2.sh \
   -t zymo_V1V2 \
   -i "ProjA,ProjB" \
-  -d /media/uhlemann/core4/DB/DADA2/Bacteria/silva_nr99_v138.1_wSpecies_train_set.fa.gz \
+  -d /data/kpark-db/dadake2/silva_nr99_v138.1_wSpecies_train_set.fa.gz \
   -c 8 \
   -K
 ```
@@ -255,7 +258,7 @@ Production (ITS):
 Go_daDake2.sh \
   -t illumina_ITS \
   -i "ProjA,ProjB" \
-  -d /media/uhlemann/core4/DB/DADA2/Fungi/sh_general_release_dynamic_29.11.2022.fasta \
+  -d /data/kpark-db/dadake2/sh_general_release_dynamic_29.11.2022.fasta \
   -c 8 \
   -K
 ```
@@ -277,7 +280,7 @@ Go_daDake2.sh \
 ## Troubleshooting
 
 - `Error: Snakefile not found` when running via symlink
-  - use `-s /home/uhlemann/heekuk_path/daDake2` or `-s /home/uhlemann/heekuk_path/daDake2/Go_daDake2.smk`
+  - use `-s /data/kpark-pipelines/daDake2` or `-s /data/kpark-pipelines/daDake2/Go_daDake2.smk`
 - All samples in `failed.csv` / no passing samples
   - check FASTQ naming, pair completeness, and the `-m` minimum size threshold
 - `track.csv` row names differ from old runs

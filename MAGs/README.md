@@ -1,5 +1,15 @@
 # MAGs
 
+Examples use `/data` as the mounted data disk. Before running analysis commands:
+
+```bash
+source /data/kpark-pipelines/kpark.env
+mkdir -p /data/projects/ProjectA
+cd /data/projects/ProjectA
+```
+
+For DB, Docker, and Conda storage setup, see [installation notes](../INSTALL_KParkLab.md#data-disk-setup).
+
 Modular MAG workflow collection for Uhlemann Lab metagenomics.
 
 The modules are intentionally separated so QC, assembly/binning, inStrain, and annotation can be run independently.
@@ -27,22 +37,18 @@ MAGs/
 
 ## Workstation Layout
 
-After `Go_toWorkstation.sh MAGs`, files are placed as:
+After installation with `--prefix /data/kpark-pipelines`:
 
 ```text
-/home/uhlemann*/heekuk_path/
-  Go_MAGs_QC.sh
-  Go_MAGs_QC.smk
-  Go_MAGs_Assembly.sh
-  Go_MAGs_Assembly.smk
+/data/kpark-pipelines/MAGs/
   Go_MAGs_Annotation.sh
-  Go_MAGs_Annotation.smk
+  Go_MAGs_Assembly.sh
+  Go_MAGs_QC.sh
+  MAGs_pipeline.pdf
+  MAGs_pipeline.png
+  docker/
   scripts/
-    summarize_all_results.py
-  docker/MAGs/
-    Dockerfile.qc
-    Dockerfile.assembly
-    Dockerfile.annotation
+  workflow/
 ```
 
 ## QC Module
@@ -64,7 +70,7 @@ raw FASTQ
 Build from the workstation Docker directory:
 
 ```bash
-cd /home/uhlemann/heekuk_path/docker/MAGs
+cd /data/kpark-pipelines/MAGs/docker
 docker build -f Dockerfile.qc -t mags-qc:1.0 .
 ```
 
@@ -73,7 +79,7 @@ docker build -f Dockerfile.qc -t mags-qc:1.0 .
 Build from the workstation Docker directory:
 
 ```bash
-cd /home/uhlemann/heekuk_path/docker/MAGs
+cd /data/kpark-pipelines/MAGs/docker
 docker build -f Dockerfile.assembly -t mags-assembly:1.0 .
 ```
 
@@ -82,7 +88,7 @@ docker build -f Dockerfile.assembly -t mags-assembly:1.0 .
 Build from the workstation Docker directory:
 
 ```bash
-cd /home/uhlemann/heekuk_path/docker/MAGs
+cd /data/kpark-pipelines/MAGs/docker
 docker build -f Dockerfile.annotation -t mags-annotation:1.0 .
 ```
 
@@ -92,9 +98,9 @@ docker build -f Dockerfile.annotation -t mags-annotation:1.0 .
 
 ```bash
 ./Go_MAGs_QC.sh \
-  -i /path/to/input_fastqs \
+  -i /data/projects/ProjectA/fastq \
   -o mags_qc_out \
-  -d /path/to/bowtie2_host_index/hg38 \
+  -d /data/kpark-db/host/bowtie2/chm13v2.0/chm13v2.0 \
   -c 8 \
   -j 4 \
   -K
@@ -105,9 +111,9 @@ docker build -f Dockerfile.annotation -t mags-annotation:1.0 .
 ```bash
 fastq_dir="input_fastqs"
 output_dir="mags_qc_out"
-host_db="/path/to/bowtie2_host_index/hg38"
+host_db="/data/kpark-db/host/bowtie2/chm13v2.0/chm13v2.0"
 
-snakemake --snakefile /home/uhlemann/heekuk_path/Go_MAGs_QC.smk \
+snakemake --snakefile /data/kpark-pipelines/MAGs/workflow/Go_MAGs_QC_V1.smk \
   --config fastq_dir="$fastq_dir" output_dir="$output_dir" host_db="$host_db" paired=2 threads=8 \
   --cores 8 --jobs 4 \
   --latency-wait 60 --rerun-incomplete
@@ -149,7 +155,7 @@ After QC is complete, use the QC `host_filtered_fastq` directory as the assembly
 ./Go_MAGs_Assembly.sh \
   -i mags_qc_out/host_filtered_fastq \
   -o mags_assembly_out \
-  -d /path/to/checkm_data \
+  -d /data/kpark-db/checkm \
   -c 24 \
   -j 4 \
   -t 24 \
@@ -163,7 +169,7 @@ Dry-run first:
 ./Go_MAGs_Assembly.sh \
   -i mags_qc_out/host_filtered_fastq \
   -o mags_assembly_out \
-  -d /path/to/checkm_data \
+  -d /data/kpark-db/checkm \
   -c 24 \
   -j 4 \
   -n
@@ -172,9 +178,9 @@ Dry-run first:
 ### Direct Snakemake Run
 
 ```bash
-snakemake --snakefile /home/uhlemann/heekuk_path/Go_MAGs_Assembly.smk \
+snakemake --snakefile /data/kpark-pipelines/MAGs/workflow/Go_MAGs_Assembly_V1.smk \
   --config fastq_dir="mags_qc_out/host_filtered_fastq" output_dir="mags_assembly_out" \
-  checkm_data_dir="/path/to/checkm_data" megahit_threads=24 megahit_memory=128000 binning_tools="concoct,metabat2,maxbin2" \
+  checkm_data_dir="/data/kpark-db/checkm" megahit_threads=24 megahit_memory=128000 binning_tools="concoct,metabat2,maxbin2" \
   --cores 24 --jobs 4 \
   --latency-wait 60 --rerun-incomplete --keep-going
 ```
@@ -204,9 +210,9 @@ The annotation workflow is also Docker-based. Provide a directory containing fin
 ./Go_MAGs_Annotation.sh \
   -i mags_assembly_out/9_Final_MAGs \
   -o mags_annotation_out \
-  -g /path/to/gtdbtk/release220 \
-  -e /path/to/eggnog \
-  -k /path/to/kofam_scan \
+  -g /data/kpark-db/gtdbtk/release220 \
+  -e /data/kpark-db/eggnog \
+  -k /data/kpark-db/kofam \
   -c 24 \
   -j 4 \
   -K
@@ -218,9 +224,9 @@ Dry-run first:
 ./Go_MAGs_Annotation.sh \
   -i mags_assembly_out/9_Final_MAGs \
   -o mags_annotation_out \
-  -g /path/to/gtdbtk/release220 \
-  -e /path/to/eggnog \
-  -k /path/to/kofam_scan \
+  -g /data/kpark-db/gtdbtk/release220 \
+  -e /data/kpark-db/eggnog \
+  -k /data/kpark-db/kofam \
   -c 24 \
   -j 4 \
   -n

@@ -5,8 +5,8 @@
       <p class="lead">Paired-end FASTQ 전처리 · fastp 품질 필터링 · Bowtie2 숙주 제거</p>
 <div class="status-banner status-tested">실행 환경: Docker</div>
 <p><a href="workstations.html#db-goqc">설치 및 DB 준비 →</a></p>
-      <div class="card"><pre><code>source "$HOME/kpark-pipelines/kpark.env"
-Go_QC.sh -i /path/to/raw_fastq -o /path/to/output/ProjectA_QC -c 8 -j 4 -K</code></pre></div>
+      <div class="card"><pre><code>source "/data/kpark-pipelines/kpark.env"
+Go_QC.sh -i /data/projects/ProjectA/fastq -o /data/projects/ProjectA/ProjectA_QC -c 8 -j 4 -K</code></pre></div>
       <p>숙주 인덱스: <code>KPARK_HOST_BT2_PREFIX</code> 또는 <code>-d INDEX_PREFIX</code></p>
       <p>이미지: <code>goqc:kpark</code> · 후속 분석 입력: <code>host_filtered_fastq/</code></p>
       <p><a href="https://github.com/bbagy/KParkLab/blob/main/GoQC/README.md">GoQC 전체 안내 ↗</a></p>

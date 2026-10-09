@@ -1,5 +1,15 @@
 # Humannake
 
+Examples use `/data` as the mounted data disk. Before running analysis commands:
+
+```bash
+source /data/kpark-pipelines/kpark.env
+mkdir -p /data/projects/ProjectA
+cd /data/projects/ProjectA
+```
+
+For DB, Docker, and Conda storage setup, see [installation notes](../INSTALL_KParkLab.md#data-disk-setup).
+
 ![HUMAnN3](https://img.shields.io/badge/Profiler-HUMAnN3-e67e22)
 ![Workflow](https://img.shields.io/badge/Workflow-Snakemake-039be5)
 ![Container](https://img.shields.io/badge/Runtime-Docker-0db7ed)
@@ -73,12 +83,12 @@ docker run --rm humann:kpark metaphlan --version
 
 ```bash
 ./Humannake/Go_Humannake.sh \
-  -i /path/to/host_filtered_fastq \
+  -i /data/projects/ProjectA/ProjectA_QC/host_filtered_fastq \
   -o humann_run \
-  -n "$HOME/kpark-db/humann/chocophlan" \
-  -p "$HOME/kpark-db/humann/uniref90_diamond" \
-  -u "$HOME/kpark-db/humann/utility_mapping" \
-  -b "$HOME/kpark-db/humann/metaphlan4" \
+  -n "/data/kpark-db/humann/chocophlan" \
+  -p "/data/kpark-db/humann/uniref90_diamond" \
+  -u "/data/kpark-db/humann/utility_mapping" \
+  -b "/data/kpark-db/humann/metaphlan4" \
   -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
   -c 8 -j 4 -t 4 \
   -K
@@ -90,12 +100,12 @@ Real example:
 Go_Humannake.sh \
   -i 1_host_filtered \
   -o 2_humann_out \
-  -n "$HOME/kpark-db/humann/chocophlan" \
-  -p "$HOME/kpark-db/humann/uniref90_diamond" \
-  -u "$HOME/kpark-db/humann/utility_mapping" \
-  -b "$HOME/kpark-db/humann/metaphlan4" \
+  -n "/data/kpark-db/humann/chocophlan" \
+  -p "/data/kpark-db/humann/uniref90_diamond" \
+  -u "/data/kpark-db/humann/utility_mapping" \
+  -b "/data/kpark-db/humann/metaphlan4" \
   -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
-  -s "$HOME/kpark-pipelines/Humannake" \
+  -s "/data/kpark-pipelines/Humannake" \
   -c 8 -j 4 -t 4 \
   -K
 ```
@@ -125,16 +135,16 @@ Go_Humannake.sh \
 
 ## Workstation Layout
 
-After `Go_toWorkstation.sh Humannake`, files are placed as:
+After installation with `--prefix /data/kpark-pipelines`:
 
 ```text
-/home/uhlemann*/heekuk_path/
+/data/kpark-pipelines/Humannake/
+  Dockerfile
+  Go_Humann_V1.smk
   Go_Humannake.sh
-  Go_Humann.smk
+  check_humann_logs_example.sh
+  run_humann_retry_example.sh
   scripts/
-    humann_masterlog.py
-  docker/Humannake/
-    Dockerfile
 ```
 
 ## Input Layout
@@ -193,12 +203,12 @@ Key files:
 ```bash
 fastq_dir="host_filtered_fastq"
 output_dir="humann_run"
-chocophlan=""$HOME/kpark-db/humann/chocophlan""
-uniref=""$HOME/kpark-db/humann/uniref90_diamond""
-metaphlan_db=""$HOME/kpark-db/humann/metaphlan4""
+chocophlan=""/data/kpark-db/humann/chocophlan""
+uniref=""/data/kpark-db/humann/uniref90_diamond""
+metaphlan_db=""/data/kpark-db/humann/metaphlan4""
 metaphlan_index="mpa_vJun23_CHOCOPhlAnSGB_202307"
 
-snakemake --snakefile "$HOME/kpark-pipelines/Humannake"/Go_Humann.smk \
+snakemake --snakefile "/data/kpark-pipelines/Humannake"/Go_Humann_V1.smk \
   --config \
   fastq_dir="$fastq_dir" \
   output_dir="$output_dir" \
@@ -218,9 +228,9 @@ snakemake --snakefile "$HOME/kpark-pipelines/Humannake"/Go_Humann.smk \
 --config \
   fastq_dir=host_filtered_fastq \
   output_dir=humann_run \
-  nucleotide_db=/path/to/chocophlan \
-  protein_db=/path/to/uniref \
-  metaphlan_db=/path/to/metaphlan_db \
+  nucleotide_db=/data/kpark-db/humann/chocophlan \
+  protein_db=/data/kpark-db/humann/uniref90_diamond \
+  metaphlan_db=/data/kpark-db/humann/metaphlan4 \
   metaphlan_index=mpa_vJun23_CHOCOPhlAnSGB_202307 \
   run_musicc=false \
   humann_threads=4 \
@@ -293,4 +303,4 @@ HUMAnN 3.9 / MetaPhlAn 4.1.0: `mpa_vJun23_CHOCOPhlAnSGB_202307`.
 The downloader pins this index. Existing installations retain local settings; rerun the downloader or update the index explicitly.
 Reference: [HUMAnN 3.9 release](https://forum.biobakery.org/t/announcing-humann-3-9/6674).
 
-KO tables require `utility_mapping/full`. Existing installs can download only this DB with `download_databases.sh --db-root "$HOME/kpark-db" --tools humann-utility`. Source `config/lab_paths.sh` again. UniRef50 uses `uniref50_ko` output names. With `--run-musicc`, only community-level KO rows are corrected, and renamed output filenames use `musicc` instead of `cpm`.
+KO tables require `utility_mapping/full`. Existing installs can download only this DB with `download_databases.sh --db-root "/data/kpark-db" --tools humann-utility`. Source `config/lab_paths.sh` again. UniRef50 uses `uniref50_ko` output names. With `--run-musicc`, only community-level KO rows are corrected, and renamed output filenames use `musicc` instead of `cpm`.

@@ -8,6 +8,17 @@ Prerequisites
 - Linux shell
 - Pipeline-specific input data and reference databases
 
+Storage layout
+--------------
+
+Use a mounted data disk (examples: ``/data``). Before image builds, configure
+Docker storage at ``/data/docker`` and containerd storage at ``/data/containerd``
+when applicable. Install pipelines with ``--prefix /data/kpark-pipelines``;
+store DBs at ``/data/kpark-db`` and inputs/results at ``/data/projects``.
+Miniforge belongs in ``/data/miniforge3``; set ``CONDA_ENVS_PATH=/data/conda/envs``
+and ``CONDA_PKGS_DIRS=/data/conda/pkgs`` before creating environments.
+See the `installation and migration guide <https://bbagy.github.io/KParkLab/workstations.html#storage>`_.
+
 Typical flow
 ------------
 
@@ -22,7 +33,10 @@ Example (shortWGS)
 
 .. code-block:: bash
 
-   cd shortWGS
+   source /data/kpark-pipelines/kpark.env
+   cd /data/kpark-pipelines/shortWGS
    docker build --network=host -t shortwgs .
-   ./Go_shortWGS.sh -i /path/fastq -o out -d /path/WGS_DB2 -k /path/kraken -r "$HOME/kpark-pipelines/shortWGS" -n
-   ./Go_shortWGS.sh -i /path/fastq -o out -d /path/WGS_DB2 -k /path/kraken -r "$HOME/kpark-pipelines/shortWGS" -K
+   mkdir -p /data/projects/ProjectA
+   cd /data/projects/ProjectA
+   Go_shortWGS.sh -i /data/projects/ProjectA/fastq -o out -d /data/kpark-db/shortWGS -k /data/kpark-db/kraken2/k2_pluspfp_16gb_latest -r "/data/kpark-pipelines/shortWGS" -n
+   Go_shortWGS.sh -i /data/projects/ProjectA/fastq -o out -d /data/kpark-db/shortWGS -k /data/kpark-db/kraken2/k2_pluspfp_16gb_latest -r "/data/kpark-pipelines/shortWGS" -K

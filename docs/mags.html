@@ -15,9 +15,9 @@
 
       <h2>품질 관리 실행</h2>
       <div class="card"><pre><code>Go_MAGs_QC.sh \
-  -i /path/to/input_fastqs \
+  -i /data/projects/ProjectA/fastq \
   -o mags_qc_out \
-  -d /path/to/bowtie2_host_index/hg38 \
+  -d /data/kpark-db/host/bowtie2/chm13v2.0/chm13v2.0 \
   -c 8 \
   -j 4 \
   -K</code></pre></div>
@@ -26,7 +26,7 @@
       <div class="card"><pre><code>Go_MAGs_Assembly.sh \
   -i mags_qc_out/host_filtered_fastq \
   -o mags_assembly_out \
-  -d /path/to/checkm_data \
+  -d /data/kpark-db/checkm \
   -c 24 \
   -j 4 \
   -K</code></pre></div>
@@ -35,9 +35,9 @@
       <div class="card"><pre><code>Go_MAGs_Annotation.sh \
   -i mags_assembly_out/9_Final_MAGs \
   -o mags_annotation_out \
-  -g /path/to/gtdbtk/release220 \
-  -e /path/to/eggnog \
-  -k /path/to/kofam_scan \
+  -g /data/kpark-db/gtdbtk/release220 \
+  -e /data/kpark-db/eggnog \
+  -k /data/kpark-db/kofam \
   -c 24 \
   -j 4 \
   -K</code></pre></div>

@@ -17,12 +17,14 @@
         <span class="node">Merged Table</span>
       </div>
 
-      <h2>실행 방법</h2><p>새 터미널 설정: <code>source "$HOME/kpark-pipelines/kpark.env"</code></p>
+      <h2>실행 방법</h2><p>분석 데이터와 결과는 <code>/data/projects</code>에 저장합니다. 예제 실행 전 프로젝트 폴더를 준비하세요.</p><div class="card"><pre><code>source /data/kpark-pipelines/kpark.env
+mkdir -p /data/projects/ProjectA
+cd /data/projects/ProjectA</code></pre></div><p>새 터미널 설정: <code>source "/data/kpark-pipelines/kpark.env"</code></p>
       <div class="card"><pre><code>Go_Rnake.sh \
-  -i /path/to/reads \
+  -i /data/projects/ProjectA/fastq \
   -o project_name \
-  -g /path/to/genome.fna \
-  -a /path/to/annotation.gff \
+  -g /data/kpark-db/rnake/ecoli.fna \
+  -a /data/kpark-db/rnake/ecoli.gff \
   -c 8 \
   -K</code></pre></div>
 
@@ -30,8 +32,8 @@
       <div class="card"><pre><code>Go_Rnake.sh \
   -i RNake/20261001_RNA_HKP \
   -o RNake/20261001_RNA_HKP_out \
-  -g "$HOME/kpark-db/rnake/ecoli.fna" \
-  -a "$HOME/kpark-db/rnake/ecoli.gff" \
+  -g "/data/kpark-db/rnake/ecoli.fna" \
+  -a "/data/kpark-db/rnake/ecoli.gff" \
   -s "$KPARK_PIPELINES/RNake" \
   -K</code></pre></div>
 
@@ -52,7 +54,7 @@
 |   `-- SAMPLE1_R2.fastq.gz
 `-- 20261001_RNA_HKP_out/
 
-$HOME/kpark-db/rnake/
+/data/kpark-db/rnake/
 |-- ecoli.fna
 `-- ecoli.gff</code></pre></div>
 

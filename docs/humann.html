@@ -21,14 +21,16 @@
         <span class="node">stratified split</span>
       </div>
 
-      <h2>실행 방법</h2><p>새 터미널 설정: <code>source "$HOME/kpark-pipelines/kpark.env"</code></p>
+      <h2>실행 방법</h2><p>분석 데이터와 결과는 <code>/data/projects</code>에 저장합니다. 예제 실행 전 프로젝트 폴더를 준비하세요.</p><div class="card"><pre><code>source /data/kpark-pipelines/kpark.env
+mkdir -p /data/projects/ProjectA
+cd /data/projects/ProjectA</code></pre></div><p>새 터미널 설정: <code>source "/data/kpark-pipelines/kpark.env"</code></p>
       <div class="card"><pre><code>Go_Humannake.sh \
-  -i /path/to/host_filtered_fastq \
+  -i /data/projects/ProjectA/ProjectA_QC/host_filtered_fastq \
   -o humann_run \
-  -n /path/to/chocophlan \
-  -p /path/to/uniref \
-  -u /path/to/utility_mapping \
-  -b /path/to/metaphlan_db \
+  -n /data/kpark-db/humann/chocophlan \
+  -p /data/kpark-db/humann/uniref90_diamond \
+  -u /data/kpark-db/humann/utility_mapping \
+  -b /data/kpark-db/humann/metaphlan4 \
   -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
   -c 8 -j 4 -t 4 \
   -K</code></pre></div>
@@ -37,10 +39,10 @@
       <div class="card"><pre><code>Go_Humannake.sh \
   -i Humannake/20261001_MG_HKP_nohuman \
   -o Humannake/20261001_MG_HKP_humann_out \
-  -n "$HOME/kpark-db/humann/chocophlan" \
-  -p "$HOME/kpark-db/humann/uniref90_diamond" \
-  -u "$HOME/kpark-db/humann/utility_mapping" \
-  -b "$HOME/kpark-db/humann/metaphlan4" \
+  -n "/data/kpark-db/humann/chocophlan" \
+  -p "/data/kpark-db/humann/uniref90_diamond" \
+  -u "/data/kpark-db/humann/utility_mapping" \
+  -b "/data/kpark-db/humann/metaphlan4" \
   -I mpa_vJun23_CHOCOPhlAnSGB_202307 \
   -s "$KPARK_PIPELINES/Humannake" \
   -c 8 -j 4 -t 4 \
@@ -70,7 +72,7 @@
 |   `-- SAMPLE1_R2_nohuman.fastq.gz
 `-- 20260901_MG_HKP_humann_out/
 
-$HOME/kpark-db/humann/
+/data/kpark-db/humann/
 |-- chocophlan/
 |-- uniref90_diamond/
 `-- metaphlan4/

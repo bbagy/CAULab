@@ -14,7 +14,7 @@ Kraken2 + Bracken profiling with merged MPA-style outputs and master logs.
 Entrypoint
 ----------
 
-``Go_KBracken.sh`` on workstations after ``Go_toWorkstation.sh KBracken``.
+``Go_KBracken.sh`` after installation with ``--prefix /data/kpark-pipelines``.
 
 Workstation layout
 ------------------

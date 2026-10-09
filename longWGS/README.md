@@ -1,5 +1,15 @@
 # longWGS
 
+Examples use `/data` as the mounted data disk. Before running analysis commands:
+
+```bash
+source /data/kpark-pipelines/kpark.env
+mkdir -p /data/projects/ProjectA
+cd /data/projects/ProjectA
+```
+
+For DB, Docker, and Conda storage setup, see [installation notes](../INSTALL_KParkLab.md#data-disk-setup).
+
 ![ONT](https://img.shields.io/badge/Reads-ONT-2ca02c)
 ![Workflow](https://img.shields.io/badge/Workflow-Snakemake-039be5)
 ![Container](https://img.shields.io/badge/Runtime-Docker-0db7ed)
@@ -187,9 +197,9 @@ The same rename-table convention is also supported by `Go_rename_barcodes.sh` fo
 
 ```bash
 ./longWGS/Go_longWGS_V1_1.sh \
-  -i /path/to/fastq \
-  -o /path/to/output \
-  -d /path/to/db \
+  -i /data/projects/ProjectA/fastq \
+  -o /data/projects/ProjectA/output \
+  -d /data/kpark-db/longWGS \
   -M strict \
   -p 0 \
   -K
@@ -201,8 +211,8 @@ Real example:
 Go_longWGS.sh \
   -i 1_merged_fastqs \
   -o 2_longWGS_out \
-  -d /media/uhlemann/Core3_V2/DB/longWGS_DB \
-  -s /home/uhlemann/heekuk_path \
+  -d /data/kpark-db/longWGS \
+  -s /data/kpark-pipelines/longWGS \
   -M strict \
   -p 0 \
   -K

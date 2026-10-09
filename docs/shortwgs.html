@@ -18,20 +18,22 @@
         <span class="node">MultiQC + Summary</span>
       </div>
 
-      <h2>실행 방법</h2><p>새 터미널 설정: <code>source "$HOME/kpark-pipelines/kpark.env"</code></p>
+      <h2>실행 방법</h2><p>분석 데이터와 결과는 <code>/data/projects</code>에 저장합니다. 예제 실행 전 프로젝트 폴더를 준비하세요.</p><div class="card"><pre><code>source /data/kpark-pipelines/kpark.env
+mkdir -p /data/projects/ProjectA
+cd /data/projects/ProjectA</code></pre></div><p>새 터미널 설정: <code>source "/data/kpark-pipelines/kpark.env"</code></p>
       <div class="card"><pre><code>Go_shortWGS.sh \
-  -i /path/to/fastq \
-  -o /path/to/output \
-  -d /path/to/WGS_DB2 \
-  -k /path/to/kraken2_db \
+  -i /data/projects/ProjectA/fastq \
+  -o /data/projects/ProjectA/output \
+  -d /data/kpark-db/shortWGS \
+  -k /data/kpark-db/kraken2/k2_pluspfp_16gb_latest \
   -K</code></pre></div>
 
       <h2>실행 예시</h2>
       <div class="card"><pre><code>Go_shortWGS.sh \
   -i shortWGS/20261001_WGS_HKP \
   -o shortWGS/20261001_WGS_HKP_out \
-  -d "$HOME/kpark-db/shortWGS" \
-  -k "$HOME/kpark-db/kraken2/k2_pluspfp_16gb_latest" \
+  -d "/data/kpark-db/shortWGS" \
+  -k "/data/kpark-db/kraken2/k2_pluspfp_16gb_latest" \
   -K</code></pre></div>
 
       <h2>옵션</h2>
@@ -52,18 +54,18 @@
 |   `-- SAMPLE1_R2.fastq.gz
 `-- 20261001_WGS_HKP_out/
 
-$HOME/kpark-db/shortWGS/
+/data/kpark-db/shortWGS/
 |-- CARD/
 |-- PlasmidFinder/
 |-- MLST/
 `-- tetyper/
 
-$HOME/kpark-db/kraken2/k2_pluspfp_16gb_latest/
+/data/kpark-db/kraken2/k2_pluspfp_16gb_latest/
 |-- hash.k2d
 |-- opts.k2d
 `-- taxo.k2d
 
-$HOME/kpark-pipelines/shortWGS/
+/data/kpark-pipelines/shortWGS/
 `-- scripts/
     `-- 20251007_Summary_WGS_tem_v3.Rmd</code></pre></div>
 

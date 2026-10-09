@@ -99,9 +99,9 @@ bash Go_merge_rename_V1_0.sh -i fastq_pass -o merged_fastqs -m rename_map.tsv --
 
   <h2>Quick Start</h2>
   <pre><code>./longWGS/Go_longWGS_V1_1.sh \
-  -i /path/to/fastq \
-  -o /path/to/output \
-  -d /path/to/db \
+  -i /data/projects/ProjectA/fastq \
+  -o /data/projects/ProjectA/output \
+  -d /data/kpark-db/longWGS \
   -M strict \
   -p 0 \
   -K</code></pre>
@@ -110,8 +110,8 @@ bash Go_merge_rename_V1_0.sh -i fastq_pass -o merged_fastqs -m rename_map.tsv --
   <pre><code>Go_longWGS.sh \
   -i 1_merged_fastqs \
   -o 2_longWGS_out \
-  -d /media/uhlemann/Core3_V2/DB/longWGS_DB \
-  -s /home/uhlemann/heekuk_path \
+  -d /data/kpark-db/longWGS \
+  -s /data/kpark-pipelines/longWGS \
   -M strict \
   -p 0 \
   -K</code></pre>

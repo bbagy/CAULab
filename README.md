@@ -22,19 +22,19 @@ Bacterial Genome, Metagenome, RNA-seq, and 16S/ITS analysis.
 
 ## Install
 
-Requirements: Git and a running Docker Engine. Default platform: Ubuntu server.
+Requirements: Git and a running Docker Engine. Default platform: Ubuntu server. Prepare the mounted `/data` disk and Docker storage using [installation notes](INSTALL_KParkLab.md#data-disk-setup) before building.
 
 ```bash
-git clone https://github.com/bbagy/KParkLab.git "$HOME/KParkLab"
-cd "$HOME/KParkLab"
-bash install_docker_env.sh --build-all
-source "$HOME/kpark-pipelines/kpark.env"
+git clone https://github.com/bbagy/KParkLab.git "/data/KParkLab"
+cd "/data/KParkLab"
+bash install_docker_env.sh --prefix /data/kpark-pipelines --build-all
+source "/data/kpark-pipelines/kpark.env"
 kpark_usage.sh
 ```
 
-- Code: `$HOME/KParkLab`
-- Installation: `$HOME/kpark-pipelines`
-- Commands on PATH: `$HOME/kpark-pipelines/bin`
+- Code: `/data/KParkLab`
+- Installation: `/data/kpark-pipelines`
+- Commands on PATH: `/data/kpark-pipelines/bin`
 - `--build-all`: all 9 Docker images; MAGs uses 3 images.
 - `--build-core`: GoQC, KBracken, and Humannake images.
 - daDake2: host Mamba/Conda, Snakemake, R/DADA2, phyloseq, and QIIME 2; FIGARO setup on first `-A` run.
@@ -45,32 +45,22 @@ kpark_usage.sh
 New terminal:
 
 ```bash
-source "$HOME/kpark-pipelines/kpark.env"
+source "/data/kpark-pipelines/kpark.env"
 ```
 
-## Install on another disk
+## Storage layout
 
-Use a mounted directory with write permission, replacing `/data` with your disk's mount point:
+Use a mounted data disk; examples use `/data`. Configure Docker (`/data/docker`, plus `/data/containerd` when applicable) before building images. Install Miniforge in `/data/miniforge3`, and set `CONDA_ENVS_PATH=/data/conda/envs` and `CONDA_PKGS_DIRS=/data/conda/pkgs` before creating environments. Keep DBs in `/data/kpark-db`, and inputs/results in `/data/projects`.
 
-```bash
-git clone https://github.com/bbagy/KParkLab.git /data/KParkLab
-cd /data/KParkLab
-bash install_docker_env.sh --prefix /data/kpark-pipelines --build-all
-source /data/kpark-pipelines/kpark.env
-download_databases.sh --prefix /data/kpark-pipelines --db-root /data/kpark-db --tools all --threads 8
-source /data/kpark-pipelines/kpark.env
-```
+Start with [data disk setup and migration](INSTALL_KParkLab.md#data-disk-setup), including directory permissions, persistent shell settings, and verified cleanup of old root-disk files. The installer still defaults to the home directory unless `--prefix` is supplied.
 
-In each new terminal, source `/data/kpark-pipelines/kpark.env`. For updates, run the installer with the same `--prefix` and `--update`.
-
-`--prefix` controls pipeline files; `--db-root` controls reference DBs. Docker image storage and daDake2's host Conda environments are configured separately. See [installation notes](INSTALL_KParkLab.md#install-on-another-disk).
 ## Update
 
 ```bash
-cd "$HOME/KParkLab"
+cd "/data/KParkLab"
 git pull --ff-only
-bash install_docker_env.sh --update --build-all
-source "$HOME/kpark-pipelines/kpark.env"
+bash install_docker_env.sh --prefix /data/kpark-pipelines --update --build-all
+source "/data/kpark-pipelines/kpark.env"
 ```
 
 Local settings preserved: `config/lab_paths.sh` and `config/lab_paths.yaml`.
@@ -95,10 +85,10 @@ Image export and SIF conversion: [container guide](common/README.md).
 ## Reference DBs
 
 ```bash
-source "$HOME/kpark-pipelines/kpark.env"
-DB_ROOT="$HOME/kpark-db"
-bash "$HOME/kpark-pipelines/download_databases.sh" --db-root "$DB_ROOT" --tools all --threads 8
-source "$HOME/kpark-pipelines/config/lab_paths.sh"
+source "/data/kpark-pipelines/kpark.env"
+DB_ROOT="/data/kpark-db"
+bash "/data/kpark-pipelines/download_databases.sh" --db-root "$DB_ROOT" --tools all --threads 8
+source "/data/kpark-pipelines/config/lab_paths.sh"
 ```
 
 - Included: CHM13 host index, Kraken2/Bracken, HUMAnN/MetaPhlAn.
@@ -109,18 +99,10 @@ source "$HOME/kpark-pipelines/config/lab_paths.sh"
 
 Heekuk Park
 
-## Updating an existing CAULab installation
+## Existing CAULab or home-directory installations
 
-The project is now K-park Lab. GitHub repository redirects preserve old clone URLs.
-To keep existing database paths and the installation directory:
-
-```bash
-cd "$HOME/CAULab"
-git remote set-url origin https://github.com/bbagy/KParkLab.git
-git pull --ff-only
-bash install_docker_env.sh --prefix "$HOME/caulab-pipelines" --update --build-all
-source "$HOME/caulab-pipelines/kpark.env"
-```
-
-New installations use `$HOME/kpark-pipelines`, `kpark.env`, and `KPARK_*` variables.
-Existing database files stay in place.
+The project is now K-park Lab; old clone URLs redirect. Migrate source code, DBs,
+Conda environments, and Docker storage to `/data` using the
+[verified migration procedure](INSTALL_KParkLab.md#move-an-existing-root-disk-installation).
+Install with `--prefix /data/kpark-pipelines`; update both local DB configuration
+files to the copied paths. Remove old root-disk copies only after verification.

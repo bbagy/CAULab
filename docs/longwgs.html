@@ -37,11 +37,13 @@ bash Go_merge_rename.sh -i fastq_pass -o merged_fastqs -m samples_barcodes.txt -
 bash Go_merge_rename.sh -i fastq_pass -o merged_fastqs -m samples_barcodes.txt</code></pre></div>
       <p>분석 입력: <code>-i merged_fastqs/</code></p>
 
-      <h2>실행 방법</h2><p>새 터미널 설정: <code>source "$HOME/kpark-pipelines/kpark.env"</code></p>
+      <h2>실행 방법</h2><p>분석 데이터와 결과는 <code>/data/projects</code>에 저장합니다. 예제 실행 전 프로젝트 폴더를 준비하세요.</p><div class="card"><pre><code>source /data/kpark-pipelines/kpark.env
+mkdir -p /data/projects/ProjectA
+cd /data/projects/ProjectA</code></pre></div><p>새 터미널 설정: <code>source "/data/kpark-pipelines/kpark.env"</code></p>
       <div class="card"><pre><code>Go_longWGS.sh \
-  -i /path/to/fastq \
-  -o /path/to/output \
-  -d /path/to/db \
+  -i /data/projects/ProjectA/fastq \
+  -o /data/projects/ProjectA/output \
+  -d /data/kpark-db/longWGS \
   -M strict \
   -K</code></pre></div>
 
@@ -57,7 +59,7 @@ Go_longWGS.sh -i IN -o OUT -d DB -M permissive -K</code></pre></div>
       <div class="card"><pre><code>Go_longWGS.sh \
   -i longWGS/20261001_ONT_HKP \
   -o longWGS/20261001_ONT_HKP_out \
-  -d "$HOME/kpark-db/longWGS" \
+  -d "/data/kpark-db/longWGS" \
   -s "$KPARK_PIPELINES/longWGS" \
   -M strict \
   -p 0 \
@@ -87,7 +89,7 @@ Go_longWGS.sh -i IN -o OUT -d DB -M permissive -K</code></pre></div>
 |-- KP0063.fastq.gz
 `-- ...
 
-$HOME/kpark-db/longWGS/
+/data/kpark-db/longWGS/
 |-- bakta_DB/
 |-- CheckM2_database/
 |-- kraken2DB/
