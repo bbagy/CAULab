@@ -252,11 +252,16 @@ report_build_failure() {
 check_image_runtime() {
   local image="$1"
   local runtime_check='(command -v python >/dev/null 2>&1 && python --version || python3 --version) && snakemake --version >/dev/null'
+  local -a runtime_command=(bash -c "$runtime_check")
+  case "$image" in
+    kbracken:kpark) runtime_command=(micromamba run -n kbracken bash -c "$runtime_check") ;;
+    humann:kpark) runtime_command=(micromamba run -n humann bash -c "$runtime_check") ;;
+  esac
   echo "[K-park Lab install] Runtime check: $image"
   if [ -n "$PLATFORM" ]; then
-    docker run --rm --platform "$PLATFORM" "$image" bash -c "$runtime_check"
+    docker run --rm --platform "$PLATFORM" "$image" "${runtime_command[@]}"
   else
-    docker run --rm "$image" bash -c "$runtime_check"
+    docker run --rm "$image" "${runtime_command[@]}"
   fi
 }
 
