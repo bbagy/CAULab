@@ -254,9 +254,9 @@ check_image_runtime() {
   local runtime_check='(command -v python >/dev/null 2>&1 && python --version || python3 --version) && snakemake --version >/dev/null'
   echo "[K-park Lab install] Runtime check: $image"
   if [ -n "$PLATFORM" ]; then
-    docker run --rm --platform "$PLATFORM" "$image" bash -lc "$runtime_check"
+    docker run --rm --platform "$PLATFORM" "$image" bash -c "$runtime_check"
   else
-    docker run --rm "$image" bash -lc "$runtime_check"
+    docker run --rm "$image" bash -c "$runtime_check"
   fi
 }
 
